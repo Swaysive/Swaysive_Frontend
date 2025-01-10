@@ -1,0 +1,52 @@
+.auth-background {
+    display: flex;
+    height: 100vh; /* Full viewport height */
+  }
+  
+  .left-side {
+    flex: 1;
+    background: linear-gradient(to right,grey, black);
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  
+  .right-side {
+    flex: 1;
+    background: white;
+    position: relative;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    /* padding: 20px; */
+  }
+  
+  .form-container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+  }
+  
+  .top-left-image {
+    position: absolute;
+    top: 0px; /* Adjust as needed */
+    left: 0px; /* Adjust as needed */
+    width: 250px; /* Adjust size as needed */
+  }
+  
+  .bottom-left-image {
+    position: absolute;
+    bottom: 0px; /* Adjust as needed */
+    left: 0px; /* Adjust as needed */
+    width: 200px; /* Adjust size as needed */
+  }
+  
+  .bottom-right-image {
+    position: absolute;
+    bottom: 0px; /* Adjust as needed */
+    right: 0px; /* Adjust as needed */
+    width: 250px; /* Adjust size as needed */
+  }
