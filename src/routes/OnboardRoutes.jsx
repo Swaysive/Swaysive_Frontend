@@ -1,17 +1,17 @@
 import { Routes, Route } from 'react-router-dom';
 import Login from '../features/auth/Login';
 import Register from '../features/auth/Register';
-import OnboardBackground from '../components/OnboardBackground/OnboardBackground';
+import AuthBackground from '../components/AuthBackground/AuthBackground';
 
-const AuthRoutes = () => {
+const OnboardRoutes = () => {
   return (
-    <OnboardBackground>
+    <AuthBackground>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>
-    </OnboardBackground>
+    </AuthBackground>
   );
 };
 
-export default AuthRoutes;
+export default OnboardRoutes;

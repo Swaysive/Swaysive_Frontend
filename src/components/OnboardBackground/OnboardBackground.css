@@ -1,18 +1,27 @@
 .auth-background {
     display: flex;
+    flex-direction: column;
     height: 100vh; /* Full viewport height */
   }
+
+  .center-logo {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 15%;
+  }
   
-  .left-side {
+  .bottom-side {
     flex: 1;
-    background: linear-gradient(to right,#434343,#020202);
+    background: linear-gradient(to top,#434343,#020202);
     position: relative;
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
   }
   
-  .right-side {
+  .top-side {
     flex: 1;
     background: white;
     position: relative;
@@ -31,25 +40,18 @@
     width:30%
   }
   
-  .top-left-image {
-    position: absolute;
-    top: 0px; /* Adjust as needed */
-    left: 0px; /* Adjust as needed */
-    width: 30%; /* Adjust size as needed */
-  }
-  
   .bottom-left-image {
     position: absolute;
     bottom: 0px; /* Adjust as needed */
     left: 0px; /* Adjust as needed */
-    width: 20%; /* Adjust size as needed */
+    width: 15%; /* Adjust size as needed */
   }
   
-  .bottom-right-image {
+  .top-right-image {
     position: absolute;
-    bottom: 0px; /* Adjust as needed */
+    top: 0px; /* Adjust as needed */
     right: 0px; /* Adjust as needed */
-    width: 40%; /* Adjust size as needed */
+    width: 15%; /* Adjust size as needed */
   }
   .left-content {
     position: absolute;
