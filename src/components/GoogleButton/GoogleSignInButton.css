@@ -1,7 +1,0 @@
-#google-sign-in-button {
-    width: 100% !important; /* Force the button to take 100% width */
-    display: flex;
-    justify-content: center; /* Center the logo horizontally */
-    align-items: center; /* Center the logo vertically */
-  }
-  
