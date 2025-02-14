@@ -1,0 +1,14 @@
+version: "3"
+services:
+  sways-dev-fe:
+    container_name: sways-dev-fe
+    image: '881490115092.dkr.ecr.eu-west-2.amazonaws.com/sways-dev-fe:gitflows-0a6908c'
+    restart: always
+    ports:
+      - "3000:80"
+    networks:
+      - sways-fe
+
+networks:
+  sways-fe:
+    external: true
