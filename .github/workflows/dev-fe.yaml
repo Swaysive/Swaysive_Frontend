@@ -64,11 +64,12 @@ jobs:
           script: |
             cd /home/ubuntu/sways/fe
             ls
-            IMAGE_TAG="${{ needs.Build-and-Push.outputs.image_tag }}"  # Use output from Build-and-Push job
-            echo "IMAGE_TAG is $IMAGE_TAG"
-          # sudo sed -i "s|image:.*881490115092.dkr.ecr.eu-west-2.amazonaws.com/sways-dev-fe:.*|image: '881490115092.dkr.ecr.eu-west-2.amazonaws.com/sways-dev-fe:${IMAGE_TAG}'|g" docker-compose.yml
             cat docker-compose.yml
-#             aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 881490115092.dkr.ecr.eu-west-2.amazonaws.com
-#             docker-compose pull useraccount  
-#             docker-compose up -d --no-deps --force-recreate gateway 
-#             docker image prune -a -f
+          # IMAGE_TAG="${{ needs.Build-and-Push.outputs.image_tag }}"  # Use output from Build-and-Push job
+          # echo "IMAGE_TAG is $IMAGE_TAG"
+          # sudo sed -i "s|image:.*881490115092.dkr.ecr.eu-west-2.amazonaws.com/sways-dev-fe:.*|image: '881490115092.dkr.ecr.eu-west-2.amazonaws.com/sways-dev-fe:${IMAGE_TAG}'|g" docker-compose.yml
+          # cat docker-compose.yml
+          # aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 881490115092.dkr.ecr.eu-west-2.amazonaws.com
+          # docker-compose pull useraccount  
+          # docker-compose up -d --no-deps --force-recreate gateway 
+          # docker image prune -a -f
