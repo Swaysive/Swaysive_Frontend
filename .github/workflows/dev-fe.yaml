@@ -38,7 +38,7 @@ jobs:
 
       - name: Build Docker image for Frontend with Dockerfile
         run: |
-          docker build --tag 881490115092.dkr.ecr.eu-west-2.amazonaws.com/sways-dev-fe:${{ env.IMAGE_TAG }}  Dockerfile .
+          docker build --tag 881490115092.dkr.ecr.eu-west-2.amazonaws.com/sways-dev-fe:${{ env.IMAGE_TAG }} --file Dockerfile .
 
       - name: Push Docker image to ECR
         run: |
