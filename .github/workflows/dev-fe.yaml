@@ -50,20 +50,20 @@ jobs:
           docker system prune --force --all --filter "label=sways-dev-fe" || true    
 
 
-#   Deploy-To-Ec2:
-#     runs-on: ubuntu-latest
-#     needs: Build-and-Push
-#     steps:
-#       - name: Deploy to Server
-#         uses: appleboy/ssh-action@master
-#         with:
-#           host: ${{ secrets.EC2_HOST }}
-#           username: ${{ secrets.EC2_USERNAME }}
-#           key: ${{ secrets.SSH_PRIVATE_KEY }}
-#           port: ${{ secrets.SSH_PORT }}
-#           script: |
-#             cd /home/ubuntu/sways/be
-#             ls
+  Deploy-To-Ec2:
+    runs-on: ubuntu-latest
+    needs: Build-and-Push
+    steps:
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /home/ubuntu/sways/fe
+            ls
 #             IMAGE_TAG="${{ needs.Build-and-Push.outputs.image_tag }}"  # Use output from Build-and-Push job
 #             echo "IMAGE_TAG is $IMAGE_TAG"
 #             sudo sed -i "s|image:.*881490115092.dkr.ecr.eu-west-2.amazonaws.com/sways-dev-fe:.*|image: '881490115092.dkr.ecr.eu-west-2.amazonaws.com/sways-dev-fe:${IMAGE_TAG}'|g" docker-compose.yml
