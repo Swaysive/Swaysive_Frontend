@@ -44,10 +44,10 @@ jobs:
         run: |
           docker push 881490115092.dkr.ecr.eu-west-2.amazonaws.com/sways-dev-fe:${{ env.IMAGE_TAG }}
           
-      - name: Prune local Docker image
-        run: |
-          docker image rm 881490115092.dkr.ecr.eu-west-2.amazonaws.com/sways-dev-fe:${{ env.IMAGE_TAG }} || true
-          docker system prune --force --all --filter "label=sways-dev-fe" || true    
+      # - name: Prune local Docker image
+      #   run: |
+      #     docker image rm 881490115092.dkr.ecr.eu-west-2.amazonaws.com/sways-dev-fe:${{ env.IMAGE_TAG }} || true
+      #     docker system prune --force --all --filter "label=sways-dev-fe" || true    
 
 
   Deploy-To-Ec2:
