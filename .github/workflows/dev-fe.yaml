@@ -70,18 +70,8 @@ jobs:
             cat docker-compose.yml
             aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 881490115092.dkr.ecr.eu-west-2.amazonaws.com
             docker-compose pull sways-dev-fe  
-
-            OLD_CONTAINER_ID=$(docker ps -q --filter "name=sways-dev-fe" | tail -n 1)
-            if [ ! -z "$OLD_CONTAINER_ID" ]; then
-                docker stop "$OLD_CONTAINER_ID"
-                docker rm "$OLD_CONTAINER_ID"
-            fi
-
-
+            docker-compose up -d --no-deps --force-recreate sways-dev-fe 
             docker image prune -a -f
-
-
-          # docker image prune -a -f
 
 
 
