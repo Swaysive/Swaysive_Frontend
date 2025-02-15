@@ -24,14 +24,30 @@ jobs:
         run: |
           aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 881490115092.dkr.ecr.eu-west-2.amazonaws.com
 
+      # - name: Get Git Branch Name and Commit SHA
+      #   id: get_tag
+      #   run: |
+      #     BRANCH_NAME=${GITHUB_REF##*/}
+      #     COMMIT_SHA=$(git rev-parse --short HEAD)
+      #     IMAGE_TAG="${BRANCH_NAME}-${COMMIT_SHA}"
+      #     echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
+      #     echo "image_tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT  # Set output variable
+
+
       - name: Get Git Branch Name and Commit SHA
         id: get_tag
         run: |
-          BRANCH_NAME=${GITHUB_REF##*/}
-          COMMIT_SHA=$(git rev-parse --short HEAD)
+          BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})  # Get branch name correctly
+          COMMIT_SHA=$(git rev-parse --short HEAD)       # Get short commit SHA
           IMAGE_TAG="${BRANCH_NAME}-${COMMIT_SHA}"
+          
           echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
-          echo "image_tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT  # Set output variable
+          echo "image_tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT  # Ensure output is set
+
+          echo "Generated IMAGE_TAG=${IMAGE_TAG}"
+
+
+
 
       - name: Write Dev .env file
         run: echo "${{ secrets.DEV_ENV_FILE }}" >  .env
@@ -48,6 +64,7 @@ jobs:
       #   run: |
       #     docker image rm 881490115092.dkr.ecr.eu-west-2.amazonaws.com/sways-dev-fe:${{ env.IMAGE_TAG }} || true
       #     docker system prune --force --all --filter "label=sways-dev-fe" || true    
+
 
 
   Deploy-To-Ec2:
