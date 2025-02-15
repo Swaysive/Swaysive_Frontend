@@ -69,9 +69,6 @@ jobs:
             sed -i "s|image:.*881490115092.dkr.ecr.eu-west-2.amazonaws.com/sways-dev-fe:.*|image: '881490115092.dkr.ecr.eu-west-2.amazonaws.com/sways-dev-fe:${IMAGE_TAG}'|g" docker-compose.yml
             cat docker-compose.yml
             aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 881490115092.dkr.ecr.eu-west-2.amazonaws.com
-          # docker-compose pull performance  
-          # docker-compose up -d --no-deps --force-recreate performance 
-          # docker image prune -a -f
             docker-compose pull sways-dev-fe  
             docker-compose up -d --no-deps --force-recreate sways-dev-fe
             docker image prune -a -f
