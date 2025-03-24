@@ -4,7 +4,7 @@
 
 // Theme Colors
 export const Colors = {
-    primary: '#872324', // Primary color
+    primary: '#000000', // Primary color
     secondary: '#4E4B66', // Secondary color
     light: '#FFFFFF', // Light color
     dark: '#333333', // Dark color

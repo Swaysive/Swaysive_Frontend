@@ -8,7 +8,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Logo from '../../assets/icons/swaysive-logo.png';
 import OrDivider from '../../components/Divider/OrDivider';
 import GoogleSignInButton from '../../components/GoogleButton/GoogleSignInButton';
-import { GlobalStyles, Colors } from '../../styles/styles';
+import { GlobalStyles } from '../../styles/styles';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -71,7 +71,7 @@ const Login = () => {
             />
           </div>
           <div className='mb-3 text-end'>
-          <a href="/register" style={GlobalStyles.forgotLink}>Forgot Password.</a>
+          <a href="/forget-password" style={GlobalStyles.forgotLink}>Forgot Password.</a>
           </div>
           <div className="d-grid">
             <Button type="submit" variant="contained" size="large" style={GlobalStyles.button} fullWidth>

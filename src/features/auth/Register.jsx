@@ -8,13 +8,14 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Logo from '../../assets/icons/swaysive-logo.png';
 import OrDivider from '../../components/Divider/OrDivider';
 import GoogleSignInButton from '../../components/GoogleButton/GoogleSignInButton';
-import { GlobalStyles, Colors } from '../../styles/styles';
+import { GlobalStyles } from '../../styles/styles';
 
 const Register = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
+    phoneNumber: '',
     password: '',
     confirmPassword: '',
   });
@@ -89,6 +90,20 @@ const Register = () => {
               name="email"
               fullWidth
               value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {/* Phone Number Field */}
+          <div className="mb-3">
+            <label style={GlobalStyles.inputLabel}>Phone Number</label>
+            <TextField
+              label="Phone Number"
+              type="tel"
+              name="phoneNumber"
+              fullWidth
+              value={formData.phoneNumber}
               onChange={handleChange}
               required
             />

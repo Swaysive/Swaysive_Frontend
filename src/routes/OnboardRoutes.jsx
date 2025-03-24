@@ -1,16 +1,17 @@
 import { Routes, Route } from 'react-router-dom';
-import Login from '../features/auth/Login';
+// import Login from '../features/auth/Login';
+import Onboard from '../features/onboarding/Onboard';
 import Register from '../features/auth/Register';
-import AuthBackground from '../components/AuthBackground/AuthBackground';
+import OnboardBackground from '../components/OnboardBackground/OnboardBackground';
 
 const OnboardRoutes = () => {
   return (
-    <AuthBackground>
+    <OnboardBackground>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Onboard />} />
         <Route path="/register" element={<Register />} />
       </Routes>
-    </AuthBackground>
+    </OnboardBackground>
   );
 };
 
