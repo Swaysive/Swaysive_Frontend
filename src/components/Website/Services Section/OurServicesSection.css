@@ -1,0 +1,47 @@
+.our-services-section {
+    background-color: #1e1e1e;
+    width: 80%;
+    margin: 0 auto;
+  }
+  
+  .services-grid {
+    /* display: grid; */
+    gap: 2rem 0rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+  
+  .service-item {
+    /* align-items: flex-start; */
+  }
+  
+  .check-icon-wrapper {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    background-color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .check-icon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .cta-btn {
+    background-color: #fff;
+    color: #000;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .cta-btn:hover {
+    background-color: #f1f1f1;
+  }
+  

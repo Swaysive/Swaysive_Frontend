@@ -5,11 +5,13 @@ import AuthBackground from '../components/AuthBackground/AuthBackground';
 import OTPVerification from '../features/auth/OTPVerification';
 import ForgetPassword from '../features/auth/ForgetPassword';
 import ResetPassword from '../features/auth/ResetPassword';
+import RegisterRoles from '../features/auth/RegisterRole';
 
 const AuthRoutes = () => {
   return (
     <AuthBackground>
       <Routes>
+      <Route path="/" element={<RegisterRoles />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/otp-verify" element={<OTPVerification />} />

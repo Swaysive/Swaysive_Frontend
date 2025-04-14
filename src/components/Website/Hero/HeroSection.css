@@ -1,0 +1,46 @@
+/* src/components/HeroSection.css */
+.hero-section {
+    background: white;
+    color: white;
+    border-radius: 30px;
+    padding: 5rem 0 0 0;
+  }
+  
+  .hero-text {
+    max-width: 600px;
+  }
+  
+  .hero-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 20px;
+  }
+  
+  .highlight-black {
+    background-color: black;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+  
+  .highlight-blue {
+    /* color: #1e3a8a; */
+    font-weight: bold;
+  }
+  
+  .highlight-orange {
+    /* color: #f59e0b; */
+    font-weight: bold;
+  }
+  
+  .hero-description {
+    color: #525252;
+    font-size: 1rem;
+  }
+  
+  .custom-outline {
+    border: 2px solid black;
+    background-color: white !important;
+    color: black !important;
+  }
+  

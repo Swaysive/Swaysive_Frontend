@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom'; // Import useLocation to access URL parameters
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -9,6 +10,8 @@ import Logo from '../../assets/icons/swaysive-logo.png';
 import OrDivider from '../../components/Divider/OrDivider';
 import GoogleSignInButton from '../../components/GoogleButton/GoogleSignInButton';
 import { GlobalStyles } from '../../styles/styles';
+import { toast } from 'react-toastify'; // Example toast library
+import { useAuth } from '../../context/Auth'; // Assuming you have an Auth context for API calls
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -17,33 +20,87 @@ const Register = () => {
     email: '',
     phoneNumber: '',
     password: '',
-    confirmPassword: '',
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { handleRegister } = useAuth(); // Assuming this function handles the API call
+
+  const [passwordRequirements, setPasswordRequirements] = useState({
+    capital: false,
+    small: false,
+    number: false,
+    special: false,
+  });
+  const [isTypingPassword, setIsTypingPassword] = useState(false); // New state to track typing
+
+  const location = useLocation(); // Get the current location
+  const queryParams = new URLSearchParams(location.search);
+  const selectedRole = queryParams.get('role'); // Extract the role from the URL parameters
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email.trim());
+  };
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, password: value });
+    setIsTypingPassword(true); // Set typing state to true
+    setPasswordRequirements({
+      capital: /[A-Z]/.test(value), // At least one uppercase letter
+      small: /[a-z]/.test(value),   // At least one lowercase letter
+      number: /[0-9]/.test(value),  // At least one number
+      special: /[!@#$%^&*]/.test(value), // At least one special character
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-    } else {
-      setError('');
-      console.log('Register Data:', formData);
-      // Handle your form submission logic here
+    setError('');
+    setLoading(true);
+
+    // Validate fields
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.phoneNumber || !formData.password) {
+      setError('All fields are required.');
+      setLoading(false);
+      return;
     }
-  };
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+    if (!validateEmail(formData.email)) {
+      setError('Please enter a valid email address.');
+      setLoading(false);
+      return;
+    }
 
-  const handleClickShowConfirmPassword = () => {
-    setShowConfirmPassword(!showConfirmPassword);
+    try {
+      setLoading(true);
+      const payload = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        role: selectedRole || 'ORG_ADMIN', // Default to ORG_ADMIN if no role is provided
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        password: formData.password,
+      };
+
+      const response = await handleRegister(payload);
+      if (response.status === 'success') {
+        toast.success('Registration successful');
+        // Handle successful registration (e.g., redirect)
+      } else {
+        toast.error('Registration failed, please try again.');
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'An unexpected error occurred.';
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -118,47 +175,40 @@ const Register = () => {
               name="password"
               fullWidth
               value={formData.password}
-              onChange={handleChange}
+              onChange={handlePasswordChange} // Use the new handler
               required
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton onClick={handleClickShowPassword} edge="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
                 ),
               }}
             />
-          </div>
-
-          {/* Confirm Password Field */}
-          <div className="mb-3">
-            <label style={GlobalStyles.inputLabel}>Confirm Password</label>
-            <TextField
-              label="Confirm Password"
-              type={showConfirmPassword ? 'text' : 'password'}
-              name="confirmPassword"
-              fullWidth
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={handleClickShowConfirmPassword} edge="end">
-                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            {error && <p style={{ color: 'red', fontSize: '12px' }}>{error}</p>}
+            {/* Password Requirements */}
+            {isTypingPassword && ( // Show requirements only if typing
+              <ul style={{ listStyleType: 'none', padding: 0 }}>
+                <li className={passwordRequirements.capital ? 'text-success' : 'text-danger'}>
+                  One uppercase letter
+                </li>
+                <li className={passwordRequirements.small ? 'text-success' : 'text-danger'}>
+                  One lowercase letter
+                </li>
+                <li className={passwordRequirements.number ? 'text-success' : 'text-danger'}>
+                  One number
+                </li>
+                <li className={passwordRequirements.special ? 'text-success' : 'text-danger'}>
+                  One special character
+                </li>
+              </ul>
+            )}
           </div>
 
           <div className="d-grid">
-            <Button type="submit" variant="contained" size="large" style={GlobalStyles.button} fullWidth>
-              Register
+            <Button type="submit" variant="contained" size="large" style={GlobalStyles.button} fullWidth disabled={loading}>
+              {loading ? 'Registering...' : 'Register'}
             </Button>
           </div>
         </form>

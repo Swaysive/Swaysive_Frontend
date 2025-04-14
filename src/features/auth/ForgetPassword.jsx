@@ -1,19 +1,51 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Logo from '../../assets/icons/swaysive-logo.png';
 import { GlobalStyles } from '../../styles/styles';
+import { useAuth } from '../../context/Auth'; // Assuming you have an Auth context for API calls
+import { toast } from 'react-toastify'; // Example toast library
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { handleForgetPassword } = useAuth(); // Assuming this function handles the API call
 
   const handleChange = (e) => {
     setEmail(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Forget Password Email:', email);
+    setLoading(true);
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const requestBody = { email };
+
+      // Call the forget password function from context and capture response
+      const response = await handleForgetPassword(requestBody);
+
+      if (response.status === "success") {
+        toast.success("Verification code sent to your email.");
+        // Optionally redirect or provide further instructions
+      } else {
+        toast.error(response.message || "Failed to send verification code.");
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "An unexpected error occurred.";
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false); // Set loading to false after the request
+    }
   };
 
   return (
@@ -38,8 +70,8 @@ const ForgetPassword = () => {
             />
           </div>
           <div className="d-grid mt-4">
-            <Button type="submit" variant="contained" size="large" style={GlobalStyles.button} fullWidth>
-              Continue
+            <Button type="submit" variant="contained" size="large" style={GlobalStyles.button} fullWidth disabled={loading}>
+              {loading ? 'Sending...' : 'Continue'}
             </Button>
           </div>
         </form>

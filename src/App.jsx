@@ -3,13 +3,24 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from './styles/theme';
 import AppRoutes from './routes/AppRoutes';
+import WebsiteRoutes from './routes/WebsiteRoutes';
+import { AuthProvider } from './context/Auth';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { getSubdomain } from './utils/getSubdomain';
 
 function App() {
+  const subdomain = getSubdomain();
+  console.log('subdomain',subdomain);
   return (
+    <AuthProvider>
     <ThemeProvider theme={theme}>
+      <ToastContainer/>
       <CssBaseline />
-      <AppRoutes />
+      {subdomain === 'app' ? <AppRoutes /> : <WebsiteRoutes />}
+      {/* <AppRoutes /> */}
     </ThemeProvider>
+    </AuthProvider>
   );
 }
 
