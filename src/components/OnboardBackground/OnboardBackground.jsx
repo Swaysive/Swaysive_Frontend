@@ -8,7 +8,7 @@ import Logo from '../../assets/icons/swaysive-logo.png';
 
 const OnboardBackground = ({ children }) => {
   return (
-    <div className="auth-background">
+    <div className="onboard-background">
       
       <div className="top-side">
         <img src={BubblesTop} alt="Bottom Right" className="top-right-image" />
