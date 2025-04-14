@@ -17,7 +17,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <ToastContainer/>
       <CssBaseline />
-      {subdomain === 'app' ? <AppRoutes /> : <WebsiteRoutes />}
+      <AppRoutes />
       {/* <AppRoutes /> */}
     </ThemeProvider>
     </AuthProvider>
