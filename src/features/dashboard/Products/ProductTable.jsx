@@ -1,0 +1,228 @@
+// ProductTableMui.js
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Checkbox,
+  Paper,
+  Chip,
+  Avatar,
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Pagination,
+  Select,
+  MenuItem,
+  InputAdornment,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import DashboardHeader from "../../../components/Headers/DashboardHeader";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { productApi } from "../../../api/productApi";
+import { useNavigate } from "react-router-dom";
+
+const ProductTable = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [products, setProducts] = useState([]);
+  const [pageSize, setPageSize] = useState(5);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await productApi.getProducts();
+        const fetchedProducts = response.data.products;
+
+        const isActive = localStorage.getItem("active") === "true";
+        console.log("Active status from localStorage:", isActive);
+
+        const updatedProducts = fetchedProducts.map((product, index) => ({
+          ...product,
+          status: isActive && index === 0 ? "Active" : "Inactive",
+        }));
+
+        console.log("Products fetched successfully:", updatedProducts);
+        setProducts(updatedProducts);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const startIndex = (currentPage - 1) * pageSize;
+  const displayedProducts = products.slice(startIndex, startIndex + pageSize);
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  const handlePageSizeChange = (event) => {
+    setPageSize(event.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleProductClick = (product) => {
+    navigate("/products/details", { state: { product } });
+  };
+
+  return (
+    <div className="row" style={{ marginTop: "50px" }}>
+      <div className="col-12 mb-4">
+        <DashboardHeader
+          headerText="Your Products"
+          bodyText="Review and update your creator-facing brand details and logo for each brand"
+        />
+      </div>
+      <Box p={2} component={Paper} sx={{ borderRadius: 2 }}>
+        {/* Top Controls */}
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+          <TextField
+            placeholder="Search..."
+            variant="outlined"
+            size="small"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="action" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ width: 300 }}
+          />
+          <Box>
+            <Button
+              variant="outlined"
+              endIcon={<ArrowDropDownIcon />}
+              sx={{ mr: 1, color: "#000", borderColor: "#000" }}
+            >
+              Actions
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{ color: "#000", borderColor: "#000" }}
+              endIcon={<FileDownloadIcon />}
+            >
+              Export
+            </Button>
+          </Box>
+        </Box>
+
+        {/* Table */}
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead sx={{ backgroundColor: "#F0F0F2" }}>
+              <TableRow>
+                <TableCell padding="checkbox">
+                  <Checkbox />
+                </TableCell>
+                <TableCell>Products</TableCell>
+                <TableCell>Brand</TableCell>
+                <TableCell>Influencer</TableCell>
+                <TableCell>Status</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {displayedProducts.map((item) => (
+                <TableRow key={item.asin} hover>
+                  <TableCell padding="checkbox">
+                    <Checkbox />
+                  </TableCell>
+                  <TableCell>
+                    <Box
+                      display="flex"
+                      alignItems="start"
+                      gap={2}
+                      onClick={() => handleProductClick(item)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <Avatar
+                        src={item.image}
+                        variant="rounded"
+                        sx={{ width: 48, height: 48 }}
+                      />
+                      <Box>
+                        <Typography
+                          variant="body2"
+                          fontWeight={600}
+                          sx={{ maxWidth: 300 }}
+                          noWrap
+                        >
+                          {item.title}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {item.asin} – Shaker Bottles
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </TableCell>
+                  <TableCell>Helmix</TableCell>
+                  <TableCell>John Thompson</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={item.status}
+                      size="small"
+                      icon={
+                        <Box
+                          sx={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: "50%",
+                            backgroundColor:
+                              item.status === "Active" ? "#4CAF50" : "#9e9e9e",
+                            ml: 1,
+                          }}
+                        />
+                      }
+                      sx={{
+                        backgroundColor:
+                          item.status === "Active" ? "#e6f4ea" : "#f4f4f5",
+                        color: item.status === "Active" ? "#4CAF50" : "#9e9e9e",
+                        fontWeight: 600,
+                        pl: 1,
+                      }}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        {/* Footer Controls */}
+        <Box display="flex" justifyContent="space-between" alignItems="center" mt={3}>
+          <Pagination
+            count={Math.ceil(products.length / pageSize)}
+            page={currentPage}
+            onChange={handlePageChange}
+            shape="rounded"
+          />
+          <Box display="flex" alignItems="center" gap={1}>
+            <Typography variant="body2">
+              Showing {displayedProducts.length} of {products.length} entries
+            </Typography>
+            <Select
+              size="small"
+              value={pageSize}
+              onChange={handlePageSizeChange}
+            >
+              <MenuItem value={5}>Show 5</MenuItem>
+              <MenuItem value={10}>Show 10</MenuItem>
+              <MenuItem value={25}>Show 25</MenuItem>
+              <MenuItem value={50}>Show 50</MenuItem>
+            </Select>
+          </Box>
+        </Box>
+      </Box>
+    </div>
+  );
+};
+
+export default ProductTable;

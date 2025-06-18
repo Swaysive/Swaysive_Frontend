@@ -118,17 +118,17 @@ const Onboard = () => {
 
         {/* Display store name and URL after form submission */}
         {showDashboard && formData.storeName && formData.storeURL && (
-          <div className="mt-4" style={{backgroundColor:'#F8F8F8'}}>
-            <div className="store-info-box" style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '8px' }}>
+          <div className="mt-4" >
+            <div className="store-info-box" style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '8px',backgroundColor: '#F8F8F8' }}>
               <div className='d-flex justify-content-between'>
              <strong>{formData.storeName}</strong>
              <>
              <IconButton 
                   onClick={handleCopyLink} 
                   style={{ marginLeft: '10px' }}
-                  color={copied ? 'primary' : 'default'}
+                  color={copied ? 'black' : 'default'}
                 >
-                  <ContentCopy />{copied && <span style={{ color: 'green', marginLeft: '5px' }}>Copied!</span>}
+                  <ContentCopy />{copied && <span style={{ color: 'black', marginLeft: '5px',fontSize:'16px' }}>Copied!</span>}
                 </IconButton>
                 </>
              </div>
@@ -137,12 +137,13 @@ const Onboard = () => {
               </span>
             </div>
 
-            <div className="text-center">
+            <div className="mt-3">
               <Button 
                 variant="contained" 
                 color="primary"
-                style={GlobalStyles.button}
-                onClick={() => window.location.href = '/dashboard'} // Redirect to the dashboard
+                className='fw-bold'
+                style={GlobalStyles.outlineButton}
+                onClick={() => window.location.href = '/'} // Redirect to the dashboard
               >
                 Go to Dashboard
               </Button>

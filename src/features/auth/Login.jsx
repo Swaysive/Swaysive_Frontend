@@ -56,7 +56,7 @@ const Login = () => {
       if (response.status === "success") {
         toast.success("You are logged in.");
         // Redirect to the home page or dashboard
-        window.location.href = '/'; // Adjust the redirect as needed
+        window.location.href = '/onboard'; // Adjust the redirect as needed
       } else {
         toast.error(response.message || "Login failed, please try again.");
       }

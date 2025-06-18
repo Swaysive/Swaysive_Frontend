@@ -2,7 +2,7 @@
 import './OnboardBackground.css'; // Import the CSS file for styling
 import BubblesTop from '../../assets/images/bubbles-top.png';
 import BubblesBottom from '../../assets/images/bubbles-bottom.png';
-import Logo from '../../assets/icons/swaysive-logo.png';
+import Logo from '../../assets/icons/swaysive-auth-logo.svg';
 // import LeftContent from '../../assets/images/left-image.png';
 
 

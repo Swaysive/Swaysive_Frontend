@@ -1,0 +1,18 @@
+.navbar-container {
+    z-index: 20;
+}
+
+.stat-row {
+    display: flex;
+    flex-wrap: wrap;
+    /* gap: 1rem;  */
+  }
+  
+  .stat-row > div {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .stat-row > div > * {
+    flex: 1;
+  }

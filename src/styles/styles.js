@@ -1,5 +1,7 @@
 // src/styles/styles.js
 
+import { color } from "framer-motion";
+
 // import { width } from "@mui/system";
 
 // Theme Colors
@@ -42,6 +44,13 @@ export const Colors = {
     },
     button: {
       backgroundColor: Colors.dark,
+    },
+    outlineButton: {
+      backgroundColor: 'transparent',
+      width: '100%',
+      padding: '10px',
+      color: Colors.primary,
+      border: `1px solid ${Colors.primary}`,
     },
     forgotLink: {
       marginBottom:'15px',

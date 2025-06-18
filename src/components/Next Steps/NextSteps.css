@@ -1,0 +1,15 @@
+.next-steps-card {
+    border: 1px solid #e0e0e0;
+    padding: 1rem;
+    height: 470px;
+  }
+  
+  .next-steps-card .icon-img {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .view-all-btn {
+    font-size: 0.9rem;
+  }
+  

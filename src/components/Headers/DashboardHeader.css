@@ -1,0 +1,40 @@
+.dashboard-header {
+    background: linear-gradient(90deg, #3c3c3c 0%, #0c0c0c 100%);
+    overflow: hidden;
+    border-radius: 1rem;
+    position: relative;
+  }
+  
+  /* Shared style for background assets */
+  .dashboard-bg-asset {
+    position: absolute;
+    opacity: 0.15;
+    animation: float 6s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .text-width {
+    width: 40%;
+  }
+  
+  /* Customize each asset's position and size */
+  .asset-0 {
+    top: 25%;
+    left: 45%;
+    width: 100px;
+  }
+  
+  .asset-1 {
+    top: 10%;
+    right: 30px;
+    width: 14px;
+  }
+  
+  /* Float animation */
+  @keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+  }
+  

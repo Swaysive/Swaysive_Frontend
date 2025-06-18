@@ -1,6 +1,7 @@
 import React from "react";
 import { AppBar, Toolbar, IconButton, Menu, MenuItem, Avatar, Typography } from "@mui/material";
 import { Search, FilterList, Notifications } from "@mui/icons-material";
+import SwaysiveLogo from "../../assets/icons/Swaysive-Icon.svg"
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/Auth";
@@ -9,18 +10,6 @@ export default function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const { handleLogout, authData } = useAuth();
   const navigate = useNavigate();
-
-
-//   const onLogout = async () => {
-//     try {
-   
-//       await handleLogout();
-//       // Navigate to the home screen or any other screen after successful login
-//       navigate("Main"); // Replace with your desired screen
-//     } catch (error) {
-//      alert("Error", "Logout failed, please try again");
-//     }
-//   };
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -42,12 +31,10 @@ export default function Navbar() {
   };
 
   return (
-    <AppBar position="static" color="primary" elevation={0} className="px-3">
+    <AppBar position="static" color="light" elevation={0} className="px-3">
       <Toolbar className="d-flex justify-content-between">
         {/* Logo */}
-        <Typography variant="h6" className="fw-bold">
-          S W A Y S I V E
-        </Typography>
+        <img src={SwaysiveLogo} alt="Swaysive Logo" className="navbar-logo" />
 
         {/* Icons Section */}
         <div className="d-flex align-items-center">

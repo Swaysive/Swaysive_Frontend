@@ -26,9 +26,9 @@ export const AuthProvider = ({ children }) => {
             const storedAccessToken = localStorage.getItem('accessToken');
             const storedRefreshToken = localStorage.getItem('refreshToken');
             const storedUserData = localStorage.getItem('userProfile');
-            const firstLaunche = localStorage.getItem('firstLaunch');
+            // const firstLaunche = localStorage.getItem('firstLaunch');
 
-            console.log('pokemon',{ storedAccessToken, storedRefreshToken, storedUserData,firstLaunche });
+            console.log('pokemon',{ storedAccessToken, storedRefreshToken, storedUserData });
             
             if (storedAccessToken && storedRefreshToken ) {
                 setAuthData({
@@ -37,12 +37,8 @@ export const AuthProvider = ({ children }) => {
                     refreshToken: storedRefreshToken,
                 });
             } 
-            // else {
-            //     // If no data exists, clear localStorage just in case
-            //     // await clearAuthData();
-            // }
+           
         };
-        // clearStorage();
         loadAuthData();
     }, []);
 

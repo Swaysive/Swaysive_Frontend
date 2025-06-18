@@ -6,7 +6,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import Logo from '../../assets/icons/swaysive-logo.png';
+import Logo from '../../assets/icons/swaysive-auth-logo.svg';
 import OrDivider from '../../components/Divider/OrDivider';
 import GoogleSignInButton from '../../components/GoogleButton/GoogleSignInButton';
 import { GlobalStyles } from '../../styles/styles';
