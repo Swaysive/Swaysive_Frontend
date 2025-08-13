@@ -29,6 +29,7 @@ export const Colors = {
       borderRadius: '8px',
       alignItems:'center',
       boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+      minWidth: "500px" 
       
     },
     logo: {

@@ -20,6 +20,7 @@ import {
   Box,
   Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom"; // add this
 import SearchIcon from "@mui/icons-material/Search";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
@@ -91,6 +92,7 @@ const getStatusChip = (status) => (
 const BrandTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
+  const navigate = useNavigate();
 
   // Calculate the paginated data
   const startIndex = (currentPage - 1) * pageSize;
@@ -174,23 +176,26 @@ const BrandTable = () => {
                 </TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {paginatedData.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell padding="checkbox">
-                    <input type="checkbox" />
-                  </TableCell>
-                  <TableCell>
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <Avatar src={row.image} />
-                      {row.name}
-                    </Box>
-                  </TableCell>
-                  <TableCell>{getStatusChip(row.status)}</TableCell>
-                  <TableCell>{row.product}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
+             <TableBody>
+    {paginatedData.map((row) => (
+      <TableRow key={row.id}>
+        <TableCell padding="checkbox">
+          <input type="checkbox" />
+        </TableCell>
+        <TableCell
+          onClick={() => navigate(`/brands/details`)}
+          style={{ cursor: "pointer" }} // make it look clickable
+        >
+          <Box display="flex" alignItems="center" gap={1}>
+            <Avatar src={row.image} />
+            {row.name || "Untitled Brand"}
+          </Box>
+        </TableCell>
+        <TableCell>{getStatusChip(row.status)}</TableCell>
+        <TableCell>{row.product}</TableCell>
+      </TableRow>
+    ))}
+  </TableBody>
           </Table>
         </TableContainer>
 

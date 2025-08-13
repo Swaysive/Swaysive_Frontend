@@ -10,13 +10,13 @@ import OrDivider from '../../components/Divider/OrDivider';
 import GoogleSignInButton from '../../components/GoogleButton/GoogleSignInButton';
 import { GlobalStyles } from '../../styles/styles';
 import { useAuth } from '../../context/Auth'; // Assuming you have an Auth context for API calls
-import { toast } from 'react-toastify'; // Example toast library
+import { toast } from 'react-toastify'; 
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { handleLogin } = useAuth(); // Assuming this function handles the API call
+  const { handleLogin } = useAuth(); 
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -126,7 +126,7 @@ const Login = () => {
           </div>
         </form>
         <div className="text-center mt-3">
-          <p className='text-secondary'>Not registered yet? <a href="/register" style={GlobalStyles.customLink}>Create an account.</a></p>
+          <p className='text-secondary'>Not registered yet? <a href="/registerRoles" style={GlobalStyles.customLink}>Create an account.</a></p>
         </div>
       </div>
     </div>

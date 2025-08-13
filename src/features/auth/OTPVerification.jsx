@@ -1,4 +1,4 @@
-import { useState,useRef } from "react";
+import { useState, useRef } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
@@ -35,7 +35,10 @@ const OTPVerification = () => {
 
   return (
     <div className="container d-flex justify-content-center align-items-center vh-100">
-      <div className="card p-4" style={GlobalStyles.card}>
+      <div
+        className="card p-4"
+        style={ GlobalStyles.card}
+      >
         <img src={Logo} alt="Logo" style={GlobalStyles.logo} />
         <h2 className="text-center">Enter OTP Code</h2>
         <p className="text-center text-secondary">
@@ -47,19 +50,19 @@ const OTPVerification = () => {
         >
           <Box display="flex" justifyContent="center" gap={3} mb={3}>
             {otp.map((digit, index) => (
-            <TextField
-              key={index}
-              type="text"
-              value={digit}
-              onChange={(e) => handleChange(index, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(index, e)}
-              inputRef={(el) => (inputRefs.current[index] = el)}
-              inputProps={{
-                maxLength: 1,
-                style: { textAlign: "center", fontSize: "20px" },
-              }}
-              sx={{ width: "3.5rem" }}
-            />
+              <TextField
+                key={index}
+                type="text"
+                value={digit}
+                onChange={(e) => handleChange(index, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(index, e)}
+                inputRef={(el) => (inputRefs.current[index] = el)}
+                inputProps={{
+                  maxLength: 1,
+                  style: { textAlign: "center", fontSize: "20px" },
+                }}
+                sx={{ width: "3.5rem" }}
+              />
             ))}
           </Box>
           <div className="d-flex gap-2 w-100">

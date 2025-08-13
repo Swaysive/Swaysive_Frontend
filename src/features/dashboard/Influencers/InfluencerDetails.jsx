@@ -43,10 +43,12 @@ const InfluencerDetails = () => {
 
         const isActive = localStorage.getItem("active") === "true";
 
-        const firstThree = response.data.products.slice(0, 3).map((product, index) => ({
-          ...product,
-          status: isActive && index === 0 ? "Active" : "Inactive",
-        }));
+        const firstThree = response.data.products
+          .slice(0, 3)
+          .map((product, index) => ({
+            ...product,
+            status: isActive && index === 0 ? "Active" : "Inactive",
+          }));
 
         setData(firstThree);
       } catch (error) {
@@ -80,10 +82,10 @@ const InfluencerDetails = () => {
   };
 
   return (
-    <div className="mt-4">
+    <div className="py-4" style={{ overflowX: "hidden" }}>
       <div className="col-12 mb-4">
         <DashboardHeader
-          headerText="All Influencers"
+          headerText="Your Products"
           bodyText="Review and update your creator-facing brand details and logo for each brand"
         />
       </div>
@@ -122,7 +124,14 @@ const InfluencerDetails = () => {
         </div>
 
         {/* Table Controls */}
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={2}
+          flexWrap="wrap"
+          gap={2}
+        >
           <TextField
             placeholder="Search…"
             variant="outlined"
@@ -134,10 +143,13 @@ const InfluencerDetails = () => {
                 </InputAdornment>
               ),
             }}
-            sx={{ width: 250 }}
+            sx={{ width: { xs: "100%", sm: 250 } }}
           />
-          <Box display="flex" gap={1}>
-            <Button variant="outlined" sx={{ color: "#000", borderColor: "#000" }}>
+          <Box display="flex" gap={1} flexWrap="wrap">
+            <Button
+              variant="outlined"
+              sx={{ color: "#000", borderColor: "#000" }}
+            >
               Filter
             </Button>
             <Button variant="contained" sx={{ backgroundColor: "#000" }}>
@@ -154,21 +166,34 @@ const InfluencerDetails = () => {
         </Box>
 
         {/* Product Table */}
-        <TableContainer component={Paper}>
-          <Table>
+        <TableContainer component={Paper} sx={{ overflowX: "auto" }}>
+          <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell padding="checkbox">
+                <TableCell padding="checkbox" sx={{ width: 50 }}>
                   <Checkbox />
                 </TableCell>
-                <TableCell><b>Product Name</b></TableCell>
-                <TableCell><b>Brand</b></TableCell>
-                <TableCell><b>Commission</b></TableCell>
-                <TableCell><b>Status</b></TableCell>
-                <TableCell><b>Units Sold</b></TableCell>
-                <TableCell><b>URL</b></TableCell>
+                <TableCell sx={{ width: "45%" }}>
+                  <b>Product Name</b>
+                </TableCell>
+                <TableCell sx={{ width: "10%" }}>
+                  <b>Brand</b>
+                </TableCell>
+                <TableCell sx={{ width: "5%" }}>
+                  <b>Commission</b>
+                </TableCell>
+                <TableCell sx={{ width: "10%" }}>
+                  <b>Status</b>
+                </TableCell>
+                <TableCell sx={{ width: "10%" }}>
+                  <b>Units Sold</b>
+                </TableCell>
+                <TableCell sx={{ width: "20%" }}>
+                  <b>URL</b>
+                </TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
               {paginatedData.map((row, idx) => (
                 <TableRow key={idx}>
@@ -179,8 +204,11 @@ const InfluencerDetails = () => {
                     <Typography
                       variant="body2"
                       fontWeight={600}
-                      sx={{ maxWidth: 400 }}
-                      noWrap
+                      sx={{
+                        maxWidth: { xs: "150px", sm: "250px", md: "400px" },
+                        whiteSpace: "normal",
+                        wordBreak: "break-word",
+                      }}
                     >
                       {row.title}
                     </Typography>
@@ -218,6 +246,7 @@ const InfluencerDetails = () => {
                       href={`https://${row.url}`}
                       target="_blank"
                       rel="noopener noreferrer"
+                      style={{ wordBreak: "break-all" }}
                     >
                       {row.url}
                     </a>
@@ -229,7 +258,14 @@ const InfluencerDetails = () => {
         </TableContainer>
 
         {/* Pagination */}
-        <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mt={2}
+          flexWrap="wrap"
+          gap={2}
+        >
           <Box display="flex" alignItems="center" gap={1}>
             <IconButton
               onClick={handlePreviousPage}
@@ -245,7 +281,7 @@ const InfluencerDetails = () => {
               <KeyboardArrowRight />
             </IconButton>
           </Box>
-          <Box display="flex" alignItems="center" gap={1}>
+          <Box display="flex" alignItems="center" gap={1} flexWrap="wrap">
             <Typography variant="body2">
               Showing {paginatedData.length} of {data.length} entries
             </Typography>

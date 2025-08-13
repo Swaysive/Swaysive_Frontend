@@ -76,7 +76,7 @@ const ForgetPassword = () => {
           </div>
         </form>
         <div className="text-center mt-3">
-          <a href="/reset-password" style={GlobalStyles.customLink}>Back to Login</a>
+          <a href="/" style={GlobalStyles.customLink}>Back to Login</a>
         </div>
       </div>
     </div>

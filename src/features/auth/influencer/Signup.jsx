@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom'; // Import useLocation to access URL parameters
+import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import Logo from '../../assets/icons/swaysive-auth-logo.svg';
-import OrDivider from '../../components/Divider/OrDivider';
-import GoogleSignInButton from '../../components/GoogleButton/GoogleSignInButton';
-import { GlobalStyles } from '../../styles/styles';
-import { toast } from 'react-toastify'; // Example toast library
-import { useAuth } from '../../context/Auth'; // Assuming you have an Auth context for API calls
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Logo from '../../../assets/icons/swaysive-auth-logo.svg';
+import { GlobalStyles } from '../../../styles/styles';
+import { toast } from 'react-toastify';
+import { useAuth } from '../../../context/Auth';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -20,11 +20,13 @@ const Register = () => {
     email: '',
     phoneNumber: '',
     password: '',
+    confirmPassword: '',
   });
+
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { handleRegister } = useAuth(); // Assuming this function handles the API call
+  const [agree, setAgree] = useState(false); // ✅ New state for checkbox
+  const { handleRegister } = useAuth();
 
   const [passwordRequirements, setPasswordRequirements] = useState({
     capital: false,
@@ -32,66 +34,76 @@ const Register = () => {
     number: false,
     special: false,
   });
-  const [isTypingPassword, setIsTypingPassword] = useState(false); // New state to track typing
+  const [isTypingPassword, setIsTypingPassword] = useState(false);
 
-  const location = useLocation(); // Get the current location
+  const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const selectedRole = queryParams.get('role'); // Extract the role from the URL parameters
+  const selectedRole = queryParams.get('role');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email.trim());
-  };
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
   const handlePasswordChange = (e) => {
     const value = e.target.value;
     setFormData({ ...formData, password: value });
-    setIsTypingPassword(true); // Set typing state to true
+    setIsTypingPassword(true);
     setPasswordRequirements({
-      capital: /[A-Z]/.test(value), // At least one uppercase letter
-      small: /[a-z]/.test(value),   // At least one lowercase letter
-      number: /[0-9]/.test(value),  // At least one number
-      special: /[!@#$%^&*]/.test(value), // At least one special character
+      capital: /[A-Z]/.test(value),
+      small: /[a-z]/.test(value),
+      number: /[0-9]/.test(value),
+      special: /[!@#$%^&*]/.test(value),
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
 
-    // Validate fields
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.phoneNumber || !formData.password) {
-      setError('All fields are required.');
+    const { firstName, lastName, email, phoneNumber, password, confirmPassword } = formData;
+
+    if (!firstName || !lastName || !email || !phoneNumber || !password || !confirmPassword) {
+      toast.error('All fields are required.');
       setLoading(false);
       return;
     }
 
-    if (!validateEmail(formData.email)) {
-      setError('Please enter a valid email address.');
+    if (!validateEmail(email)) {
+      toast.error('Please enter a valid email address.');
+      setLoading(false);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match.');
+      setLoading(false);
+      return;
+    }
+
+    if (!agree) {
+      toast.error('You must agree to the Terms and Privacy Policy.');
       setLoading(false);
       return;
     }
 
     try {
-      setLoading(true);
       const payload = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        role: selectedRole || 'ORG_ADMIN', // Default to ORG_ADMIN if no role is provided
-        email: formData.email,
-        phoneNumber: formData.phoneNumber,
-        password: formData.password,
+        firstName,
+        lastName,
+        role: selectedRole || 'ORG_ADMIN',
+        email,
+        phoneNumber,
+        password,
+        confirmPassword,
+        agreedToTerms: agree, // ✅ Send to backend if needed
       };
 
       const response = await handleRegister(payload);
+
       if (response.status === 'success') {
         toast.success('Registration successful');
-        // Handle successful registration (e.g., redirect)
       } else {
         toast.error('Registration failed, please try again.');
       }
@@ -107,37 +119,8 @@ const Register = () => {
     <div className="container d-flex justify-content-center align-items-center vh-100">
       <div className="card p-4" style={GlobalStyles.card}>
         <img src={Logo} alt="Logo" style={GlobalStyles.logo} />
-        <GoogleSignInButton />
-        <OrDivider />
+        
         <form onSubmit={handleSubmit} style={GlobalStyles.customForm}>
-          {/* First Name and Last Name Fields */}
-          <div className="d-flex mb-3">
-            <div className="me-2" style={{ flex: 1 }}>
-              <label style={GlobalStyles.inputLabel}>First Name</label>
-              <TextField
-                label="First Name"
-                type="text"
-                name="firstName"
-                fullWidth
-                value={formData.firstName}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div style={{ flex: 1 }}>
-              <label style={GlobalStyles.inputLabel}>Last Name</label>
-              <TextField
-                label="Last Name"
-                type="text"
-                name="lastName"
-                fullWidth
-                value={formData.lastName}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-          
           {/* Email Field */}
           <div className="mb-3">
             <label style={GlobalStyles.inputLabel}>Email</label>
@@ -152,20 +135,6 @@ const Register = () => {
             />
           </div>
 
-          {/* Phone Number Field */}
-          <div className="mb-3">
-            <label style={GlobalStyles.inputLabel}>Phone Number</label>
-            <TextField
-              label="Phone Number"
-              type="tel"
-              name="phoneNumber"
-              fullWidth
-              value={formData.phoneNumber}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
           {/* Password Field */}
           <div className="mb-3">
             <label style={GlobalStyles.inputLabel}>Password</label>
@@ -175,7 +144,7 @@ const Register = () => {
               name="password"
               fullWidth
               value={formData.password}
-              onChange={handlePasswordChange} // Use the new handler
+              onChange={handlePasswordChange}
               required
               InputProps={{
                 endAdornment: (
@@ -187,8 +156,7 @@ const Register = () => {
                 ),
               }}
             />
-            {/* Password Requirements */}
-            {isTypingPassword && ( // Show requirements only if typing
+            {isTypingPassword && (
               <ul style={{ listStyleType: 'none', padding: 0 }}>
                 <li className={passwordRequirements.capital ? 'text-success' : 'text-danger'}>
                   One uppercase letter
@@ -206,15 +174,72 @@ const Register = () => {
             )}
           </div>
 
+          {/* Confirm Password Field */}
+          <div className="mb-3">
+            <label style={GlobalStyles.inputLabel}>Confirm Password</label>
+            <TextField
+              label="Confirm Password"
+              type={showPassword ? 'text' : 'password'}
+              name="confirmPassword"
+              fullWidth
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </div>
+
+          {/* ✅ Terms and Privacy Checkbox */}
+       <div className="mb-3">
+  <FormControlLabel
+    control={
+      <Checkbox
+        checked={agree}
+        onChange={(e) => setAgree(e.target.checked)}
+      />
+    }
+    label={
+      <span
+        style={{
+          display: 'inline-block',
+          whiteSpace: 'no-wrap', // allows wrapping
+          lineHeight: '1.2',    // better readability for 2 lines
+          fontSize:'12px'
+        }}
+      >
+        I agree to <strong>Swaysive’s </strong>  Terms and Privacy Policy.
+      </span>
+    }
+    style={{ alignItems: 'center' }} // aligns top with checkbox
+  />
+</div>
+
+
           <div className="d-grid">
-            <Button type="submit" variant="contained" size="large" style={GlobalStyles.button} fullWidth disabled={loading}>
-              {loading ? 'Registering...' : 'Register'}
+            <Button
+              type="submit"
+              variant="contained"
+              size="large"
+              style={GlobalStyles.button}
+              fullWidth
+              disabled={loading}
+            >
+              {loading ? 'Registering...' : 'Sign Up'}
             </Button>
           </div>
         </form>
+
         <div className="text-center mt-3">
           <p className="text-secondary">
-            Already have an account?
+            Already have an account?{' '}
             <a href="/" style={GlobalStyles.customLink}>
               Login here.
             </a>

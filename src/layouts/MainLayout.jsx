@@ -89,7 +89,7 @@ export default function NavbarWithSidebar({ children }) {
           zIndex: (theme) => theme.zIndex.drawer + 1,
           bgcolor: "#fff",
           color: "#000",
-          padding: 3,
+          padding: 2,
         }}
       >
         <Toolbar className="d-flex justify-content-between">
@@ -143,11 +143,12 @@ export default function NavbarWithSidebar({ children }) {
         variant="permanent"
         open={open}
         sx={{
-          width: open ? drawerWidth : 74,
+          width: open ? "240px" : 64,
           flexShrink: 0,
           overflowX: "hidden",
           "& .MuiDrawer-paper": {
-            width: open ? drawerWidth : 74,
+            
+            width: open ? "240px" : 64 ,
             boxSizing: "border-box",
             background: "linear-gradient(90deg, #3c3c3c 0%, #0c0c0c 100%)",
             color: "#fff",
@@ -184,7 +185,7 @@ export default function NavbarWithSidebar({ children }) {
       </Drawer>
 
       {/* Content area */}
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
         <Toolbar />
         {children}
       </Box>

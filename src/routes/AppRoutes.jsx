@@ -15,6 +15,12 @@ import PaymentTable from '../features/dashboard/Payments/PaymentTable';
 import ReportTable from '../features/dashboard/Reports/ReportTable';
 import NotFoundPage from '../pages/Not Found Page/NotFoundPage';
 import Session from '../pages/Session/Session';
+import BrandDetailsPage from "../features/dashboard/Brands/BrandsDetail"
+import SubscriptionPLans from '../features/auth/SubscriptionPlans';
+
+
+import InfluencerHome from  "../features/influencerDashboard/Home"
+import MyProductsPage from '../features/dashboard/Influencers/MyProducts';
 
 const AppRoutes = () => {
   const { authData } = useAuth();
@@ -29,13 +35,25 @@ const AppRoutes = () => {
             <Route element={<LayoutRoute />}>
               <Route path="/" element={<Home />} />
               <Route path="/brands" element={<BrandTable />} />
+                <Route path="/brands/details" element={<BrandDetailsPage />} />
               <Route path="/products" element={<ProductTable />} />
               <Route path="/payments" element={<PaymentTable />} />
               <Route path="/reports" element={<ReportTable />} />
               <Route path="/products/details" element={<ProductDetailsPage />} />
               <Route path="/home" element={<Home />} />
+           
+
+              <Route path="/plans" element={<SubscriptionPLans />} />  
+
+
+              {/* Influencer routes */}
               <Route path="/influencers" element={<InfluencerTable />} />
               <Route path="/influencers/details" element={<InfluencerDetails />} />
+
+
+               <Route path="/influencer-home" element={<InfluencerHome />} />
+              <Route path="/myproducts" element={<MyProductsPage />} />
+
               {/* Add more layout-wrapped routes here */}
             </Route>
           </>
@@ -46,7 +64,7 @@ const AppRoutes = () => {
         )}
 
         <Route path="/session" element={<Session />} />
-        <Route path="/onboard" element={<OnboardRoutes />} />
+        <Route path="/onboard/*" element={<OnboardRoutes />} />
         <Route path="*" element={<NotFoundPage/>} />
       </Routes>
     </Router>

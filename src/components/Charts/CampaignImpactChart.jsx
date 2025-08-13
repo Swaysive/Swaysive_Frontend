@@ -8,11 +8,11 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from 'recharts';
-import { Button, ButtonGroup } from '@mui/material';
+import { Button, ButtonGroup, Box, Typography } from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './CampaignImpactChart.css'; // Assuming you have some styles for the chart
 
-const data = {
+// Fallback dummy data
+const fallbackData = {
   conversions: [
     { date: '5/22', value: 45 },
     { date: '5/23', value: 30 },
@@ -60,78 +60,60 @@ const data = {
     { date: '6/2', value: 200 },
     { date: '6/3', value: 180 },
     { date: '6/4', value: 210 },
-  ]
+  ],
 };
 
-const CampaignImpactChart = () => {
-  const [activeTab, setActiveTab] = useState('conversions');
+const CampaignImpactChart = ({
+  title = 'Campaign Impact – Last 14 Days',
+  tabs = ['conversions', 'revenue', 'clicks'],
+  chartData = fallbackData,
+  lineColor = '#88A73F',
+  height = 300,
+}) => {
+  const [activeTab, setActiveTab] = useState(tabs[0]);
 
   return (
-    <div className="chart-container  py-3 ">
-        <div className='container'>
-        <div className='d-flex align-items-center justify-content-between py-3'>
-      <h5>Campaign Impact – Last 14 Days</h5>
+    <Box className="chart-container py-3">
+      <Box className="container">
+        {/* Header with Tabs */}
+        <Box className="d-flex align-items-center justify-content-between py-3">
+          <Typography variant="h6">{title}</Typography>
 
-      <ButtonGroup className="mb-4">
-        <Button
-          variant={activeTab === 'conversions' ? 'contained' : 'outlined'}
-          onClick={() => setActiveTab('conversions')}
-          sx={{
-            bgcolor: activeTab === 'conversions' ? 'black' : 'transparent',
-            color: activeTab === 'conversions' ? 'white' : 'black',
-            borderColor: 'black',
-            '&:hover': {
-              bgcolor: 'black',
-              color: 'white',
-            },
-          }}
-        >
-          Conversions
-        </Button>
-        <Button
-          variant={activeTab === 'revenue' ? 'contained' : 'outlined'}
-          onClick={() => setActiveTab('revenue')}
-          sx={{
-            bgcolor: activeTab === 'revenue' ? 'black' : 'transparent',
-            color: activeTab === 'revenue' ? 'white' : 'black',
-            borderColor: 'black',
-            '&:hover': {
-              bgcolor: 'black',
-              color: 'white',
-            },
-          }}
-        >
-          Revenue
-        </Button>
-        <Button
-          variant={activeTab === 'clicks' ? 'contained' : 'outlined'}
-          onClick={() => setActiveTab('clicks')}
-          sx={{
-            bgcolor: activeTab === 'clicks' ? 'black' : 'transparent',
-            color: activeTab === 'clicks' ? 'white' : 'black',
-            borderColor: 'black',
-            '&:hover': {
-              bgcolor: 'black',
-              color: 'white',
-            },
-          }}
-        >
-          Clicks
-        </Button>
-      </ButtonGroup>
-      </div>
+          <ButtonGroup className="mb-4">
+            {tabs.map((tab) => (
+              <Button
+                key={tab}
+                variant={activeTab === tab ? 'contained' : 'outlined'}
+                onClick={() => setActiveTab(tab)}
+                sx={{
+                  bgcolor: activeTab === tab ? 'black' : 'transparent',
+                  color: activeTab === tab ? 'white' : 'black',
+                  borderColor: 'black',
+                  textTransform: 'capitalize',
+                  '&:hover': {
+                    bgcolor: 'black',
+                    color: 'white',
+                  },
+                }}
+              >
+                {tab}
+              </Button>
+            ))}
+          </ButtonGroup>
+        </Box>
 
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data[activeTab]}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          <YAxis />
-          <Tooltip />
-          <Line type="monotone" dataKey="value" stroke="#88A73F" strokeWidth={4} />
-        </LineChart>
-      </ResponsiveContainer>
-      </div>
-    </div>
+        {/* Line Chart */}
+        <ResponsiveContainer width="100%" height={height}>
+          <LineChart data={chartData[activeTab]}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" dataKey="value" stroke={lineColor} strokeWidth={4} />
+          </LineChart>
+        </ResponsiveContainer>
+      </Box>
+    </Box>
   );
 };
 

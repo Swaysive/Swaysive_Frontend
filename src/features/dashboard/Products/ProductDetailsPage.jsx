@@ -363,7 +363,7 @@ const ProductDetailsPage = () => {
                   <Button
                     onClick={() => setModalOpen(true)}
                     variant="outlined"
-                    sx={{ mr: 1, color: "#000", borderColor: "#000" }}
+                    sx={{ mr: 0, color: "#000", borderColor: "#000", width:'100px' }}
                   >
                     Assign Influencer
                   </Button>
