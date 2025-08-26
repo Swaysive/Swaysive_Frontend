@@ -1,0 +1,49 @@
+.step-circle {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  color: #999;
+  font-weight: 500;
+}
+
+.step-circle.active {
+  border-color: black;
+  background-color: black;
+  color: white;
+}
+
+.step-line {
+  height: 2px;
+  width: 50px;
+  background-color: #ccc;
+  margin: 0 15px;
+}
+
+.input-variant {
+    border: 1px solid #999;
+    border-radius: 5px;
+}
+
+.step-label {
+  font-size: 14px;
+}
+
+
+/* .card {
+  border-radius: 8px;
+  border: 1px solid #eee;
+} */
+
+.alert-light {
+  background-color: #fafafa;
+}
+
+.alert-light strong {
+  display: block;
+  margin-bottom: 4px;
+}

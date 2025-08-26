@@ -24,7 +24,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import DashboardHeader from "../../../components/Headers/DashboardHeader";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { productApi } from "../../../api/productApi";
+import { catalogApi } from "../../../api/catalogApi";
 import { useNavigate } from "react-router-dom";
 
 const ProductTable = () => {
@@ -36,8 +36,8 @@ const ProductTable = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await productApi.getProducts();
-        const fetchedProducts = response.data.products;
+        const response = await catalogApi.getProducts({ page:1, limit:20 });
+        const fetchedProducts = response.data.data.result;
 
         const isActive = localStorage.getItem("active") === "true";
         console.log("Active status from localStorage:", isActive);
@@ -70,7 +70,7 @@ const ProductTable = () => {
   };
 
   const handleProductClick = (product) => {
-    navigate("/products/details", { state: { product } });
+    navigate(`/products/details/${product._id}`);
   };
 
   return (
@@ -144,7 +144,7 @@ const ProductTable = () => {
                       style={{ cursor: "pointer" }}
                     >
                       <Avatar
-                        src={item.image}
+                        src={item.images && item.images.length > 0 ? item.images[1] : ""}
                         variant="rounded"
                         sx={{ width: 48, height: 48 }}
                       />
@@ -158,16 +158,21 @@ const ProductTable = () => {
                           {item.title}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
-                          {item.asin} – Shaker Bottles
+                          {item.asin}
                         </Typography>
                       </Box>
                     </Box>
                   </TableCell>
-                  <TableCell>Helmix</TableCell>
-                  <TableCell>John Thompson</TableCell>
+                  <TableCell>
+                    {item.brand?.name || "N/A"}
+                  </TableCell>
+                  <TableCell>
+                    {/* If you have influencer data, show it here. Otherwise, use a placeholder */}
+                    N/A
+                  </TableCell>
                   <TableCell>
                     <Chip
-                      label={item.status}
+                      label={item.status === "active" ? "Active" : "Inactive"}
                       size="small"
                       icon={
                         <Box
@@ -176,15 +181,15 @@ const ProductTable = () => {
                             height: 8,
                             borderRadius: "50%",
                             backgroundColor:
-                              item.status === "Active" ? "#4CAF50" : "#9e9e9e",
+                              item.status === "active" ? "#4CAF50" : "#9e9e9e",
                             ml: 1,
                           }}
                         />
                       }
                       sx={{
                         backgroundColor:
-                          item.status === "Active" ? "#e6f4ea" : "#f4f4f5",
-                        color: item.status === "Active" ? "#4CAF50" : "#9e9e9e",
+                          item.status === "active" ? "#e6f4ea" : "#f4f4f5",
+                        color: item.status === "active" ? "#4CAF50" : "#9e9e9e",
                         fontWeight: 600,
                         pl: 1,
                       }}

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { createApiInstance } from '../instance/axiosInstance';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -33,6 +34,8 @@ API.interceptors.request.use(async (config) => {
     }
 });
 
+const apiInstance = createApiInstance('auth');
+
 // Helper function to get the access token from localStorage
 const getAccessToken = async () => {
     return localStorage.getItem('accessToken');
@@ -41,7 +44,7 @@ const getAccessToken = async () => {
 // Register API function
 export const register = async (userData) => {
     try {
-        const response = await API.post('/signup', userData);
+        const response = await apiInstance.post('/signup', userData);
         return response.data;
     } catch (error) {
         console.error('Registration failed:', error.response?.data?.message);
@@ -52,7 +55,7 @@ export const register = async (userData) => {
 // Login API function
 export const login = async (credentials) => {
     try {
-        const response = await API.post('/signin', credentials);
+        const response = await apiInstance.post('/login', credentials);
         return response.data;
     } catch (error) {
         console.error('Login failed:', error.response?.data?.message);
@@ -62,7 +65,7 @@ export const login = async (credentials) => {
 
 export const googleAuth = async (credentials) => {
     try {
-        const response = await API.post('/google', credentials);
+        const response = await apiInstance.post('/google', credentials);
         return response.data;
     } catch (error) {
         console.error('Google authentication failed:', error.response?.data?.message);
@@ -73,7 +76,7 @@ export const googleAuth = async (credentials) => {
 // Email verification API function
 export const verifyEmail = async (data) => {
     try {
-        const response = await API.post('/verify-email', data);
+        const response = await apiInstance.post('/verify-email', data);
         return response.data;
     } catch (error) {
         console.error('Email verification failed:', error);
@@ -84,7 +87,7 @@ export const verifyEmail = async (data) => {
 // Resend Email Verification
 export const resendEmail = async (data) => {
     try {
-        const response = await API.post('/resend-verification-email', data);
+        const response = await apiInstance.post('/resend-verification-email', data);
         return response.data;
     } catch (error) {
         console.error('Resend verification failed:', error);
@@ -95,7 +98,7 @@ export const resendEmail = async (data) => {
 // Password reset API function
 export const resetPassword = async (data) => {
     try {
-        const response = await API.post('/reset-password', data);
+        const response = await apiInstance.post('/reset-password', data);
         return response.data;
     } catch (error) {
         console.error('Password reset failed:', error);
@@ -106,7 +109,7 @@ export const resetPassword = async (data) => {
 // Forgot Password API function
 export const forgotPassword = async (data) => {
     try {
-        const response = await API.post('/forgot-password', data);
+        const response = await apiInstance.post('/forgot-password', data);
         return response.data;
     } catch (error) {
         console.error('Forgot password request failed:', error);
@@ -118,7 +121,7 @@ export const forgotPassword = async (data) => {
 export const getUserProfile = async () => {
     try {
         const accessToken = await getAccessToken();
-        const response = await API.get('/get/profile', {
+        const response = await apiInstance.get('/get/profile', {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -134,7 +137,7 @@ export const getUserProfile = async () => {
 export const logout = async (data) => {
     try {
         const accessToken = await getAccessToken();
-        const response = await API.post('/logout', data, {
+        const response = await apiInstance.post('/logout', data, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -150,8 +153,8 @@ export const logout = async (data) => {
 export const refreshAccessToken = async () => {
     try {
         const refreshToken = localStorage.getItem('refreshToken');
-        const response = await API.post('/refresh', { refreshToken });
-        return response.data;
+        const response = await apiInstance.post('/refresh-token', { refreshToken });
+        return response.data.data;
     } catch (error) {
         console.error('Token refresh failed:', error);
         throw error;

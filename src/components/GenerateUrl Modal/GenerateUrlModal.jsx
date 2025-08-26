@@ -15,7 +15,7 @@ import {
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import { productApi } from "../../api/productApi";
+import { catalogApi } from "../../api/catalogApi";
 
 const brands = ["Helimix", "Nike", "Adidas"];
 // const products = ["Magic Bullet Blender", "Air Max 90", "Ultraboost"];
@@ -33,7 +33,7 @@ const GenerateUrlModal = ({ open, onClose }) => {
   useEffect(() => {
       const fetchProducts = async () => {
         try {
-          const response = await productApi.getProducts();
+          const response = await catalogApi.getProducts();
           console.log("Products fetched successfully:", response.data.products);
   
           // Only take the first 3 products

@@ -1,130 +1,195 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Paper,
   Typography,
   Box,
-  Avatar,
-  ButtonGroup,
+  TextField,
+  InputAdornment,
   Button,
+  Select,
+  MenuItem,
+  Pagination,
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import ProductTable from "../../../components/ReusableTable/ProductTable";
-import CampaignImpactChart from "../../../components/Charts/CampaignImpactChart";
+import { useParams } from "react-router-dom";
+import { catalogApi } from "../../../api/catalogApi";
+import DashboardHeader from "../../../components/Headers/DashboardHeader";
 
-const BrandPage = () => {
-  const tabs = ["conversions", "revenue", "clicks"];
+const columns = ["Products", "Brand", "Influencer", "Campaign Status"];
 
-  const columns = ["Products", "Brand", "Influencer", "Campaign Status"];
-
-  const rows = [
-    {
-      id: 1,
-      image: "/images/shaker1.png",
-      name: "HELIMIX 1.5 Vortex Blender Shaker Bottle Holds Upto 20oz | No Blending Ball or Whisk | USA Made | Portable Pre Workout Whey Protein Drink Shaker Cup...",
-      code: "B0045678",
-      material: "Copolyester BPA and BPS Free Plastic",
-      tags: ["11", "1 New"],
-      brand: "Helimix",
-      influencer: "John Thompson",
-      status: "Active",
-    },
-    {
-      id: 2,
-      image: "/images/shaker2.png",
-      name: "HELIMIX 2.0 Vortex Blender Shaker Bottle Holds upto 28oz | No Blending Ball or Whisk | USA Made | Portable Pre Workout...",
-      code: "B078KCYLZF",
-      material: "VOLTRIK",
-      tags: ["15", "2 New"],
-      brand: "Helimix",
-      influencer: "John Thompson",
-      status: "Active",
-    },
-    {
-      id: 3,
-      image: "/images/shaker3.png",
-      name: "Ice Shaker Insulated Stainless Steel Shaker Bottle | 26oz, Bomber | Cold for 30+ Hours | Insulated Cup with Twist-on Agitator...",
-      code: "B0CGQLPHSK",
-      material: "Ice Shaker",
-      tags: [],
-      brand: "Helimix",
-      influencer: "Jennifer",
-      status: "Active",
-    },
-    {
-      id: 4,
-      image: "/images/shaker4.png",
-      name: "HydroJug 24 oz New Stainless Steel Shaker – Insulated, Leakproof, BPA-Free with Silent Mixing Grate – No Clumps, No Noise...",
-      code: "B0CF8LVNMD",
-      material: "HydroJug",
-      tags: [],
-      brand: "Helimix",
-      influencer: "Ray Gibbson",
-      status: "Inactive",
-    },
-    {
-      id: 5,
-      image: "/images/shaker5.png",
-      name: "Shaker Bottle – Protein Shaker Cup with Storage Compartments – Leak-proof Workout Shake Bottles with Mixer...",
-      code: "B0CIFJGZ76",
-      material: "XTKS",
-      tags: [],
-      brand: "Helimix",
-      influencer: "Amelia",
-      status: "Inactive",
-    },
-  ];
-
+const BrandsDetail = () => {
+  const { brandId } = useParams(); // Make sure your route is /brands/:brandId
+  const [brand, setBrand] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
-  const [activeTab, setActiveTab] = useState(tabs[0]); // FIX: added this
-  const rowsPerPage = 3;
+  const [pageSize, setPageSize] = useState(5);
+  const [search, setSearch] = useState("");
+
+  // Fetch brand detail
+  useEffect(() => {
+    const fetchBrand = async () => {
+      try {
+        const res = await catalogApi.getBrandDetail(brandId);
+        if (res.data.status === "success") {
+          setBrand(res.data.data);
+        }
+      } catch (e) {
+        setBrand(null);
+      }
+    };
+    fetchBrand();
+  }, [brandId]);
+
+  // Fetch brand products
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await catalogApi.getBrandProducts({
+          page,
+          limit: pageSize,
+          brandId,
+        });
+        if (res.data.status === "success") {
+          setProducts(res.data.data.result);
+          setTotalCount(res.data.data.totalRecords || res.data.data.result.length);
+        }
+      } catch (e) {
+        setProducts([]);
+      }
+    };
+    fetchProducts();
+  }, [brandId, page, pageSize]);
+
+  // Filter products by search
+  const filteredProducts = products.filter((p) =>
+    p.title?.toLowerCase().includes(search.toLowerCase()) ||
+    p.asin?.toLowerCase().includes(search.toLowerCase())
+  );
+
+  // Map API products to table rows
+  const rows = filteredProducts.map((p) => ({
+    id: p._id,
+    image: p.images?.[1] || "",
+    name: p.title,
+    code: p.asin,
+    material: p.material || "",
+    tags: [],
+    brand: brand?.name || "",
+    influencer: "-", // You can fill this if you have influencer info
+    status: p.status === "active" ? "Active" : "Inactive",
+  }));
 
   return (
+     <div className="row" style={{ marginTop: "50px" }}>
+      <div className="col-12 mb-4">
+        <DashboardHeader
+          headerText="Your Brands"
+          bodyText="Review and update your creator-facing brand details and logo for each brand"
+        />
+      </div>
     <Box sx={{ p: 3 }}>
-      {/* Top Section */}
+      {/* Brand Overview */}
       <Grid container spacing={2} alignItems="stretch">
-        {/* Left: Brand Overview */}
-        <Grid item xs={12} md={12}>
+        <Grid item xs={12}>
           <Paper sx={{ p: 2, borderRadius: "12px", height: "100%" }}>
             <Typography variant="h6" color="black" mb={2}>
               Brand Overview
             </Typography>
-
             <Box display="flex" justifyContent="space-between" mb={1}>
               <Typography fontWeight={600}>Name</Typography>
-              <Typography>Nike</Typography>
+              <Typography>{brand?.name || "-"}</Typography>
             </Box>
-
             <Box display="flex" justifyContent="space-between" mb={1}>
               <Typography fontWeight={600}>Campaign</Typography>
               <Typography>45</Typography>
             </Box>
-
             <Box display="flex" justifyContent="space-between">
               <Typography fontWeight={600}>Products</Typography>
-              <Typography>5</Typography>
+              <Typography>{brand?.product_count ?? "-"}</Typography>
             </Box>
           </Paper>
         </Grid>
-       
       </Grid>
 
-      {/* Products Table */}
-      <Paper sx={{ p: 2, borderRadius: "12px", border: "none", mt: 3 }}>
-        <Typography variant="subtitle1" fontWeight="bold" mb={2}>
-          Products
-        </Typography>
+      {/* Products Table Controls */}
+      <Box p={2} component={Paper} sx={{ borderRadius: 2, mt: 3 }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+          <TextField
+            placeholder="Search..."
+            variant="outlined"
+            size="small"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="action" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ width: 300 }}
+          />
+          <Box>
+            <Button
+              variant="outlined"
+              sx={{ mr: 1, color: "#000", borderColor: "#000" }}
+            >
+              Actions
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{ color: "#000", borderColor: "#000" }}
+            >
+              Export
+            </Button>
+          </Box>
+        </Box>
+
+        {/* Table */}
         <ProductTable
           columns={columns}
           rows={rows}
           page={page}
-          rowsPerPage={rowsPerPage}
-          totalCount={rows.length}
+          rowsPerPage={pageSize}
+          totalCount={totalCount}
           onPageChange={setPage}
           onRowClick={(row) => console.log("Clicked row:", row)}
         />
-      </Paper>
+
+        {/* Footer Controls */}
+        <Box display="flex" justifyContent="space-between" alignItems="center" mt={3}>
+          <Pagination
+            count={Math.ceil(totalCount / pageSize)}
+            page={page}
+            onChange={(e, value) => setPage(value)}
+            shape="rounded"
+          />
+          <Box display="flex" alignItems="center" gap={1}>
+            <Typography variant="body2">
+              Showing {rows.length} of {totalCount} entries
+            </Typography>
+            <Select
+              size="small"
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(e.target.value);
+                setPage(1);
+              }}
+            >
+              <MenuItem value={5}>Show 5</MenuItem>
+              <MenuItem value={10}>Show 10</MenuItem>
+              <MenuItem value={25}>Show 25</MenuItem>
+              <MenuItem value={50}>Show 50</MenuItem>
+            </Select>
+          </Box>
+        </Box>
+      </Box>
     </Box>
+    </div>
   );
 };
 
-export default BrandPage;
+export default BrandsDetail;

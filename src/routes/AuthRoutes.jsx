@@ -21,10 +21,6 @@ const AuthRoutes = () => {
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-
-        
-
-
             {/* <Route path="/plans" element={<SubscriptionPLans />} />   */}
       </Routes>
     </AuthBackground>

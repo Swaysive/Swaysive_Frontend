@@ -1,11 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 import { register, login, verifyEmail, resetPassword, getUserProfile, logout, resendEmail, forgotPassword , googleAuth } from '../api/authApi'; // Importing API functions
+import { usersApi } from '../api/usersApi';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [authData, setAuthData] = useState(null);
+    const [onboard, setOnboard] = useState(false);
+    const [step, setStep] = useState(0);
+    const [loading, setLoading] = useState(true);
     // const [authEmail, setAuthEmail] = useState(null)
 
     const clearAuthData = async () => {
@@ -14,6 +18,30 @@ export const AuthProvider = ({ children }) => {
          localStorage.removeItem('userProfile');
         setAuthData(null); // Clear the authData state as well
     };
+
+    const fetchOnboard = async () => {
+      if (!authData) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await usersApi.getOnboardStatus();
+        setOnboard(response.data.data.completed);
+        setStep(response.data.data.step)
+      } catch (err) {
+        console.error("Error checking onboarding status", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+
+
+    useEffect(() => {
+
+    fetchOnboard();
+  }, [authData]);
 
     // const clearStorage = async () => {
     //      localStorage.clear();
@@ -37,8 +65,8 @@ export const AuthProvider = ({ children }) => {
                     refreshToken: storedRefreshToken,
                 });
             } 
-           
         };
+        // clearAuthData();
         loadAuthData();
     }, []);
 
@@ -86,7 +114,7 @@ export const AuthProvider = ({ children }) => {
             const user = response.data.user;
             const role = response.data.user.role;
             const setup = response.data.requires_setup;
-            const tokens = response.data;
+            const tokens = response.data.tokens;
 
             // Save to localStorage
             localStorage.setItem('accessToken', tokens.accessToken);
@@ -152,7 +180,7 @@ export const AuthProvider = ({ children }) => {
             });
             return { status: 'success', message: 'Login successful' };
         } catch (error) {
-            console.log('response',response)
+            // console.log('response',response)
             console.error('Login failed', error);
             return { status: 'error', message: 'Login failed' };
         }
@@ -235,6 +263,10 @@ export const AuthProvider = ({ children }) => {
     return (
         <AuthContext.Provider value={{
             authData,
+            onboard,
+            step,
+            loading,
+            fetchOnboard,
             handleLogin,
             handleGoogleLogin,
             handleLogout,

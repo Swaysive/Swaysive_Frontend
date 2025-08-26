@@ -8,8 +8,8 @@ function Session() {
   const { handleLogout, authData } = useAuth();
 
   const deleteSessionToken = () => {
-    localStorage.removeItem('influencer');
-    localStorage.removeItem('active');
+    localStorage.clear();
+    // localStorage.removeItem('active');
     alert("Influencer token deleted!");
   };
 

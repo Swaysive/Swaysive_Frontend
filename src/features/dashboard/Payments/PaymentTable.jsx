@@ -24,6 +24,7 @@ import DashboardHeader from "../../../components/Headers/DashboardHeader";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useNavigate } from "react-router-dom";
+import CurrentPlan from "../../../components/Current Plan/CurrentPlan";
 
 const PaymentTable = () => {
 //   const [currentPage, setCurrentPage] = useState(1);
@@ -39,45 +40,7 @@ const PaymentTable = () => {
           bodyText="Review and update your creator-facing brand details and logo for each brand"
         />
       </div>
-      <Box p={2} component={Paper} sx={{ borderRadius: 2 }}>
-        {/* Top Controls */}
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={3}
-        >
-          <TextField
-            placeholder="Search..."
-            variant="outlined"
-            size="small"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon color="action" />
-                </InputAdornment>
-              ),
-            }}
-            sx={{ width: 300 }}
-          />
-          <Box>
-            <Button
-              variant="outlined"
-              endIcon={<ArrowDropDownIcon />}
-              sx={{ mr: 1, color: "#000", borderColor: "#000" }}
-            >
-              Actions
-            </Button>
-            <Button
-              variant="outlined"
-              sx={{ color: "#000", borderColor: "#000" }}
-              endIcon={<FileDownloadIcon />}
-            >
-              Export
-            </Button>
-          </Box>
-        </Box>
-      </Box>
+      <CurrentPlan/>
     </div>
   );
 };

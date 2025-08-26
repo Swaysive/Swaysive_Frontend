@@ -26,7 +26,7 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import DashboardHeader from "../../../components/Headers/DashboardHeader";
 import "./InfluencerDetails.css"; // custom styles
 import EditIcon from "../../../assets/icons/edit-icon.svg";
-import { productApi } from "../../../api/productApi";
+import { catalogApi } from "../../../api/catalogApi";
 import GenerateUrlModal from "../../../components/GenerateUrl Modal/GenerateUrlModal";
 
 const InfluencerDetails = () => {
@@ -38,7 +38,7 @@ const InfluencerDetails = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await productApi.getProducts();
+        const response = await catalogApi.getProducts();
         console.log("Products fetched successfully:", response.data.products);
 
         const isActive = localStorage.getItem("active") === "true";

@@ -56,9 +56,9 @@ const Login = () => {
       if (response.status === "success") {
         toast.success("You are logged in.");
         // Redirect to the home page or dashboard
-        window.location.href = '/onboard'; // Adjust the redirect as needed
+        // window.location.href = '/onboard'; // Adjust the redirect as needed
       } else {
-        toast.error(response.message || "Login failed, please try again.");
+        toast.error(response || "Login failed, please try again.");
       }
     } catch (error) {
       const errorMessage =
@@ -126,7 +126,7 @@ const Login = () => {
           </div>
         </form>
         <div className="text-center mt-3">
-          <p className='text-secondary'>Not registered yet? <a href="/registerRoles" style={GlobalStyles.customLink}>Create an account.</a></p>
+          <p className='text-secondary'>Not registered yet? <a href="/register" style={GlobalStyles.customLink}>Create an account.</a></p>
         </div>
       </div>
     </div>

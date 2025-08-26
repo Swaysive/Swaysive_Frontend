@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -7,100 +7,288 @@ import {
   TextField,
   Avatar,
   Typography,
-  Button
+  Button,
+  Grid,
+  InputAdornment,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { catalogApi } from "../../api/catalogApi";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle"
+// import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { toast } from 'react-toastify';
 
-const influencers = [
-  {
-    name: 'John Thompson',
-    image: 'https://randomuser.me/api/portraits/men/1.jpg',
-    facebook: '1.5k',
-    instagram: '1.5k',
-  },
-  {
-    name: "David Cooper",
-    image: "https://randomuser.me/api/portraits/men/4.jpg",
-    facebook: '1.5k',
-    instagram: '3.2k',
-  },
+const randomAvatars = [
+  "https://randomuser.me/api/portraits/men/1.jpg",
+  "https://randomuser.me/api/portraits/women/2.jpg",
+  "https://randomuser.me/api/portraits/men/3.jpg",
+  "https://randomuser.me/api/portraits/women/4.jpg"
 ];
 
-const AssignInfluencerModal = ({ open, onClose, onAssign,onInvite }) => {
-  const [selectedInfluencer, setSelectedInfluencer] = useState('');
-  const [alreadyAssigned, setAlreadyAssigned] = useState(false);
+const swayFee = 1.5; // Fixed
 
-const handleAssign = () => {
-    if (onAssign) onAssign(); // call parent handler
+const AssignInfluencerModal = ({
+  open,
+  onClose,
+  onInvite,
+  productId,
+  influencers = [],
+  onAssign,
+  onSuccess
+}) => {
+  const [selectedInfluencer, setSelectedInfluencer] = useState("");
+  const [selectedInfluencerId, setSelectedInfluencerId] = useState("");
+  const [showCommission, setShowCommission] = useState(false);
+  const [commission, setCommission] = useState("");
+  const [generatedUrl, setGeneratedUrl] = useState(null);
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+
+  // Assign influencer to product
+  const handleAssign = async () => {
+    if (!selectedInfluencerId) return;
+    try {
+      await catalogApi.assignInfluencerToProduct({
+        productId,
+        influencerId: selectedInfluencerId,
+      });
+      setShowCommission(true);
+      if (onAssign) onAssign(selectedInfluencerId);
+    } catch (error) {
+      const errorMessage =
+              error.response?.data?.message || "An unexpected error occurred.";
+            toast.error(errorMessage);
+      // Optionally show error
+    }
   };
 
+  const total = commission ? parseFloat(commission) + swayFee : "";
 
-  const handleInviteClick = () => {
-    if (onInvite) onInvite(); // call parent handler
-    if (onClose) onClose(); 
+  // Generate affiliate link
+  const handleGenerate = async () => {
+    try {
+      const reesponse =await catalogApi.generateAffiliateLink({
+        productId,
+        influencerId: selectedInfluencerId,
+        commissionRate: Number(total),
+      });
+      setGeneratedUrl(reesponse.data.data.affiliateLink)
+      // setSuccessModalOpen(true);
+      if (onSuccess) onSuccess();
+    } catch (error) {
+      const errorMessage =
+              error.response?.data?.message || "An unexpected error occurred.";
+            toast.error(errorMessage);
+      // Optionally show error
+    }
   };
 
   const handleSelect = (e) => {
+    const inf = influencers.find(i => i.id === e.target.value);
     setSelectedInfluencer(e.target.value);
+    setSelectedInfluencerId(inf?.id || "");
+    setShowCommission(false);
+    setCommission("");
   };
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(generatedUrl);
+  };
+
+  const handleOpen = () => {
+    window.open(generatedUrl, "_blank");
+  };
+
+  const handleSuccessModalClose = () => {
+    setSuccessModalOpen(false);
+    if (onClose) onClose();
+  };
+
+  // const total = commission ? parseFloat(commission) + swayFee : "";
+
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogContent className="position-relative text-start py-4 px-4" style={{ width: 400 }}>
-        {/* Close Button */}
-        <IconButton
-          aria-label="close"
-          onClick={onClose}
-          style={{ position: 'absolute', right: 8, top: 8 }}
-        >
-          <CloseIcon />
-        </IconButton>
-
-        <Typography variant="h6" className="fw-bold mb-3 text-black">
-          Assign Influencer
-        </Typography>
-
-        {/* Select Influencer Dropdown */}
-        <TextField
-          fullWidth
-          select
-          label="Select Influencer"
-          value={selectedInfluencer}
-          onChange={handleSelect}
-          className="mb-3"
-        >
-          {influencers.map((inf, idx) => (
-            <MenuItem key={idx} value={inf.name}>
-              <div className="d-flex align-items-center">
-                <Avatar src={inf.image} className="me-2" />
-                <span>{inf.name}</span>
-              </div>
-            </MenuItem>
-          ))}
-        </TextField>
-
-        {/* Show Assign Button only if selected and not already assigned */}
-        {selectedInfluencer && !alreadyAssigned && (
-          <Button
-            fullWidth
-            variant="contained"
-            color="inherit"
-            onClick={handleAssign}
-            className="mb-3"
-            style={{ backgroundColor: 'black', color: 'white' }}
+    <>
+      <Dialog open={open} onClose={onClose}>
+        <DialogContent className="position-relative text-start py-4 px-4" style={{ width: 500 }}>
+          {/* Close Button */}
+          <IconButton
+            aria-label="close"
+            onClick={onClose}
+            style={{ position: 'absolute', right: 8, top: 8 }}
           >
-            Assign
-          </Button>
-        )}
+            <CloseIcon />
+          </IconButton>
 
-        {/* Invite Influencer Link */}
-        <div className="d-flex align-items-center text-primary" onClick={handleInviteClick} style={{ cursor: 'pointer' }}>
-          <AddIcon className="me-1" fontSize="small" />
-          <Typography variant="body2">Invite Influencer</Typography>
-        </div>
-      </DialogContent>
-    </Dialog>
+          <Typography variant="h6" className="fw-bold mb-3 text-black">
+            Assign Influencer
+          </Typography>
+
+          {/* Select Influencer Dropdown */}
+          <TextField
+            fullWidth
+            select
+            label="Select Influencer"
+            value={selectedInfluencer}
+            onChange={handleSelect}
+            className="mb-3"
+          >
+            {influencers.map((inf, idx) => (
+              <MenuItem key={inf.id} value={inf.id}>
+                <div className="d-flex align-items-center">
+                  <Avatar src={inf.image} className="me-2" />
+                  <span>{inf.name}</span>
+                </div>
+              </MenuItem>
+            ))}
+          </TextField>
+
+          {/* Assign Button */}
+          {selectedInfluencer && !showCommission && (
+            <Button
+              fullWidth
+              variant="contained"
+              color="inherit"
+              onClick={handleAssign}
+              className="mb-3"
+              style={{ backgroundColor: 'black', color: 'white' }}
+            >
+              Assign
+            </Button>
+          )}
+
+          {/* Commission/Fee/Total Calculation */}
+          {showCommission && (
+            <Grid container spacing={2} className="mb-3">
+              <Grid item xs={4}>
+                <Typography fontSize={13} mb={0.5}>
+                  Affiliate Commission
+                </Typography>
+                <TextField
+                  fullWidth
+                  placeholder="10"
+                  value={commission}
+                  onChange={(e) => setCommission(e.target.value)}
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                    type: "number",
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={1}>
+                <Typography align="center" mt={3} fontWeight="bold">
+                  +
+                </Typography>
+              </Grid>
+
+              <Grid item xs={3}>
+                <Typography fontSize={13} mb={0.5}>
+                  Fees
+                  <InfoOutlinedIcon fontSize="inherit" sx={{ ml: 0.5 }} />
+                </Typography>
+                <TextField
+                  fullWidth
+                  value={`${swayFee} %`}
+                  disabled
+                />
+              </Grid>
+
+              <Grid item xs={1}>
+                <Typography align="center" mt={3} fontWeight="bold">
+                  =
+                </Typography>
+              </Grid>
+
+              <Grid item xs={3}>
+                <Typography fontSize={13} mb={0.5}>
+                  Total
+                  <InfoOutlinedIcon fontSize="inherit" sx={{ ml: 0.5 }} />
+                </Typography>
+                <TextField fullWidth value={total ? `${total} %` : ""} disabled />
+              </Grid>
+              <Grid item xs={12}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, backgroundColor: "#000" }}
+                  disabled={!commission}
+                  onClick={handleGenerate}
+                  // sx={{ mt: 2 }}
+                >
+                  Generate Affiliate Link
+                </Button>
+              </Grid>
+            </Grid>
+          )}
+
+            {/* URL Display */}
+          {generatedUrl && (
+            <Grid item xs={12}>
+              <Typography fontSize={13} mb={0.5}>
+                URL
+              </Typography>
+              <TextField
+                fullWidth
+                value={generatedUrl}
+                disabled
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleCopy}>
+                        <ContentCopyIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton onClick={handleOpen}>
+                        <OpenInNewIcon fontSize="small" />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+          )}
+
+          {/* Done Button */}
+          {/* <Grid item xs={12}>
+            <Button
+            color="dark"
+              fullWidth
+              variant="outlined"
+              onClick={onClose}
+              sx={{ borderRadius: 2 }}
+            >
+              Done
+            </Button>
+          </Grid> */}
+
+          {/* Invite Influencer Link */}
+          {/* <div className="d-flex align-items-center text-primary" onClick={onInvite} style={{ cursor: 'pointer' }}>
+            <AddIcon className="me-1" fontSize="small" />
+            <Typography variant="body2">Invite Influencer</Typography>
+          </div> */}
+        </DialogContent>
+      </Dialog>
+
+      {/* Success Modal */}
+      <Dialog open={successModalOpen} onClose={handleSuccessModalClose}>
+        <DialogContent className="text-center py-4 px-5">
+          <CheckCircleIcon style={{ fontSize: 50, color: "green" }} />
+          <h5 className="fw-bold mt-3 mb-3">Affiliate Link Generated!</h5>
+          <Typography className="text-muted mb-0">
+            The affiliate link has been generated successfully.
+          </Typography>
+          <Button
+            variant="contained"
+            sx={{ mt: 3, backgroundColor: "#000" }}
+            onClick={handleSuccessModalClose}
+            fullWidth
+          >
+            Done
+          </Button>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

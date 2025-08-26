@@ -1,6 +1,7 @@
 .auth-background {
     display: flex;
-    height: 100vh; /* Full viewport height */
+    min-height: 100vh; /* fill the screen at minimum, but grow if content is bigger */
+  height: auto;
   }
   
   .left-side {

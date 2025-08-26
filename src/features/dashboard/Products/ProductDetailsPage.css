@@ -1,5 +1,5 @@
 .container {
-    max-width: 1200px;
+    /* max-width: 1200px; */
   }
   
   .card .MuiCardContent-root {
@@ -15,6 +15,6 @@
   flex-wrap: wrap;
   /* gap: 16px; */
   align-items: stretch;
-  justify-content: center;
+  /* justify-content: center; */
   }
   
