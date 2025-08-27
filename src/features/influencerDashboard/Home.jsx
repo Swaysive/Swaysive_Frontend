@@ -7,11 +7,19 @@ import {
   Button,
   Avatar,
   Stack,
+  Divider,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DescriptionIcon from "@mui/icons-material/Description";
 import ReusableTable from "../../components/ReusableTable/ReusableTable";
-import CampaignImpactChart from "../../components/Charts/CampaignImpactChart";
+import SmartWatch from "../../assets/images/fitnesstracker.png";
+import SmartWaterBottle from "../../assets/images/smartwaterbottle.png";
+import YogaMat from "../../assets/images/yogamat.png";
+import EarBudsPro from "../../assets/images/earbudspro.png";
+import OfficeChair from "../../assets/images/officechair.png";
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import InfluencerImpactChart from "../influencerDashboard/InfluencerImpactChart";
+import { Link } from "react-router-dom";
 
 export default function InfluencerDashboard() {
   // Dummy Data
@@ -25,91 +33,166 @@ export default function InfluencerDashboard() {
   const rowsPerPage = 5;
 
   const columns = [
-    {
-      id: "product",
-      label: "Product",
-      width: "35%",
-      render: (value, row) => (
-        <Box display="flex" alignItems="center" gap={2}>
-          <Avatar
-            src={row.image}
-            variant="rounded"
-            sx={{ width: 40, height: 40 }}
-          />
-          <Typography variant="body2" fontWeight={600}>
-            {value}
-          </Typography>
-        </Box>
-      ),
-    },
-    { id: "brand", label: "Brand", width: "15%" },
-    { id: "influencer", label: "Influencer", width: "20%" },
-    { id: "status", label: "Status", width: "10%" },
-    { id: "price", label: "Price ($)", width: "8%" },
-    { id: "stock", label: "Stock", width: "7%" },
-  ];
+  {
+    id: "product",
+    label: "Product",
+    width: "35%",
+    render: (value, row) => (
+      <Box display="flex" alignItems="center" gap={1}>
+        <Avatar
+          src={row.image}
+          variant="rounded"
+          sx={{ width: 40, height: 40 }}
+        />
+        <Typography
+          variant="body2"
+          fontWeight={600}
+          sx={{
+            fontFamily: "Plus Jakarta Sans",
+            fontSize: "12px",
+          }}
+        >
+          {value}
+        </Typography>
+      </Box>
+    ),
+  },
+  {
+    id: "brand",
+    label: "Brand",
+    width: "15%",
+    render: (value) => (
+      <Typography
+        sx={{ fontFamily: "Poppins", fontSize: "12px", color: "#6B7280EB" }}
+      >
+        {value}
+      </Typography>
+    ),
+  },
+  {
+    id: "commission",
+    label: "Commission",
+    width: "10%",
+    render: (value) => (
+      <Typography
+        sx={{ fontFamily: "Poppins", fontSize: "12px", color: "#6B7280EB" }}
+      >
+        {value}
+      </Typography>
+    ),
+  },
+  {
+    id: "unitssold",
+    label: "Units Sold",
+    width: "15%",
+    render: (value) => (
+      <Typography
+        sx={{ fontFamily: "Poppins", fontSize: "12px", color: "#6B7280EB" }}
+      >
+        {value}
+      </Typography>
+    ),
+  },
+  { id: "totalearned", label: "Total Earned", width: "18%",
+    render: (value) => (
+      <Typography
+        sx={{ fontFamily: "Poppins", fontSize: "12px", color: "#6B7280EB" }} 
+      >
+        {value}
+      </Typography>
+    ),
+  },
+  {
+    id: "status",
+    label: "Status",
+    width: "10%",
+    render: (value) => (
+      <Box display="flex" alignItems="center" gap={0.5}>
+        <FiberManualRecordIcon
+          sx={{
+            fontSize: 10,
+            color: value === "Active" ? "green" : "grey",
+          }}
+        />
+        <Typography
+          sx={{
+            fontFamily: "poppins",
+            fontSize: "12px",
+          }}
+          variant="body2"
+          fontWeight="medium"
+          color={value === "Active" ? "green" : "grey"}
+        >
+          {value}
+        </Typography>
+      </Box>
+    ),
+  },
+];
+
 
   // Dummy rows
   const rows = [
     {
       id: 1,
-      image: "https://via.placeholder.com/40x40?text=WF", // Wireless Fitness
+      image: SmartWatch, // Wireless Fitness
       product: "Wireless Fitness Tracker Pro",
       brand: "GymPro",
-      influencer: "John Thompson",
+      commission: "15%",
+      unitssold: "18",
+      totalearned: "$258.30",
       status: "Active",
-      price: 258.3,
-      stock: 18,
+      
     },
     {
       id: 2,
-      image: "https://via.placeholder.com/40x40?text=WB",
+      image: SmartWaterBottle,
       product: "Smart Water Bottle with Temp Control",
       brand: "SmartBottle",
-      influencer: "Sarah Lee",
+      commission: "12%",
+      unitssold: "22",
+      totalearned: "$105.60",
       status: "Paused",
-      price: 105.6,
-      stock: 22,
     },
     {
       id: 3,
-      image: "https://via.placeholder.com/40x40?text=YM",
+      image: YogaMat,
       product: "Premium Yoga Mat with Alignment Lines",
       brand: "YogaLife",
-      influencer: "Emily Brown",
+      commission: "18%",
+      unitssold: "67",
+      totalearned: "$312.30",
       status: "Active",
-      price: 312.45,
-      stock: 67,
     },
     {
       id: 4,
-      image: "https://via.placeholder.com/40x40?text=EB",
+      image: EarBudsPro,
       product: "Bluetooth Earbuds Pro",
       brand: "SoundMax",
-      influencer: "Mike Chen",
-      status: "Inactive",
-      price: 145.99,
-      stock: 50,
+      commission: "18%",
+      unitssold: "67",
+      totalearned: "$312.30",
+      status: "Active",
     },
     {
       id: 5,
-      image: "https://via.placeholder.com/40x40?text=DB",
+      image: OfficeChair,
       product: "Adjustable Dumbbell Set 40kg",
       brand: "FitStrong",
-      influencer: "John Thompson",
-      status: "Active",
-      price: 499.99,
-      stock: 12,
+      commission: "15%",
+      unitssold: "18",
+      totalearned: "$260.30",
+      status: "Paused",
     },
     {
       id: 6,
-      image: "https://via.placeholder.com/40x40?text=CH",
+      image: OfficeChair,
       product: "Ergonomic Office Chair",
       brand: "ComfyWork",
-      influencer: "Sarah Lee",
+      commission: "18%",
+      unitssold: "18",
+      totalearned: "$258.30",
       status: "Active",
-      price: 249.99,
-      stock: 30,
     },
   ];
 
@@ -121,24 +204,60 @@ export default function InfluencerDashboard() {
   };
 
   const notifications = [
-    "New product launched: SmartBottle Pro.",
-    "Commission adjusted for GymPro.",
-    "A payout of $285.20 processed.",
-    "A payout of $455.10 processed.",
+    {
+      title: "New product launched: SmartBottle Pro.",
+      launchtime: "Just now",
+    },
+    {
+      title: "Commission adjusted for GymPro.",
+      launchtime: "The day before",
+    },
+    {
+      title: "A payout of $285.20 processed.",
+      launchtime: "Five days ago",
+    },
+    {
+      title: "A payout of $455.10 processed.",
+      launchtime: "Five days ago",
+    },
+    {
+      title: "A payout of $455.10 processed.",
+      launchtime: "Five days ago",
+    },
+    {
+      title: "A payout of $455.10 processed.",
+      launchtime: "Five days ago",
+    },
+    {
+      title: "A payout of $455.10 processed.",
+      launchtime: "Five days ago",
+    },
   ];
 
   return (
     <Box p={3} bgcolor="#f9f9f9" minHeight="100vh">
-      <Grid container spacing={3}>
+      <Grid container spacing={2}>
         {/* LEFT COLUMN */}
         <Grid item xs={12} md={8}>
           {/* Top Stats */}
           <Grid container spacing={3} mb={3}>
             {stats.map((stat, index) => (
               <Grid item xs={12} sm={4} key={index}>
-                <Paper elevation={1} sx={{ p: 2 ,borderRadius:'12px'}}   >
-                  <Typography variant="subtitle2">{stat.title}</Typography>
-                  <Typography variant="h5" fontWeight="bold">
+                <Paper elevation={1} sx={{ p: 2, borderRadius: "12px" }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{
+                      fontFamily: "Poppins",
+                      fontSize: "12px",
+                      // fontWeight: 600,
+                    }}
+                  >
+                    {stat.title}
+                  </Typography>
+                  <Typography variant="h5" fontWeight="bold" sx={{
+                      fontFamily: "Poppins",
+                      fontSize: "24px",
+                    }}>
                     {stat.value}
                   </Typography>
                 </Paper>
@@ -148,10 +267,17 @@ export default function InfluencerDashboard() {
 
           {/* Assigned Products Table */}
           <Paper elevation={1} sx={{ p: 2, mb: 3 }}>
-            <Typography variant="subtitle1" fontWeight="bold" mb={2}>
+            <Typography variant="subtitle1" fontWeight="medium" mb={2} sx={{
+                      fontFamily: "Poppins",
+                      fontSize: "16px",
+                    }}>
               Assigned Products
             </Typography>
             <ReusableTable
+            sx={{
+                      fontFamily: "Poppins",
+                      fontSize: "12px",
+                    }}
               columns={columns}
               rows={rows}
               page={page}
@@ -163,109 +289,130 @@ export default function InfluencerDashboard() {
             />
           </Paper>
 
-          {/* Performance Overview */}
           <Paper elevation={1} sx={{ p: 2 }}>
-            <Typography variant="subtitle1" fontWeight="bold" mb={2}>
-              Performance Overview
-            </Typography>
-            {/* <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              minHeight="180px"
-              color="text.secondary"
-              border="1px dashed #ddd"
-              borderRadius={1}
-            >
-              <Typography variant="body2">Graph placeholder</Typography>
-            </Box> */}
-
-
-           <CampaignImpactChart
-        title="Ad Campaign Performance – Last 4 Days"
-        tabs={['Earnings', 'Units Sold', 'conversions']}
-        // chartData={customChartData}
-        lineColor="#FF5722" // Custom orange line
-        height={250}        // Custom chart height
-      />
+            <InfluencerImpactChart />
           </Paper>
         </Grid>
 
         {/* RIGHT COLUMN */}
         <Grid item xs={12} md={4}>
           {/* Quick Actions */}
-          <Paper elevation={1} sx={{ p: 2, mb: 3 , borderRadius:'12px'}}>
-            <Typography variant="subtitle1" fontWeight="bold" mb={2} >
+          <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: "12px" }}>
+            <Typography variant="subtitle1" fontWeight="bold" mb={2} sx={{fontFamily: "poppins", fontSize: "16px"}}>
               Quick Actions
             </Typography>
             <Button
               fullWidth
               variant="outlined"
-              startIcon={<VisibilityIcon />}
-              sx={{ mb: 1, backgroundColor:'#F2F2F2', border:'none', color:'#2A2A2A'}}
+              endIcon={<VisibilityIcon />}
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                mb: 1,
+                backgroundColor: "#F2F2F2",
+                border: "none",
+                color: "#2A2A2A",
+                fontFamily: "poppins", fontSize: "12px"
+              }}
             >
-              View payment history
+              View all payment history
             </Button>
             <Button
               fullWidth
               variant="outlined"
-              startIcon={<DescriptionIcon />}
-               sx={{ mb: 1, backgroundColor:'#F2F2F2' , border:'none', color:'#2A2A2A'}}
+              endIcon={<DescriptionIcon />}
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                mb: 1,
+                backgroundColor: "#F2F2F2",
+                border: "none",
+                color: "#2A2A2A",
+                fontFamily: "poppins", fontSize: "12px"
+              }}
             >
               Download statement
             </Button>
           </Paper>
 
-         <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: "12px" }}>
-  <Typography variant="subtitle1" fontWeight="bold" mb={2}>
-    Payout Overview
-  </Typography>
+          <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: "12px" }}>
+            <Typography variant="subtitle1" fontWeight="bold" mb={2} sx={{fontFamily: "poppins", fontSize: "16px"}} >
+              Payout Overview
+            </Typography>
 
-  {[
-    { label: "Next Payout", value: payoutData.nextPayout, color: "green" },
-    { label: "Payout Schedule", value: payoutData.schedule },
-    { label: "Last Payment", value: payoutData.lastPayment },
-    { label: "Payment Method", value: payoutData.method },
-  ].map((item, index) => (
-    <Grid
-      container
-      key={index}
-      sx={{
-        mb: 1,
-        alignItems: "center",
-      }}
-    >
-      {/* 70% Column - Label */}
-      <Grid item xs={6}>
-        <Typography variant="body2">{item.label}</Typography>
-      </Grid>
+            {[
+              {
+                label: "Next Payout",
+                value: payoutData.nextPayout,
+                color: "green",
+              },
+              { label: "Payout Schedule", value: payoutData.schedule },
+              { label: "Last Payment", value: payoutData.lastPayment },
+              { label: "Payment Method", value: payoutData.method },
+            ].map((item, index) => (
+              <Grid
+                container
+                key={index}
+                sx={{
+                  mb: 1,
+                  alignItems: "center",
+                }}
+              >
+                {/* 70% Column - Label */}
+                <Grid item xs={6}>
+                  <Typography variant="body2" sx={{fontFamily: "poppins", fontSize: "14px"}}>{item.label}</Typography>
+                </Grid>
 
-      {/* 30% Column - Value */}
-      <Grid item xs={6}>
-        <Typography
-          variant="body2"
-          fontWeight="bold"
-          color={item.color || "inherit"}
-          textAlign="right"
-        >
-          {item.value}
-        </Typography>
-      </Grid>
-    </Grid>
-  ))}
-</Paper>
+                {/* 30% Column - Value */}
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body2"
+                    fontWeight="bold"
+                    color={item.color || "inherit"}
+                    textAlign="right"
+                    sx={{fontFamily: "poppins", fontSize: "12px"}}
 
+                  >
+                    {item.value}
+                  </Typography>
+                </Grid>
+              </Grid>
+            ))}
+          </Paper>
 
           {/* Recent Notifications */}
-          <Paper elevation={1} sx={{ p: 2 ,borderRadius:'12px'}}>
-            <Typography variant="subtitle1" fontWeight="bold" mb={2}>
+          <Paper elevation={1} sx={{ pb: 2, borderRadius: "12px" }}>
+            <Typography p={2} variant="subtitle1" fontWeight="500"  sx={{fontFamily: "poppins", fontSize: "16px"}}>
               Recent Notifications
             </Typography>
             {notifications.map((note, idx) => (
-              <Typography variant="body2" key={idx} mb={1}>
-                {note}
-              </Typography>
+              <Box key={idx} mb={1}>
+                <Box px={2} display="flex" flexDirection="column">
+                  <Typography variant="body2" fontWeight="400"  sx={{fontFamily: "poppins", fontSize: "14px"}}>
+                    {note.title}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary"  sx={{fontFamily: "poppins", fontSize: "8px"}}>
+                    {note.launchtime}
+                  </Typography>
+                </Box>
+
+                {/* Divider between items, except after the last one */}
+                {idx < notifications.length && (
+                  <Divider
+                    sx={{
+                      my: 1,
+                      borderBottomWidth: 2,
+                      width: "100%",
+                    }}
+                  />
+                )}
+              </Box>
             ))}
+            <Typography variant="body2" fontWeight="bold" px={2} py={1}>
+              <Link href="" underline="none" sx={{ color: "black", fontFamily: "poppins", fontSize: "12px" }}>
+                View All Notifications
+              </Link>
+            </Typography>
           </Paper>
         </Grid>
       </Grid>

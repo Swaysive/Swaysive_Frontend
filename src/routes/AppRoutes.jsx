@@ -60,6 +60,8 @@ const AppRoutes = () => {
                 />
 
                 <Route path="/influencer-home" element={<InfluencerHome />} />
+                <Route path="/influencer-home/dashboard" element={<InfluencerHome />} />
+
                 <Route path="/myproducts" element={<MyProductsPage />} />
 
                 {/* Add more layout-wrapped routes here */}

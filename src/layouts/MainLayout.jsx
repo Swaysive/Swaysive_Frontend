@@ -1,5 +1,10 @@
 // NavbarWithSidebar.jsx
 import React from "react";
+import { GrHomeRounded } from "react-icons/gr";
+import { RiShoppingBag3Line } from "react-icons/ri";
+// import PaymentsSvg from "../../src/assets/icons/payments.svg"
+import { IoSettingsOutline } from "react-icons/io5";
+
 import {
   AppBar,
   Toolbar,
@@ -66,16 +71,21 @@ export default function NavbarWithSidebar({ children }) {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
-  const menuItems = [
-    { text: "Dashboard", icon: <Dashboard />, path: "/" },
-    { text: "Products", icon: <Inventory2 />, path: "/products" },
-    { text: "Brands", icon: <Store />, path: "/brands" },
-    { text: "Influencer", icon: <Groups />, path: "/influencers" },
-    { text: "Payments", icon: <Payments />, path: "/payments" },
-    { text: "Reports", icon: <BarChart />, path: "/reports" },
-    { text: "Settings", icon: <Settings />, path: "/settings" },
+const sellerMenuItems = [
+    { text: "Dashboard", icon: <GrHomeRounded size={23} />, path: "/admin/dashboard" },
+    { text: "Products", icon: <RiShoppingBag3Line size={25} />, path: "/admin/products" },
+    { text: "Payments", icon: <Payments />, path: "/admin/payments" },
+    { text: "Settings", icon: <IoSettingsOutline size={25} />, path: "/admin/settings" },
   ];
+
+  // ✅ Influencer menu
+  const influencerMenuItems = [
+    { text: "Dashboard", icon: <GrHomeRounded size={23} />, path: "/influencer-home/dashboard" },
+    { text: "Products", icon: <RiShoppingBag3Line size={25} />, path: "/influencer/products" },
+    { text: "Payments", icon: <Payments />, path: "/influencer/payments" },
+    { text: "Settings", icon: <IoSettingsOutline size={25} />, path: "/influencer/settings" },
+  ];
+  const menuItems = authData?.role === "Seller" ? sellerMenuItems : influencerMenuItems;
 
   return (
     <Box sx={{ display: "flex" }}>

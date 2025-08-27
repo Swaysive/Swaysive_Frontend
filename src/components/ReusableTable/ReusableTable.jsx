@@ -35,7 +35,7 @@ const ReusableTable = ({
               {columns.map((col) => (
                 <TableCell
                   key={col.id}
-                  sx={{ fontWeight: 600, width: col.width || "auto",padding:'8px' }}
+                  sx={{ fontWeight: 500, fontFamily: "poppins", width: col.width || "auto",padding:'8px' }}
                   //  style={{padding:'8px'}}
                 >
                   {col.label}
