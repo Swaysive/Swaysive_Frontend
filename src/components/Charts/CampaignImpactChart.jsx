@@ -77,7 +77,7 @@ const CampaignImpactChart = ({
       <Box className="container">
         {/* Header with Tabs */}
         <Box className="d-flex align-items-center justify-content-between py-3">
-          <Typography variant="h6">{title}</Typography>
+          <Typography variant="h6"sx={{ fontFamily: "Poppins", fontSize: "18px", fontWeight:"medium" }} >{title}</Typography>
 
           <ButtonGroup className="mb-4">
             {tabs.map((tab) => (
@@ -88,6 +88,7 @@ const CampaignImpactChart = ({
                 sx={{
                   bgcolor: activeTab === tab ? 'black' : 'transparent',
                   color: activeTab === tab ? 'white' : 'black',
+                  fontFamily: "Poppins", fontSize: "14px",
                   borderColor: 'black',
                   textTransform: 'capitalize',
                   '&:hover': {

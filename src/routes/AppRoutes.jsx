@@ -18,6 +18,8 @@ import Session from "../pages/Session/Session";
 import BrandDetailsPage from "../features/dashboard/Brands/BrandsDetail";
 import SubscriptionPLans from "../features/auth/SubscriptionPlans";
 import CreateDiscountCode from "../features/dashboard/Discount Code/CreateDiscountCode";
+import InfluencerPayments from "../features/influencerDashboard/InfluencerPayments";
+import InfluencerSettings from "../features/influencerDashboard/InfluencerSettings";
 // import { useAuth } from "../context/Auth";
 
 import InfluencerHome from "../features/influencerDashboard/Home";
@@ -35,8 +37,12 @@ const AppRoutes = () => {
             {onboard ? (
               <Route element={<LayoutRoute />}>
                 <Route path="/" element={<Home />} />
+                <Route path="/dashboard" element={<Home />} />
                 <Route path="/brands" element={<BrandTable />} />
-                <Route path="/brands/details/:brandId" element={<BrandDetailsPage />} />
+                <Route
+                  path="/brands/details/:brandId"
+                  element={<BrandDetailsPage />}
+                />
                 <Route path="/products" element={<ProductTable />} />
                 <Route path="/payments" element={<PaymentTable />} />
                 <Route path="/reports" element={<ReportTable />} />
@@ -48,7 +54,6 @@ const AppRoutes = () => {
                   path="/products/details/:id"
                   element={<ProductDetailsPage />}
                 />
-                <Route path="/home" element={<Home />} />
 
                 {/* <Route path="/plans" element={<SubscriptionPLans />} />   */}
 
@@ -58,12 +63,23 @@ const AppRoutes = () => {
                   path="/influencers/details/:id"
                   element={<InfluencerDetails />}
                 />
-
                 <Route path="/influencer-home" element={<InfluencerHome />} />
-                <Route path="/influencer-home/dashboard" element={<InfluencerHome />} />
-
-                <Route path="/myproducts" element={<MyProductsPage />} />
-
+                <Route
+                  path="/influencer-home/dashboard"
+                  element={<InfluencerHome />}
+                />
+                <Route
+                  path="/influencer-home/products"
+                  element={<MyProductsPage />}
+                />
+                <Route
+                  path="/influencer-home/payments"
+                  element={<InfluencerPayments />}
+                />
+                <Route
+                  path="/influencer-home/settings"
+                  element={<InfluencerSettings />}
+                />
                 {/* Add more layout-wrapped routes here */}
               </Route>
             ) : (
@@ -73,7 +89,6 @@ const AppRoutes = () => {
         ) : (
           <Route path="/*" element={<AuthRoutes />} />
         )}
-
         <Route path="/session" element={<Session />} />
         <Route path="/onboard/*" element={<OnboardRoutes />} />
         <Route path="*" element={<NotFoundPage />} />

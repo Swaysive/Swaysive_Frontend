@@ -16,8 +16,8 @@ const DashboardHeader = ({ headerText, bodyText }) => {
     <Box className="dashboard-header container-fluid p-4 rounded-4 position-relative text-white">
       {/* Text Content */}
       <div className="z-1 position-relative text-width">
-        <Typography variant="h5" className="fw-bold">{headerText}</Typography>
-        <Typography variant="body1" className="mt-2">
+        <Typography variant="h5" className="fw-bold"  sx={{ fontFamily: "Poppins", fontSize: "24px" }}>{headerText}</Typography>
+        <Typography variant="body1" className="mt-2" sx={{ fontFamily: "Poppins", fontSize: "14px" }}>
           {bodyText}
         </Typography>
       </div>

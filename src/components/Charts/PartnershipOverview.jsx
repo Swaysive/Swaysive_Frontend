@@ -41,12 +41,12 @@ export default function PartnershipOverview() {
 
   return (
     <div className="card p-5 shadow-sm" style={{ height:'470px', borderRadius: 20 }}>
-      <h6 className="mb-3">Partnership Overview</h6>
+      <h6 className="mb-3 font-poppins" style={{fontSize: "18px"}}>Partnership Overview</h6>
       <Box display="flex" alignItems="center" mb={2}>
         <PersonOutline fontSize="large" className="me-2" />
         <div>
-          <Typography variant="h5">{currentData.count}</Typography>
-          <Typography variant="body2">{currentData.label}</Typography>
+          <Typography sx={{ fontFamily: "Poppins", fontSize: "24px", fontWeight: "bold" }} variant="h5">{currentData.count}</Typography>
+          <Typography variant="body2" sx={{ fontFamily: "Poppins", fontSize: "14px" }}>{currentData.label}</Typography>
         </div>
       </Box>
 
@@ -66,17 +66,17 @@ export default function PartnershipOverview() {
       </PieChart>
 
       <Box display="flex" justifyContent="center" gap={4} mt={2}>
-        <Box display="flex" alignItems="center" gap={1}>
+        <Box display="flex" alignItems="center" gap={1} sx={{ fontFamily: "Poppins", fontSize: "14px", fontWeight:"medium" }}>
           <span className="rounded-circle" style={{ width: 10, height: 10, background: COLORS[0] }}></span>
-          <small>Active ({currentData.active}%)</small>
+          <small >Active ({currentData.active}%)</small>
         </Box>
-        <Box display="flex" alignItems="center" gap={1}>
+        <Box display="flex" alignItems="center" gap={1} sx={{ fontFamily: "Poppins", fontSize: "14px", fontWeight:"medium" }}>
           <span className="rounded-circle" style={{ width: 10, height: 10, background: COLORS[1] }}></span>
           <small>Inactive ({currentData.inactive}%)</small>
         </Box>
       </Box>
 
-      <Typography className="mt-3" variant="body2">
+      <Typography className="mt-3" variant="body2" sx={{ fontFamily: "Poppins", fontSize: "13px", fontWeight:"medium" }}>
         {currentData.description}
       </Typography>
 

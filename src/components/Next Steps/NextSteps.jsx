@@ -30,19 +30,19 @@ const NextSteps = () => {
   return (
     <Card className="next-steps-card shadow-sm rounded-4">
       <CardContent>
-        <Typography variant="h6" className="fw-bold mb-3">Next Steps</Typography>
+        <Typography variant="h6" className=" mb-3" sx={{ fontFamily: "Poppins", fontSize: "24px", fontWeight:"medium" }}>Next Steps</Typography>
 
         {tasks.map((task, index) => (
           <div key={index} className="d-flex justify-content-between align-items-center border-top py-3">
-            <Typography variant="body2" className="text-body">{task.message}</Typography>
-            <Button href={task.link} variant="text" className="text-end text-nowrap fw-bold text-dark">
+            <Typography variant="body2" className="text-body" sx={{ fontFamily: "Poppins", fontSize: "18px", fontWeight:"regular" }}>{task.message}</Typography>
+            <Button href={task.link} variant="text" className="text-end text-nowrap text-dark" sx={{ fontFamily: "Poppins", fontSize: "14px", fontWeight:"bold" }}>
               {task.action}
             </Button>
           </div>
         ))}
 
         <div className="text-center mt-3">
-          <Button href="#" variant="text" className="view-all-btn fw-bold d-inline-flex align-items-center text-dark">
+          <Button href="#" variant="text" className="view-all-btn d-inline-flex align-items-center text-dark" sx={{ fontFamily: "Poppins", fontSize: "18px", fontWeight:"bold" }}>
             View All Tasks
             <img src={ExternalIcon} alt="External link" className="ms-2 icon-img" />
           </Button>

@@ -8,8 +8,8 @@ const StatCard = ({ label, count, change, isPositive }) => {
   return (
     <div className="card stat-card shadow-sm border-0">
       <div className="card-body text-center">
-        <div className="text-muted fw-semibold mb-1">{label}</div>
-        <div className="d-flex justify-content-center align-items-center gap-1">
+        <div className="text-muted font-poppins fw-semibold mb-1" style={{fontSize:"14px"}}>{label}</div>
+        <div className="d-flex justify-content-center font-poppins align-items-center gap-1">
           <h3 className="fw-bold mb-0">{count}</h3>
           {change !== 0 && (
             <>

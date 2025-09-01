@@ -4,6 +4,13 @@ import { GrHomeRounded } from "react-icons/gr";
 import { RiShoppingBag3Line } from "react-icons/ri";
 // import PaymentsSvg from "../../src/assets/icons/payments.svg"
 import { IoSettingsOutline } from "react-icons/io5";
+import { PiVanBold } from "react-icons/pi";
+import { TbUsers } from "react-icons/tb";
+import { VscGraph } from "react-icons/vsc";
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+
+
+
 
 import {
   AppBar,
@@ -71,21 +78,66 @@ export default function NavbarWithSidebar({ children }) {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-const sellerMenuItems = [
-    { text: "Dashboard", icon: <GrHomeRounded size={23} />, path: "/admin/dashboard" },
-    { text: "Products", icon: <RiShoppingBag3Line size={25} />, path: "/admin/products" },
-    { text: "Payments", icon: <Payments />, path: "/admin/payments" },
-    { text: "Settings", icon: <IoSettingsOutline size={25} />, path: "/admin/settings" },
+  const sellerMenuItems = [
+    {
+      text: "Dashboard",
+      icon: <GrHomeRounded size={23} />,
+      path: "/seller-home/dashboard",
+    },
+    {
+      text: "Brands",
+      icon: <PiVanBold size={25} />,
+      path: "/seller-home/brands",
+    },
+     {
+      text: "Products",
+      icon: <RiShoppingBag3Line size={25} />,
+      path: "/seller-home/products",
+    },
+    {
+      text: "Influencer",
+      icon: <TbUsers size={25} />,
+      path: "/seller-home/influencer",
+    },
+    {
+      text: "Track & Sales",
+      icon: <MonetizationOnIcon size={25} />,
+      path: "/seller-home/track&sales",
+    },
+   
+    { text: "Payments", icon: <Payments />, path: "/seller-home/payments" },
+     {
+      text: "Reports",
+      icon: <VscGraph size={25} />,
+      path: "/seller-home/reports",
+    },
+    {
+      text: "Settings",
+      icon: <IoSettingsOutline size={25} />,
+      path: "/seller-home/settings",
+    },
   ];
 
-  // ✅ Influencer menu
   const influencerMenuItems = [
-    { text: "Dashboard", icon: <GrHomeRounded size={23} />, path: "/influencer-home/dashboard" },
-    { text: "Products", icon: <RiShoppingBag3Line size={25} />, path: "/influencer/products" },
-    { text: "Payments", icon: <Payments />, path: "/influencer/payments" },
-    { text: "Settings", icon: <IoSettingsOutline size={25} />, path: "/influencer/settings" },
+    {
+      text: "Dashboard",
+      icon: <GrHomeRounded size={23} />,
+      path: "/influencer-home/dashboard",
+    },
+    {
+      text: "Products",
+      icon: <RiShoppingBag3Line size={25} />,
+      path: "/influencer-home/products",
+    },
+    { text: "Payments", icon: <Payments />, path: "/influencer-home/payments" },
+    {
+      text: "Settings",
+      icon: <IoSettingsOutline size={25} />,
+      path: "/influencer-home/settings",
+    },
   ];
-  const menuItems = authData?.role === "Seller" ? sellerMenuItems : influencerMenuItems;
+  const menuItems =
+    authData?.role === "Seller" ? sellerMenuItems : influencerMenuItems;
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -157,8 +209,7 @@ const sellerMenuItems = [
           flexShrink: 0,
           overflowX: "hidden",
           "& .MuiDrawer-paper": {
-            
-            width: open ? "240px" : 64 ,
+            width: open ? "240px" : 64,
             boxSizing: "border-box",
             background: "linear-gradient(90deg, #3c3c3c 0%, #0c0c0c 100%)",
             color: "#fff",
@@ -169,7 +220,7 @@ const sellerMenuItems = [
         <Toolbar />
         <Divider />
 
-        <List>
+        <List >
           {menuItems.map(({ text, icon, path }, index) => (
             <ListItem
               button
@@ -179,16 +230,26 @@ const sellerMenuItems = [
                 px: 2,
                 bgcolor: location.pathname === path ? "white" : "transparent",
                 borderRadius: 1,
-                width: location.pathname === path ? '90%' : "transparent",
+                width: location.pathname === path ? "90%" : "transparent",
                 mx: location.pathname === path ? 1 : "transparent",
                 "&:hover": {
                   bgcolor: "#434343",
+                  
                 },
                 cursor: "pointer",
               }}
             >
-              <ListItemIcon sx={{ color: location.pathname === path ? "black" : "white", }}>{icon}</ListItemIcon>
-              {open && <ListItemText sx={{ color: location.pathname === path ? "black" : "white", }} primary={text} />}
+              <ListItemIcon
+                sx={{ color: location.pathname === path ? "black" : "white" }}
+              >
+                {icon}
+              </ListItemIcon>
+              {open && (
+                <ListItemText
+                  sx={{ color: location.pathname === path ? "black" : "white", fontFamily: "Poppins", fontSize: "24px" }}
+                  primary={text}
+                />
+              )}
             </ListItem>
           ))}
         </List>

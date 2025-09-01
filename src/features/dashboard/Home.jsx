@@ -13,7 +13,7 @@ function Home() {
       {/* <MainLayout> */}
       <div className="row" style={{ marginTop: "50px" }}>
         
-        <div className="col-12 ">
+        <div className="col-12">
         <DashboardHeader
         headerText="Dashboard"
         bodyText="Welcome to swaysive! This is your homepage – check here to see new notifications and review a snapshot of your performance."
@@ -23,49 +23,49 @@ function Home() {
           <div className="col-md-2 col-lg-2">
             <StatCard
               label="Active Brands"
-              count={1}
-              change={1}
+              count={30}
+              change={2}
               isPositive={true}
             />
           </div>
           <div className="col-md-2 col-lg-2">
             <StatCard
               label="Products Live"
-              count={0}
-              change={0}
+              count={26}
+              change={3}
               isPositive={true}
             />
           </div>
           <div className="col-md-2 col-lg-2">
             <StatCard
               label="Running Campaigns"
-              count={0}
-              change={0}
+              count={12}
+              change={3}
               isPositive={true}
             />
           </div>
           <div className="col-md-2 col-lg-2">
             <StatCard
               label="Conversions"
-              count={0}
-              change={0}
+              count={212}
+              change={18}
               isPositive={true}
             />
           </div>
           <div className="col-md-2 col-lg-2">
             <StatCard
               label="Pending Reviews"
-              count={0}
-              change={0}
-              isPositive={true}
+              count={4}
+              change={2}
+              isPositive={false}
             />
           </div>
           <div className="col-md-2 col-lg-2">
             <StatCard
               label="Avg Response Time"
-              count={0}
-              change={0}
-              isPositive={true}
+              count={3.2}
+              change={0.5}
+              isPositive={false}
             />
           </div>
         </div>
