@@ -35,7 +35,12 @@ const ReusableTable = ({
               {columns.map((col) => (
                 <TableCell
                   key={col.id}
-                  sx={{ fontWeight: 500, fontFamily: "poppins", width: col.width || "auto",padding:'8px' }}
+                  sx={{
+                    fontWeight: 500,
+                    fontFamily: "poppins",
+                    width: col.width || "auto",
+                    padding: "8px",
+                  }}
                   //  style={{padding:'8px'}}
                 >
                   {col.label}
@@ -51,11 +56,14 @@ const ReusableTable = ({
                 <TableRow
                   hover
                   key={row.id || rowIndex}
-                  sx={{ cursor: onRowClick ? "pointer" : "default",padding:'8px' }}
+                  sx={{
+                    cursor: onRowClick ? "pointer" : "default",
+                    padding: "8px",
+                  }}
                   onClick={() => onRowClick && onRowClick(row)}
                 >
                   {columns.map((col) => (
-                    <TableCell key={col.id}   sx={{padding:'8px' }} >
+                    <TableCell key={col.id} sx={{ padding: "8px" }}>
                       {col.render
                         ? col.render(row[col.id], row) // Use custom render if provided
                         : row[col.id] ?? "-"}
@@ -86,7 +94,15 @@ const ReusableTable = ({
             page={page}
             onChange={(e, newPage) => onPageChange(newPage)}
             shape="rounded"
-            color="primary"
+            sx={{
+              "& .MuiPaginationItem-root": {
+                color: "#000000",
+              },
+              "& .MuiPaginationItem-root.Mui-selected": {
+                backgroundColor: "#000000",
+                color: "#ffffff",
+              },
+            }}
           />
         </Box>
       )}

@@ -20,6 +20,7 @@ import SubscriptionPLans from "../features/auth/SubscriptionPlans";
 import CreateDiscountCode from "../features/dashboard/Discount Code/CreateDiscountCode";
 import InfluencerPayments from "../features/influencerDashboard/InfluencerPayments";
 import InfluencerSettings from "../features/influencerDashboard/InfluencerSettings";
+import Pricing from "../components/New Pricing/Pricing";
 // import { useAuth } from "../context/Auth";
 
 import InfluencerHome from "../features/influencerDashboard/Home";
@@ -37,15 +38,24 @@ const AppRoutes = () => {
             {onboard ? (
               <Route element={<LayoutRoute />}>
                 <Route path="/" element={<Home />} />
-                <Route path="/dashboard" element={<Home />} />
-                <Route path="/brands" element={<BrandTable />} />
+                <Route path="/pricing" element={<Pricing />} />
+
+
+                <Route path="/seller-home/dashboard" element={<Home />} />
+                <Route path="/seller-home/brands" element={<BrandTable />} />
                 <Route
                   path="/brands/details/:brandId"
                   element={<BrandDetailsPage />}
                 />
-                <Route path="/products" element={<ProductTable />} />
-                <Route path="/payments" element={<PaymentTable />} />
-                <Route path="/reports" element={<ReportTable />} />
+                <Route
+                  path="/seller-home/products"
+                  element={<ProductTable />}
+                />
+                <Route
+                  path="/seller-home/payments"
+                  element={<PaymentTable />}
+                />
+                <Route path="/seller-home/reports" element={<ReportTable />} />
                 <Route
                   path="/create-discount-code"
                   element={<CreateDiscountCode />}

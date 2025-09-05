@@ -36,7 +36,7 @@ const ProductTable = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await catalogApi.getProducts({ page:1, limit:20 });
+        const response = await catalogApi.getProducts({ page: 1, limit: 20 });
         const fetchedProducts = response.data.data.result;
 
         const isActive = localStorage.getItem("active") === "true";
@@ -83,7 +83,12 @@ const ProductTable = () => {
       </div>
       <Box p={2} component={Paper} sx={{ borderRadius: 2 }}>
         {/* Top Controls */}
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={3}
+        >
           <TextField
             placeholder="Search..."
             variant="outlined"
@@ -144,7 +149,11 @@ const ProductTable = () => {
                       style={{ cursor: "pointer" }}
                     >
                       <Avatar
-                        src={item.images && item.images.length > 0 ? item.images[1] : ""}
+                        src={
+                          item.images && item.images.length > 0
+                            ? item.images[1]
+                            : ""
+                        }
                         variant="rounded"
                         sx={{ width: 48, height: 48 }}
                       />
@@ -163,9 +172,7 @@ const ProductTable = () => {
                       </Box>
                     </Box>
                   </TableCell>
-                  <TableCell>
-                    {item.brand?.name || "N/A"}
-                  </TableCell>
+                  <TableCell>{item.brand?.name || "N/A"}</TableCell>
                   <TableCell>
                     {/* If you have influencer data, show it here. Otherwise, use a placeholder */}
                     N/A
@@ -202,12 +209,26 @@ const ProductTable = () => {
         </TableContainer>
 
         {/* Footer Controls */}
-        <Box display="flex" justifyContent="space-between" alignItems="center" mt={3}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mt={3}
+        >
           <Pagination
             count={Math.ceil(products.length / pageSize)}
             page={currentPage}
             onChange={handlePageChange}
             shape="rounded"
+            sx={{
+              "& .MuiPaginationItem-root": {
+                color: "#000000",
+              },
+              "& .MuiPaginationItem-root.Mui-selected": {
+                backgroundColor: "#000000",
+                color: "#ffffff",
+              },
+            }}
           />
           <Box display="flex" alignItems="center" gap={1}>
             <Typography variant="body2">

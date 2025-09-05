@@ -61,7 +61,6 @@ function InfluencerPayments() {
     },
   };
 
-  //   Dummy Card Data
   const DummyData = [
     {
       title: "PayPal (john@example.com)",
@@ -134,6 +133,7 @@ function InfluencerPayments() {
               backgroundColor: "#2A2A2A",
               fontFamily: "Poppins",
               fontSize: "12px",
+              borderRadius: "6px",
             }}
           >
             Add Payment Method
@@ -146,6 +146,7 @@ function InfluencerPayments() {
               color: "black",
               fontFamily: "Poppins",
               fontSize: "12px",
+              borderRadius: "6px",
             }}
           >
             Download Latest Statement
@@ -438,7 +439,7 @@ function InfluencerPayments() {
               IconComponent: () => null,
               MenuProps: {
                 PaperProps: {
-                  sx: { backgroundColor: "#fff" }, // ✅ dropdown bg white
+                  sx: { backgroundColor: "#fff" },
                 },
               },
             }}

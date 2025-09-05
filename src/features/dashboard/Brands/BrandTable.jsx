@@ -176,6 +176,15 @@ const BrandTable = () => {
             onChange={(_, value) => setPage(value)}
             variant="outlined"
             shape="rounded"
+             sx={{
+              "& .MuiPaginationItem-root": {
+                color: "#000000",
+              },
+              "& .MuiPaginationItem-root.Mui-selected": {
+                backgroundColor: "#000000",
+                color: "#ffffff",
+              },
+            }}
           />
         </Box>
       </Box>

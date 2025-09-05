@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, Button, TextField } from "@mui/material";
 import { LuPencil } from "react-icons/lu";
 import { IoMdLock } from "react-icons/io";
@@ -6,6 +6,10 @@ import { RxCross2 } from "react-icons/rx";
 import { LuSave } from "react-icons/lu";
 import { styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
+import ChangePasswordModal from "./ChangePasswordModal";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function InfluencerSettings() {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -14,7 +18,9 @@ function InfluencerSettings() {
     email: "john.doe@example.com",
     socialUrl: "https://instagram.com/johndoe",
   });
+
   const [backupData, setBackupData] = useState(formData);
+  const [open, setOpen] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -24,25 +30,21 @@ function InfluencerSettings() {
   };
 
   const handleEdit = () => {
-    setBackupData(formData); // save backup before editing
+    setBackupData(formData);
     setIsEditing(true);
   };
 
   const handleCancel = () => {
-    setFormData(backupData); // restore backup
+    setFormData(backupData);
     setIsEditing(false);
   };
 
   const handleSave = () => {
-    setIsEditing(false); // keep updated formData
+    setIsEditing(false);
   };
 
   const IOSSwitch = styled((props) => (
-    <Switch
-      focusVisibleClassName=".Mui-focusVisible"
-      disableRipple
-      {...props}
-    />
+    <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
   ))(({ theme }) => ({
     width: 42,
     height: 26,
@@ -100,6 +102,7 @@ function InfluencerSettings() {
       }),
     },
   }));
+
   const DummyNotifications = [
     {
       title: "Notify me when a new product is assigned",
@@ -110,12 +113,105 @@ function InfluencerSettings() {
       description: "Stay informed about changes to your commission structure",
     },
     {
-      title: "Notify me when my commission rate changes",
-      description: "Stay informed about changes to your commission structure",
+      title: "Notify me when my campaign ends",
+      description: "Never miss when a campaign is completed or stopped",
+    },
+    {
+      title: "Notify me when a payout is processed",
+      description: "Receive confirmation when your earnings are processed",
     },
   ];
+
+  // ✅ initialize switches state from localStorage OR default true
+  const [switchStates, setSwitchStates] = useState(() => {
+    const saved = localStorage.getItem("notificationSwitches");
+    return saved ? JSON.parse(saved) : Array(DummyNotifications.length).fill(true);
+  });
+
+  // ✅ keep localStorage updated when switchStates change
+  useEffect(() => {
+    localStorage.setItem("notificationSwitches", JSON.stringify(switchStates));
+  }, [switchStates]);
+
+  const handleSwitchToggle = (index, checked) => {
+    const updatedStates = [...switchStates];
+    updatedStates[index] = checked;
+    setSwitchStates(updatedStates);
+
+    if (checked) {
+      toast.success(
+        <div>
+          <strong style={{ color: "black", fontSize: "12px", fontWeight: "500", fontFamily: "Poppins" }}>
+            Preference Updated
+          </strong>
+          <div style={{ fontSize: "10px", fontFamily: "Poppins", color: "#828797" }}>
+            Platform update the notifications enabled
+          </div>
+        </div>,
+        {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "light",
+          icon: false,
+        }
+      );
+    } else {
+      toast.info(
+        <div>
+          <strong style={{ color: "black", fontSize: "12px", fontWeight: "500", fontFamily: "Poppins" }}>
+            Preference Updated
+          </strong>
+          <div style={{ fontSize: "10px", fontFamily: "Poppins", color: "#828797" }}>
+            Platform update the notifications disabled
+          </div>
+        </div>,
+        {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "light",
+          icon: false,
+        }
+      );
+    }
+  };
+
+  const handleResetDefaults = () => {
+    const resetStates = Array(DummyNotifications.length).fill(true);
+    setSwitchStates(resetStates);
+    localStorage.setItem("notificationSwitches", JSON.stringify(resetStates));
+    toast.success(
+      <div>
+        <strong style={{ color: "black", fontSize: "12px", fontWeight: "500", fontFamily: "Poppins" }}>
+          Preferences Reset
+        </strong>
+        <div style={{ fontSize: "10px", fontFamily: "Poppins", color: "#828797" }}>
+          All notification preferences set to default (enabled)
+        </div>
+      </div>,
+      {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+        icon: false,
+      }
+    );
+  };
+
   return (
     <Box>
+      {/* Header */}
       <Box
         sx={{
           background: "linear-gradient(180deg, #FCFCFC 0%, #F0F7FF 100%)",
@@ -123,19 +219,10 @@ function InfluencerSettings() {
           borderRadius: 2,
         }}
       >
-        <Typography
-          variant="h5"
-          fontWeight={700}
-          sx={{ fontFamily: "Poppins", fontSize: "28px" }}
-        >
+        <Typography variant="h5" fontWeight={700} sx={{ fontFamily: "Poppins", fontSize: "28px" }}>
           Settings
         </Typography>
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          mb={3}
-          sx={{ fontFamily: "Poppins", fontSize: "14px" }}
-        >
+        <Typography variant="body2" color="text.secondary" mb={3} sx={{ fontFamily: "Poppins", fontSize: "14px" }}>
           Manage your account details and preferences.
         </Typography>
         <Box display="flex" gap={2} justifyContent="flex-end">
@@ -147,24 +234,18 @@ function InfluencerSettings() {
               fontFamily: "Poppins",
               fontSize: "12px",
             }}
+            onClick={() => setOpen(true)}
           >
             Change Password
           </Button>
+          <ChangePasswordModal open={open} handleClose={() => setOpen(false)} />
         </Box>
       </Box>
 
+      {/* Personal Information */}
       <Box p={3} sx={{ border: "1px solid #E0E0E0", mt: 3, borderRadius: 2 }}>
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          pr={5}
-        >
-          <Typography
-            variant="h6"
-            fontWeight={700}
-            sx={{ fontFamily: "Poppins", fontSize: "18px" }}
-          >
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6" fontWeight={700} sx={{ fontFamily: "Poppins", fontSize: "18px" }}>
             Personal Information
           </Typography>
           {!isEditing && (
@@ -173,7 +254,7 @@ function InfluencerSettings() {
                 backgroundColor: "#EDEDED",
                 px: 2,
                 py: 1,
-                borderRadius: "15px",
+                borderRadius: "10px",
                 textAlign: "center",
                 cursor: "pointer",
               }}
@@ -193,7 +274,6 @@ function InfluencerSettings() {
                   fontFamily: "Poppins",
                   fontSize: "12px",
                   color: "white",
-                  borderColor: "#2A2A2A",
                   backgroundColor: "#2A2A2A",
                   px: 3,
                   py: 1.5,
@@ -213,7 +293,6 @@ function InfluencerSettings() {
                   borderColor: "#8E1308",
                   px: 3,
                   py: 1.5,
-
                   borderRadius: "15px",
                 }}
               >
@@ -222,16 +301,12 @@ function InfluencerSettings() {
             </Box>
           )}
         </Box>
+
+        {/* Form Fields */}
         <Box display="flex" flexDirection="column" gap={6} mt={3}>
           <Box display="flex" gap={4} width="100%">
             <Box width="50%">
-              <Typography
-                sx={{
-                  fontFamily: "Poppins",
-                  fontWeight: 500,
-                  fontSize: "13px",
-                }}
-              >
+              <Typography sx={{ fontFamily: "Poppins", fontWeight: 500, fontSize: "13px" }}>
                 Full Name
               </Typography>
               {isEditing ? (
@@ -258,13 +333,7 @@ function InfluencerSettings() {
             </Box>
 
             <Box width="50%">
-              <Typography
-                sx={{
-                  fontFamily: "Poppins",
-                  fontWeight: 500,
-                  fontSize: "13px",
-                }}
-              >
+              <Typography sx={{ fontFamily: "Poppins", fontWeight: 500, fontSize: "13px" }}>
                 Phone Number
               </Typography>
               {isEditing ? (
@@ -290,15 +359,10 @@ function InfluencerSettings() {
               )}
             </Box>
           </Box>
+
           <Box display="flex" gap={4} width="100%">
             <Box width="50%">
-              <Typography
-                sx={{
-                  fontFamily: "Poppins",
-                  fontWeight: 500,
-                  fontSize: "13px",
-                }}
-              >
+              <Typography sx={{ fontFamily: "Poppins", fontWeight: 500, fontSize: "13px" }}>
                 Email Address
               </Typography>
               {isEditing ? (
@@ -329,13 +393,7 @@ function InfluencerSettings() {
             </Box>
 
             <Box width="50%">
-              <Typography
-                sx={{
-                  fontFamily: "Poppins",
-                  fontWeight: 500,
-                  fontSize: "13px",
-                }}
-              >
+              <Typography sx={{ fontFamily: "Poppins", fontWeight: 500, fontSize: "13px" }}>
                 Social Profile URL
               </Typography>
               {isEditing ? (
@@ -363,10 +421,10 @@ function InfluencerSettings() {
           </Box>
         </Box>
       </Box>
+
+      {/* Notification Preferences */}
       <Box p={3} sx={{ border: "1px solid #E0E0E0", mt: 3, borderRadius: 2 }}>
-        <Typography
-          sx={{ fontFamily: "Poppins", fontSize: "18px", fontWeight: "700" }}
-        >
+        <Typography sx={{ fontFamily: "Poppins", fontSize: "18px", fontWeight: "700" }}>
           Notification Preferences
         </Typography>
         <Typography
@@ -379,21 +437,11 @@ function InfluencerSettings() {
         >
           Manage how you receive notifications about your account activity
         </Typography>
+
         {DummyNotifications.map((notification, index) => (
-          <Box
-            key={index}
-            mt={3}
-            display={"flex"}
-            justifyContent={"space-between"}
-          >
+          <Box key={index} mt={3} display={"flex"} justifyContent={"space-between"}>
             <Box>
-              <Typography
-                sx={{
-                  fontFamily: "Poppins",
-                  fontSize: "12px",
-                  fontWeight: "400",
-                }}
-              >
+              <Typography sx={{ fontFamily: "Poppins", fontSize: "12px", fontWeight: "400" }}>
                 {notification.title}
               </Typography>
               <Typography
@@ -408,11 +456,35 @@ function InfluencerSettings() {
               </Typography>
             </Box>
             <Box>
-              <IOSSwitch />
+              <IOSSwitch
+                checked={switchStates[index]}
+                onChange={(e) => handleSwitchToggle(index, e.target.checked)}
+              />
             </Box>
           </Box>
         ))}
+
+        <Box sx={{ mt: 2 }}>
+          <Button
+            variant="contained"
+            onClick={handleResetDefaults}
+            sx={{
+              fontFamily: "Poppins",
+              fontSize: "12px",
+              color: "#828797",
+              borderColor: "#E6E6E6",
+              backgroundColor: "#E6E6E6",
+              px: 3,
+              py: 1.5,
+              borderRadius: "4px",
+            }}
+          >
+            Reset to Defaults
+          </Button>
+        </Box>
       </Box>
+
+      <ToastContainer />
     </Box>
   );
 }

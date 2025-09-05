@@ -15,7 +15,8 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ReusableTable from "../../../components/ReusableTable/ReusableTable";
 import { HiArrowsUpDown } from "react-icons/hi2";
 import { LuFilter } from "react-icons/lu";
-
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const MyProductsPage = () => {
   const [page, setPage] = useState(1);
@@ -23,7 +24,20 @@ const MyProductsPage = () => {
   const [filterAll, setFilterAll] = useState("All");
   const [sortOrder, setSortOrder] = useState("Newest Assigned");
 
-  //   const columns = [];
+  const handleCopyLink = async (url) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Successfully Copied", {
+        position: "top-right",
+        autoClose: 2000,
+      });
+    } catch (err) {
+      toast.error("Unable to copy link. Please try again or copy manually", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
+  };
 
   const columns = [
     {
@@ -101,7 +115,7 @@ const MyProductsPage = () => {
           startIcon={<ContentCopyIcon />}
           onClick={(e) => {
             e.stopPropagation();
-            navigator.clipboard.writeText(row.url);
+            handleCopyLink(row.url);
           }}
           style={{
             color: "#344256",
@@ -123,13 +137,13 @@ const MyProductsPage = () => {
     unitsSold: 256,
     totalEarned: "856.32",
     status: i % 3 === 0 ? "Active" : i % 3 === 1 ? "Paused" : "Ended",
-    image: ProteinShaker, // replace with actual
+    image: ProteinShaker, 
     url: "https://example.com/product-link",
   }));
 
   return (
     <Box p={3}>
-      {/* Header */}
+      <ToastContainer />
       <Box
         sx={{
           background: "linear-gradient(180deg, #FCFCFC 0%, #F0F7FF 100%)",
@@ -174,27 +188,17 @@ const MyProductsPage = () => {
             <ListItemText primary="All" />
           </MenuItem>
           <MenuItem value="Active">
-            <Checkbox
-              checked={filterAll === "Active"}
-              size="small"
-            />
+            <Checkbox checked={filterAll === "Active"} size="small" />
             <ListItemText primary="Active" />
           </MenuItem>
           <MenuItem value="Paused">
-            <Checkbox
-              checked={filterAll === "Paused"}
-              size="small"
-            />
+            <Checkbox checked={filterAll === "Paused"} size="small" />
             <ListItemText primary="Paused" />
           </MenuItem>
           <MenuItem value="Ended">
-            <Checkbox
-              checked={filterAll === "Ended"}
-              size="small"
-            />
+            <Checkbox checked={filterAll === "Ended"} size="small" />
             <ListItemText primary="Ended" />
           </MenuItem>
-          
         </TextField>
 
         <TextField
@@ -213,27 +217,23 @@ const MyProductsPage = () => {
           SelectProps={{
             renderValue: (selected) => selected,
           }}
-
         >
           <MenuItem value="Newest Assigned">
-           <Checkbox
-              checked={sortOrder === "New Assigned"}
-              size="small"
-            />
+            <Checkbox checked={sortOrder === "Newest Assigned"} size="small" />
             <ListItemText primary="Newest Assigned" />
           </MenuItem>
 
           <MenuItem value="Units Sold (High to Low)">
             <Checkbox
-              checked={sortOrder === "Units Sold High to Low"}
+              checked={sortOrder === "Units Sold (High to Low)"}
               size="small"
             />
             <ListItemText primary="Units Sold (High → Low)" />
           </MenuItem>
 
-          <MenuItem value="Units Sold Low to High">
+          <MenuItem value="Units Sold (Low to High)">
             <Checkbox
-              checked={sortOrder === "Units Sold Low to High"}
+              checked={sortOrder === "Units Sold (Low to High)"}
               size="small"
             />
             <ListItemText primary="Units Sold (Low → High)" />

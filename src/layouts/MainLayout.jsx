@@ -137,14 +137,14 @@ export default function NavbarWithSidebar({ children }) {
     },
   ];
   const menuItems =
-    authData?.role === "Seller" ? sellerMenuItems : influencerMenuItems;
+    authData?.role === "Seller" ? sellerMenuItems : sellerMenuItems;
 
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
 
       {/* AppBar */}
-      <AppBar
+      {/* <AppBar
         position="fixed"
         elevation={0}
         sx={{
@@ -198,10 +198,10 @@ export default function NavbarWithSidebar({ children }) {
             </Menu>
           </Box>
         </Toolbar>
-      </AppBar>
+      </AppBar> */}
 
       {/* Sidebar */}
-      <Drawer
+      {/* <Drawer
         variant="permanent"
         open={open}
         sx={{
@@ -253,7 +253,7 @@ export default function NavbarWithSidebar({ children }) {
             </ListItem>
           ))}
         </List>
-      </Drawer>
+      </Drawer> */}
 
       {/* Content area */}
       <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
