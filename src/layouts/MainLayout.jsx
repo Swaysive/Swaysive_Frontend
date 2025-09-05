@@ -7,10 +7,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { PiVanBold } from "react-icons/pi";
 import { TbUsers } from "react-icons/tb";
 import { VscGraph } from "react-icons/vsc";
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-
-
-
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 
 import {
   AppBar,
@@ -89,7 +86,7 @@ export default function NavbarWithSidebar({ children }) {
       icon: <PiVanBold size={25} />,
       path: "/seller-home/brands",
     },
-     {
+    {
       text: "Products",
       icon: <RiShoppingBag3Line size={25} />,
       path: "/seller-home/products",
@@ -104,9 +101,9 @@ export default function NavbarWithSidebar({ children }) {
       icon: <MonetizationOnIcon size={25} />,
       path: "/seller-home/track&sales",
     },
-   
+
     { text: "Payments", icon: <Payments />, path: "/seller-home/payments" },
-     {
+    {
       text: "Reports",
       icon: <VscGraph size={25} />,
       path: "/seller-home/reports",
@@ -137,14 +134,12 @@ export default function NavbarWithSidebar({ children }) {
     },
   ];
   const menuItems =
-    authData?.role === "Seller" ? sellerMenuItems : sellerMenuItems;
+    authData?.role === "Seller" ? sellerMenuItems : influencerMenuItems;
 
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-
-      {/* AppBar */}
-      {/* <AppBar
+      <AppBar
         position="fixed"
         elevation={0}
         sx={{
@@ -198,10 +193,8 @@ export default function NavbarWithSidebar({ children }) {
             </Menu>
           </Box>
         </Toolbar>
-      </AppBar> */}
-
-      {/* Sidebar */}
-      {/* <Drawer
+      </AppBar>
+      <Drawer
         variant="permanent"
         open={open}
         sx={{
@@ -220,7 +213,7 @@ export default function NavbarWithSidebar({ children }) {
         <Toolbar />
         <Divider />
 
-        <List >
+        <List>
           {menuItems.map(({ text, icon, path }, index) => (
             <ListItem
               button
@@ -234,7 +227,6 @@ export default function NavbarWithSidebar({ children }) {
                 mx: location.pathname === path ? 1 : "transparent",
                 "&:hover": {
                   bgcolor: "#434343",
-                  
                 },
                 cursor: "pointer",
               }}
@@ -246,16 +238,18 @@ export default function NavbarWithSidebar({ children }) {
               </ListItemIcon>
               {open && (
                 <ListItemText
-                  sx={{ color: location.pathname === path ? "black" : "white", fontFamily: "Poppins", fontSize: "24px" }}
+                  sx={{
+                    color: location.pathname === path ? "black" : "white",
+                    fontFamily: "Poppins",
+                    fontSize: "24px",
+                  }}
                   primary={text}
                 />
               )}
             </ListItem>
           ))}
         </List>
-      </Drawer> */}
-
-      {/* Content area */}
+      </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
         <Toolbar />
         {children}
