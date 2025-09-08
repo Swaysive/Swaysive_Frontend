@@ -37,6 +37,8 @@ const AppRoutes = () => {
           <>
             {onboard ? (
               <Route element={<LayoutRoute />}>
+
+                 {/* Seller role routes */}
                 <Route path="/" element={<Home />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/seller-home/dashboard" element={<Home />} />
@@ -71,6 +73,8 @@ const AppRoutes = () => {
                   path="/influencers/details/:id"
                   element={<InfluencerDetails />}
                 />
+
+                {/* Influencer role routes */}
                 <Route path="/influencer-home" element={<InfluencerHome />} />
                 <Route
                   path="/influencer-home/dashboard"
