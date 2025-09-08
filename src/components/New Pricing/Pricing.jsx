@@ -7,34 +7,34 @@ import { BiCheck } from "react-icons/bi";
 function Pricing() {
   const subscriptions = [
     {
-      duration: "60 Days Free",
-      amount: "$0",
+      duration: "Basic",
+      amount: "$297",
       slogan: "Try every feature without commitment.",
       features: [
-        "Connect 1 Amazon seller account",
-        "Invite up to 2 influencers",
-        "Generate unlimited affiliate tracking links",
-        "Create unique Amazon coupon codes",
-        "View basic analytics (real-time clicks & total sales)",
-        "Access guided onboarding tour & sample campaign templates",
+        "Connect 1 Amazon store",
+        "Extended discount validity (for 30+ days)",
+        "Track basic sales & clicks",
+        "Manage up to 3 influencers",
+        "Simple campaign dashboard",
+        "Email support",
       ],
-      buttontext: "Start free",
+      buttontext: "Start with basic",
     },
     {
       duration: "Pro Subscription",
-      amount: "$297",
+      amount: "$497",
       slogan: "Scale your influencer program with advanced tools.",
       features: [
-        "Connect 1 Amazon seller account",
-        "Invite unlimited influencers",
-        "Generate unlimited tracking links & coupon codes",
-        "Advanced analytics dashboard",
-        "Automated monthly payout scheduling",
-        "Full API access & real-time webhooks",
-        "Priority email & in-app chat support",
-        "Dedicated success manager onboarding call",
+        "Connect up to 3 Amazon stores ",
+        "Extended discount validity (for 30+ days)",
+        "Manage up to 100 influencers ",
+        "Advanced attribution tracking (beyond Amazon’s default window)",
+        "Campaign performance analytics (CTR, conversions, revenue uplift)",
+        "Commission & payout automation",
+        "Influencer dashboard with real-time tracking",
+        "Priority email + chat support",
       ],
-      buttontext: "Subscribe now",
+      buttontext: "Start with pro",
     },
     {
       duration: "Go Ultimate",
@@ -50,13 +50,12 @@ function Pricing() {
         "Dedicated account manager",
         "SLA-backed support (24/7 priority)"
       ],
-      buttontext: "Subscribe Now",
+      buttontext: "Go Ultimate",
     },
   ];
 
   return (
     <Box sx={{ position: "relative" }}>
-      {/* Background bubbles */}
       <Box
         component="img"
         src={BubbleLeft}
@@ -69,8 +68,6 @@ function Pricing() {
         alt=""
         sx={{ position: "absolute", bottom: 0, right: -14, width: "20%" }}
       />
-
-      {/* Heading */}
       <Typography
         variant="h4"
         sx={{
@@ -96,8 +93,6 @@ function Pricing() {
         After your trial, continue with our Pro subscription. <br /> Payment
         details required now; you won’t be billed until after Day 60.
       </Typography>
-
-      {/* Cards */}
       <Box display={"flex"} justifyContent={"center"}>
         <Box
           sx={{
@@ -196,8 +191,6 @@ function Pricing() {
                       </Box>
                     )}
                   </Box>
-
-                  {/* Amount + Slogan */}
                   <Typography
                     className="card-amount"
                     gap={2}
@@ -218,15 +211,13 @@ function Pricing() {
                         fontFamily: "Poppins",
                         fontSize: "12px",
                         fontWeight: "400",
-                        color: "#B9BEC1", // slogan remains gray
+                        color: "#B9BEC1",
                         ml: 0.5,
                       }}
                     >
                       {subscription.slogan}
                     </Typography>
                   </Typography>
-
-                  {/* Features */}
                   <Box>
                     {subscription.features.map((feature, fIndex) => (
                       <Box
@@ -281,8 +272,6 @@ function Pricing() {
                       </Box>
                     ))}
                   </Box>
-
-                  {/* Button */}
                   <Box py={2}>
                     <Button
                       className="card-btn"
