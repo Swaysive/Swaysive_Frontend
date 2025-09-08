@@ -1,34 +1,37 @@
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Logo from '../../../assets/icons/swaysive-auth-logo.svg';
-import { GlobalStyles } from '../../../styles/styles';
-import { toast } from 'react-toastify';
-import { useAuth } from '../../../context/Auth';
+import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Logo from "../../../assets/icons/swaysive-auth-logo.svg";
+import { GlobalStyles } from "../../../styles/styles";
+import { toast } from "react-toastify";
+import { useAuth } from "../../../context/Auth";
+import { IoIosCheckmarkCircleOutline } from "react-icons/io";
+import { IoCloseCircleOutline } from "react-icons/io5";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phoneNumber: '',
-    password: '',
-    confirmPassword: '',
+    // firstName: "",
+    // lastName: "",
+    email: "",
+    // phoneNumber: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [agree, setAgree] = useState(false); // ✅ New state for checkbox
+  const [agree, setAgree] = useState(false);
   const { handleRegister } = useAuth();
 
   const [passwordRequirements, setPasswordRequirements] = useState({
+    length: false,
     capital: false,
     small: false,
     number: false,
@@ -38,19 +41,21 @@ const Register = () => {
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const selectedRole = queryParams.get('role');
+  const selectedRole = queryParams.get("role");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const validateEmail = (email) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
   const handlePasswordChange = (e) => {
     const value = e.target.value;
     setFormData({ ...formData, password: value });
     setIsTypingPassword(true);
     setPasswordRequirements({
+      length: value.length >= 8,
       capital: /[A-Z]/.test(value),
       small: /[a-z]/.test(value),
       number: /[0-9]/.test(value),
@@ -62,53 +67,68 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
 
-    const { firstName, lastName, email, phoneNumber, password, confirmPassword } = formData;
+    const {
+      // firstName,
+      // lastName,
+      email,
+      // phoneNumber,
+      password,
+      confirmPassword,
+    } = formData;
 
-    if (!firstName || !lastName || !email || !phoneNumber || !password || !confirmPassword) {
-      toast.error('All fields are required.');
+    if (
+      // !firstName ||
+      // !lastName ||
+      !email ||
+      // !phoneNumber ||
+      !password ||
+      !confirmPassword
+    ) {
+      toast.error("All fields are required.");
       setLoading(false);
       return;
     }
 
     if (!validateEmail(email)) {
-      toast.error('Please enter a valid email address.');
+      toast.error("Please enter a valid email address.");
       setLoading(false);
       return;
     }
 
     if (password !== confirmPassword) {
-      toast.error('Passwords do not match.');
+      toast.error("Passwords does not match.");
       setLoading(false);
       return;
     }
 
     if (!agree) {
-      toast.error('You must agree to the Terms and Privacy Policy.');
+      toast.error("You must agree to the Terms and Privacy Policy.");
       setLoading(false);
       return;
     }
 
     try {
       const payload = {
-        firstName,
-        lastName,
-        role: selectedRole || 'ORG_ADMIN',
+        // firstName,
+        // lastName,
+        role: selectedRole || "ORG_ADMIN",
         email,
-        phoneNumber,
+        // phoneNumber,
         password,
         confirmPassword,
-        agreedToTerms: agree, // ✅ Send to backend if needed
+        agreedToTerms: agree,
       };
 
       const response = await handleRegister(payload);
 
-      if (response.status === 'success') {
-        toast.success('Registration successful');
+      if (response.status === "success") {
+        toast.success("Registration successful");
       } else {
-        toast.error('Registration failed, please try again.');
+        toast.error("Registration failed, please try again.");
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'An unexpected error occurred.';
+      const errorMessage =
+        error.response?.data?.message || "An unexpected error occurred.";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -119,7 +139,7 @@ const Register = () => {
     <div className="container d-flex justify-content-center align-items-center vh-100">
       <div className="card p-4" style={GlobalStyles.card}>
         <img src={Logo} alt="Logo" style={GlobalStyles.logo} />
-        
+
         <form onSubmit={handleSubmit} style={GlobalStyles.customForm}>
           {/* Email Field */}
           <div className="mb-3">
@@ -134,13 +154,11 @@ const Register = () => {
               required
             />
           </div>
-
-          {/* Password Field */}
           <div className="mb-3">
             <label style={GlobalStyles.inputLabel}>Password</label>
             <TextField
               label="Password"
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               name="password"
               fullWidth
               value={formData.password}
@@ -149,7 +167,10 @@ const Register = () => {
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
@@ -157,18 +178,85 @@ const Register = () => {
               }}
             />
             {isTypingPassword && (
-              <ul style={{ listStyleType: 'none', padding: 0 }}>
-                <li className={passwordRequirements.capital ? 'text-success' : 'text-danger'}>
-                  One uppercase letter
+              <ul style={{ listStyleType: "none", padding: 0, marginTop:"15px" }}>
+                <li style={{ display: "flex", alignItems: "center" }}>
+                  {passwordRequirements.length ? (
+                    <IoIosCheckmarkCircleOutline color="green" size={18} />
+                  ) : (
+                    <IoCloseCircleOutline color="red" size={18} />
+                  )}
+                  <span
+                    style={{
+                      marginLeft: "6px",
+                      color: passwordRequirements.length ? "green" : "red",
+                    }}
+                  >
+                    Password must be at least 8 characters
+                  </span>
                 </li>
-                <li className={passwordRequirements.small ? 'text-success' : 'text-danger'}>
-                  One lowercase letter
+
+                <li style={{ display: "flex", alignItems: "center" }}>
+                  {passwordRequirements.capital ? (
+                    <IoIosCheckmarkCircleOutline color="green" size={18} />
+                  ) : (
+                    <IoCloseCircleOutline color="red" size={18} />
+                  )}
+                  <span
+                    style={{
+                      marginLeft: "6px",
+                      color: passwordRequirements.capital ? "green" : "red",
+                    }}
+                  >
+                    Contains at least one uppercase
+                  </span>
                 </li>
-                <li className={passwordRequirements.number ? 'text-success' : 'text-danger'}>
-                  One number
+
+                <li style={{ display: "flex", alignItems: "center" }}>
+                  {passwordRequirements.small ? (
+                    <IoIosCheckmarkCircleOutline color="green" size={18} />
+                  ) : (
+                    <IoCloseCircleOutline color="red" size={18} />
+                  )}
+                  <span
+                    style={{
+                      marginLeft: "6px",
+                      color: passwordRequirements.small ? "green" : "red",
+                    }}
+                  >
+                    Contains at least one lowercase
+                  </span>
                 </li>
-                <li className={passwordRequirements.special ? 'text-success' : 'text-danger'}>
-                  One special character
+
+                <li style={{ display: "flex", alignItems: "center" }}>
+                  {passwordRequirements.number ? (
+                    <IoIosCheckmarkCircleOutline color="green" size={18} />
+                  ) : (
+                    <IoCloseCircleOutline color="red" size={18} />
+                  )}
+                  <span
+                    style={{
+                      marginLeft: "6px",
+                      color: passwordRequirements.number ? "green" : "red",
+                    }}
+                  >
+                    Contains at least one number (0-9)
+                  </span>
+                </li>
+
+                <li style={{ display: "flex", alignItems: "center" }}>
+                  {passwordRequirements.special ? (
+                    <IoIosCheckmarkCircleOutline color="green" size={18} />
+                  ) : (
+                    <IoCloseCircleOutline color="red" size={18} />
+                  )}
+                  <span
+                    style={{
+                      marginLeft: "6px",
+                      color: passwordRequirements.special ? "green" : "red",
+                    }}
+                  >
+                    Contains at least one special character (@, #, *, %, etc)
+                  </span>
                 </li>
               </ul>
             )}
@@ -179,7 +267,7 @@ const Register = () => {
             <label style={GlobalStyles.inputLabel}>Confirm Password</label>
             <TextField
               label="Confirm Password"
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               name="confirmPassword"
               fullWidth
               value={formData.confirmPassword}
@@ -188,7 +276,10 @@ const Register = () => {
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
@@ -198,30 +289,30 @@ const Register = () => {
           </div>
 
           {/* ✅ Terms and Privacy Checkbox */}
-       <div className="mb-3">
-  <FormControlLabel
-    control={
-      <Checkbox
-        checked={agree}
-        onChange={(e) => setAgree(e.target.checked)}
-      />
-    }
-    label={
-      <span
-        style={{
-          display: 'inline-block',
-          whiteSpace: 'no-wrap', // allows wrapping
-          lineHeight: '1.2',    // better readability for 2 lines
-          fontSize:'12px'
-        }}
-      >
-        I agree to <strong>Swaysive’s </strong>  Terms and Privacy Policy.
-      </span>
-    }
-    style={{ alignItems: 'center' }} // aligns top with checkbox
-  />
-</div>
-
+          <div className="mb-3">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={agree}
+                  onChange={(e) => setAgree(e.target.checked)}
+                />
+              }
+              label={
+                <span
+                  style={{
+                    display: "inline-block",
+                    whiteSpace: "no-wrap",
+                    lineHeight: "1.2",
+                    fontSize: "12px",
+                  }}
+                >
+                  I agree to <strong>Swaysive’s </strong> Terms and Privacy
+                  Policy.
+                </span>
+              }
+              style={{ alignItems: "center" }}
+            />
+          </div>
 
           <div className="d-grid">
             <Button
@@ -232,19 +323,10 @@ const Register = () => {
               fullWidth
               disabled={loading}
             >
-              {loading ? 'Registering...' : 'Sign Up'}
+              {loading ? "Registering..." : "Create Account"}
             </Button>
           </div>
         </form>
-
-        <div className="text-center mt-3">
-          <p className="text-secondary">
-            Already have an account?{' '}
-            <a href="/" style={GlobalStyles.customLink}>
-              Login here.
-            </a>
-          </p>
-        </div>
       </div>
     </div>
   );

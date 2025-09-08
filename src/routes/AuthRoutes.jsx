@@ -15,7 +15,7 @@ const AuthRoutes = () => {
       <Routes>
       <Route path="/registerRoles" element={<RegisterRoles />} />
         <Route path="/" element={<Login />} />
-           <Route path="/signup" element={<InfluencerSignup />} />
+           <Route path="/influencer/signup" element={<InfluencerSignup />} />
         <Route path="/register" element={<Register />} />
         <Route path="/otp-verify" element={<OTPVerification />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
