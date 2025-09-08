@@ -134,7 +134,7 @@ export default function NavbarWithSidebar({ children }) {
     },
   ];
   const menuItems =
-    authData?.role === "Seller" ? sellerMenuItems : influencerMenuItems;
+    authData?.role === "Seller" ? sellerMenuItems : sellerMenuItems;
 
   return (
     <Box sx={{ display: "flex" }}>

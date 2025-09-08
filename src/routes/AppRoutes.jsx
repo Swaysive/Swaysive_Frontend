@@ -32,7 +32,6 @@ const AppRoutes = () => {
   return (
     <Router>
       <Routes>
-        {/* Auth Routes */}
         {authData ? (
           <>
             {onboard ? (
@@ -63,7 +62,7 @@ const AppRoutes = () => {
                   element={<ProductDetailsPage />}
                 />
 
-                {/* <Route path="/plans" element={<SubscriptionPLans />} />   */}
+                {/* <Route path="/plans" element={<SubscriptionPLans />} />  */}
 
                 {/* Influencer routes */}
                 <Route path="/influencers" element={<InfluencerTable />} />

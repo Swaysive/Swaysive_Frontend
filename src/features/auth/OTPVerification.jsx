@@ -14,7 +14,11 @@ const OTPVerification = () => {
   const [timer, setTimer] = useState(30); // 30 seconds
   const [canResend, setCanResend] = useState(false);
   const inputRefs = useRef([]);
-  const { handleResendEmail, handleVerifyEmail, handleVerifyForgotPasswordEmail } = useAuth();
+  const {
+    handleResendEmail,
+    handleVerifyEmail,
+    handleVerifyForgotPasswordEmail,
+  } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -34,7 +38,7 @@ const OTPVerification = () => {
   const formatTime = () => {
     const minutes = Math.floor(timer / 60);
     const seconds = timer % 60;
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
   const handleChange = (index, value) => {
@@ -63,34 +67,39 @@ const OTPVerification = () => {
       setCanResend(false);
       try {
         const response = await handleResendEmail({ email });
-        if (response.status === 'success') {
+        if (response.status === "success") {
           toast.success("A new OTP has been sent to your email.");
         } else {
           toast.error(response);
         }
       } catch (error) {
-        toast.error(error.message || 'Failed to resend OTP. Please check your network.');
+        toast.error(
+          error.message || "Failed to resend OTP. Please check your network."
+        );
       }
     }
   };
 
   const handleVerify = async (e) => {
     e.preventDefault();
-    const verificationCode = otp.join('');
+    const verificationCode = otp.join("");
     if (verificationCode.length !== otpLength) {
-      toast.error('Please enter the complete verification code.');
+      toast.error("Please enter the complete verification code.");
       return;
     }
     try {
       let response;
-      if (type === 'email-verification') {
+      if (type === "email-verification") {
         response = await handleVerifyEmail({ email, otp: verificationCode });
       } else {
-        response = await handleVerifyForgotPasswordEmail({ email, otp: verificationCode });
+        response = await handleVerifyForgotPasswordEmail({
+          email,
+          otp: verificationCode,
+        });
       }
-      if (response.status === 'success') {
+      if (response.status === "success") {
         toast.success("Email verified successfully!");
-        navigate('/');
+        navigate("/");
         // if (type === 'email-verification') {
         //   navigate('/auth/login');
         // } else if (type === 'password-reset') {
@@ -99,10 +108,10 @@ const OTPVerification = () => {
         //   });
         // }
       } else {
-        toast.error(response || 'Verification failed. Please try again.');
+        toast.error(response || "Verification failed. Please try again.");
       }
     } catch (error) {
-      toast.error('Failed to verify OTP. Please check your network.');
+      toast.error("Failed to verify OTP. Please check your network.");
     }
   };
 
@@ -112,7 +121,8 @@ const OTPVerification = () => {
         <img src={Logo} alt="Logo" style={GlobalStyles.logo} />
         <h2 className="text-center">Enter OTP Code</h2>
         <p className="text-center text-secondary">
-          Please enter OTP Code sent to<br /> your email {email}
+          Please enter OTP Code sent to
+          <br /> your email {email}
         </p>
         <form
           onSubmit={handleVerify}

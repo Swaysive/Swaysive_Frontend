@@ -179,9 +179,19 @@ const BrandsDetail = () => {
               page={page}
               onChange={(e, value) => setPage(value)}
               shape="rounded"
+              sx={{
+                      "& .MuiPaginationItem-root": {
+                        color: "#000000",
+                      },
+                      "& .MuiPaginationItem-root.Mui-selected": {
+                        backgroundColor: "#000000",
+                        color: "#ffffff",
+                      },
+                    }}
             />
             <Box display="flex" alignItems="center" gap={1}>
-              <Typography variant="body2">
+              <Typography variant="body2"
+              >
                 Showing {rows.length} of {totalCount} entries
               </Typography>
               <Select
@@ -190,6 +200,7 @@ const BrandsDetail = () => {
                 onChange={(e) => {
                   setPageSize(e.target.value);
                   setPage(1);
+                  
                 }}
               >
                 <MenuItem value={5}>Show 5</MenuItem>
