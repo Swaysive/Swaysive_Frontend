@@ -7,7 +7,7 @@ import Home from "../features/dashboard/Home";
 import BrandTable from "../features/dashboard/Brands/BrandTable";
 import { useAuth } from "../context/Auth";
 import ProductTable from "../features/dashboard/Products/ProductTable";
-import LayoutRoute from "./LayoutRoute"; // import layout wrapper
+import LayoutRoute from "./LayoutRoute"; 
 import InfluencerTable from "../features/dashboard/Influencers/InfluencerTable";
 import ProductDetailsPage from "../features/dashboard/Products/ProductDetailsPage";
 import InfluencerDetails from "../features/dashboard/Influencers/InfluencerDetails";
@@ -21,78 +21,75 @@ import CreateDiscountCode from "../features/dashboard/Discount Code/CreateDiscou
 import InfluencerPayments from "../features/influencerDashboard/InfluencerPayments";
 import InfluencerSettings from "../features/influencerDashboard/InfluencerSettings";
 import Pricing from "../components/New Pricing/Pricing";
-// import { useAuth } from "../context/Auth";
-
 import InfluencerHome from "../features/influencerDashboard/Home";
 import MyProductsPage from "../features/dashboard/Influencers/MyProducts";
 
 const AppRoutes = () => {
-  const { authData, onboard, loading, step } = useAuth();
+  const { authData, onboard } = useAuth();
+  const role = authData?.user?.role; // 👈 extract role safely
 
   return (
     <Router>
       <Routes>
-        {/* Auth Routes */}
         {authData ? (
           <>
             {onboard ? (
               <Route element={<LayoutRoute />}>
+                
+                {/* ✅ Seller role routes */}
+                {role === "seller" && (
+                  <>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/pricing" element={<Pricing />} />
+                    <Route path="/seller-home/dashboard" element={<Home />} />
+                    <Route path="/seller-home/brands" element={<BrandTable />} />
+                    <Route
+                      path="/brands/details/:brandId"
+                      element={<BrandDetailsPage />}
+                    />
+                    <Route path="/seller-home/products" element={<ProductTable />} />
+                    <Route path="/seller-home/payments" element={<PaymentTable />} />
+                    <Route path="/seller-home/reports" element={<ReportTable />} />
+                    <Route
+                      path="/create-discount-code"
+                      element={<CreateDiscountCode />}
+                    />
+                    <Route
+                      path="/products/details/:id"
+                      element={<ProductDetailsPage />}
+                    />
 
-                 {/* Seller role routes */}
-                <Route path="/" element={<Home />} />
-                <Route path="/pricing" element={<Pricing />} />
-                <Route path="/seller-home/dashboard" element={<Home />} />
-                <Route path="/seller-home/brands" element={<BrandTable />} />
-                <Route
-                  path="/brands/details/:brandId"
-                  element={<BrandDetailsPage />}
-                />
-                <Route
-                  path="/seller-home/products"
-                  element={<ProductTable />}
-                />
-                <Route
-                  path="/seller-home/payments"
-                  element={<PaymentTable />}
-                />
-                <Route path="/seller-home/reports" element={<ReportTable />} />
-                <Route
-                  path="/create-discount-code"
-                  element={<CreateDiscountCode />}
-                />
-                <Route
-                  path="/products/details/:id"
-                  element={<ProductDetailsPage />}
-                />
+                    {/* If seller also manages influencers */}
+                    <Route path="/seller-home/influencer" element={<InfluencerTable />} />
+                    <Route
+                      path="/seller-home/influencers/details/:id"
+                      element={<InfluencerDetails />}
+                    />
+                  </>
+                )}
 
-                {/* <Route path="/plans" element={<SubscriptionPLans />} />   */}
-
-                {/* Influencer routes */}
-                <Route path="/influencers" element={<InfluencerTable />} />
-                <Route
-                  path="/influencers/details/:id"
-                  element={<InfluencerDetails />}
-                />
-
-                {/* Influencer role routes */}
-                <Route path="/influencer-home" element={<InfluencerHome />} />
-                <Route
-                  path="/influencer-home/dashboard"
-                  element={<InfluencerHome />}
-                />
-                <Route
-                  path="/influencer-home/products"
-                  element={<MyProductsPage />}
-                />
-                <Route
-                  path="/influencer-home/payments"
-                  element={<InfluencerPayments />}
-                />
-                <Route
-                  path="/influencer-home/settings"
-                  element={<InfluencerSettings />}
-                />
-                {/* Add more layout-wrapped routes here */}
+                {/* ✅ Influencer role routes */}
+                {role === "influencer" && (
+                  <>
+                    <Route path="/" element={<InfluencerHome />} />
+                    <Route
+                      path="/influencer-home/dashboard"
+                      element={<InfluencerHome />}
+                    />
+                    <Route
+                      path="/influencer-home/products"
+                      element={<MyProductsPage />}
+                    />
+                    <Route
+                      path="/influencer-home/payments"
+                      element={<InfluencerPayments />}
+                    />
+                    <Route
+                      path="/influencer-home/settings"
+                      element={<InfluencerSettings />}
+                    />
+                  </>
+                )}
               </Route>
             ) : (
               <Route path="/" element={<SubscriptionPLans />} />
@@ -101,6 +98,8 @@ const AppRoutes = () => {
         ) : (
           <Route path="/*" element={<AuthRoutes />} />
         )}
+
+        {/* Common routes (accessible to all) */}
         <Route path="/session" element={<Session />} />
         <Route path="/onboard/*" element={<OnboardRoutes />} />
         <Route path="*" element={<NotFoundPage />} />

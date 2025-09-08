@@ -36,6 +36,8 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useNavigate, useParams } from "react-router-dom";
 import { catalogApi } from "../../../api/catalogApi";
 import { usersApi } from "../../../api/usersApi";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
 const randomAvatars = [
   "https://randomuser.me/api/portraits/men/1.jpg",
@@ -58,6 +60,27 @@ const ProductDetailsPage = () => {
   const [variants, setVariants] = useState([]);
   const [influencers, setInfluencers] = useState([]);
   const [assignedInfluencer, setAssignedInfluencer] = useState(null);
+  const [analytics, setAnalytics] = useState([
+    {
+      date: "2025-09-01",
+      price: 29.99,
+      traffic: 1200,
+      unitsSold: 50,
+      conversionRate: "4.2%",
+      trend: "increase",
+    },
+    {
+      date: "2025-09-02",
+      price: 29.99,
+      traffic: 1100,
+      unitsSold: 45,
+      conversionRate: "4.1%",
+      trend: "decrease",
+    },
+    // Add more mock rows as needed
+  ]);
+  const [analyticsPage, setAnalyticsPage] = useState(1);
+  const [analyticsPageSize, setAnalyticsPageSize] = useState(5);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -68,7 +91,7 @@ const ProductDetailsPage = () => {
         if (response.data.status === "success") {
           setProduct(response.data.data);
           setVariants(response.data.data.variants || []);
-          setInfluencer(response.data.data.overview.influencer)
+          setInfluencer(response.data.data.overview.influencer);
           // Set active status based on first variant or product status
           if (
             response.data.data.variants &&
@@ -153,13 +176,35 @@ const ProductDetailsPage = () => {
   const handleCreateCoupon = () => {
     // navigate(`/create-discount-code/${product.overview._id}`);
     navigate("/create-discount-code", {
-    state: { productApiId: product._id, productId: product.overview._id, productTitle: product?.title, productPrice:product?.overview.price, productAsin:product?.overview.variant_sku  }
-  });
+      state: {
+        productApiId: product._id,
+        productId: product.overview._id,
+        productTitle: product?.title,
+        productPrice: product?.overview.price,
+        productAsin: product?.overview.variant_sku,
+      },
+    });
   };
 
   // Paginated variants
   const startIndex = (currentPage - 1) * pageSize;
   const paginatedVariants = variants.slice(startIndex, startIndex + pageSize);
+
+  // Analytics pagination
+  const analyticsTotalPages = Math.ceil(analytics.length / analyticsPageSize);
+  const analyticsPaginated = analytics.slice(
+    (analyticsPage - 1) * analyticsPageSize,
+    analyticsPage * analyticsPageSize
+  );
+
+  const handleAnalyticsPageChange = (event, value) => {
+    setAnalyticsPage(value);
+  };
+
+  const handleAnalyticsPageSizeChange = (event) => {
+    setAnalyticsPageSize(event.target.value);
+    setAnalyticsPage(1);
+  };
 
   return (
     <>
@@ -262,15 +307,16 @@ const ProductDetailsPage = () => {
                   </Grid>
                   <Grid item xs={6}>
                     <div className="mb-2" style={{ color: "#667085" }}>
-                      <strong className="text-dark">Brand:</strong> {product?.brand?.name}
+                      <strong className="text-dark">Brand:</strong>{" "}
+                      {product?.brand?.name}
                     </div>
                     <div className="mb-2" style={{ color: "#667085" }}>
-                      <strong className="text-dark">Category:</strong> 
+                      <strong className="text-dark">Category:</strong>
                       {product?.overview?.best_sellers_rank?.[0]?.category}
                     </div>
                     <div className="mb-2" style={{ color: "#667085" }}>
                       <strong className="text-dark">Best Seller Rank: </strong>
-                     {product?.overview?.best_sellers_rank?.[0]?.rank}
+                      {product?.overview?.best_sellers_rank?.[0]?.rank}
                       {/* {product?.overview?.best_seller_rank?.[0]?.rank} */}
                     </div>
                     <div>
@@ -442,6 +488,75 @@ const ProductDetailsPage = () => {
                 size="small"
                 value={pageSize}
                 onChange={handlePageSizeChange}
+              >
+                <MenuItem value={5}>Show 5</MenuItem>
+                <MenuItem value={10}>Show 10</MenuItem>
+                <MenuItem value={25}>Show 25</MenuItem>
+              </Select>
+            </div>
+          </div>
+        </div>
+
+        {/* Analytics Table */}
+        <div className="mt-4">
+          <Typography variant="h6" gutterBottom>
+            Analytics
+          </Typography>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead style={{ backgroundColor: "#F0F0F2" }}>
+                <TableRow>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Price</TableCell>
+                  <TableCell>Traffic</TableCell>
+                  <TableCell>Units Sold</TableCell>
+                  <TableCell>Conversion Rate</TableCell>
+                  <TableCell>Increased/Decreased</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {analyticsPaginated.map((row, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell>{row.date}</TableCell>
+                    <TableCell>${row.price}</TableCell>
+                    <TableCell>{row.traffic}</TableCell>
+                    <TableCell>{row.unitsSold}</TableCell>
+                    <TableCell>{row.conversionRate}</TableCell>
+                    <TableCell>
+                      <span>
+                        {row.trend === "increase" ? (
+                          <ArrowUpwardIcon
+                            sx={{ color: "green", fontSize: 18 }}
+                          />
+                        ) : (
+                          <ArrowDownwardIcon
+                            sx={{ color: "red", fontSize: 18 }}
+                          />
+                        )}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <div className="d-flex justify-content-between align-items-center mt-3">
+            <Pagination
+              count={analyticsTotalPages}
+              page={analyticsPage}
+              onChange={handleAnalyticsPageChange}
+              shape="rounded"
+              size="small"
+            />
+            <div className="d-flex align-items-center gap-2">
+              <Typography variant="body2">
+                Showing {analyticsPaginated.length} of {analytics.length}{" "}
+                entries
+              </Typography>
+              <Select
+                size="small"
+                value={analyticsPageSize}
+                onChange={handleAnalyticsPageSizeChange}
               >
                 <MenuItem value={5}>Show 5</MenuItem>
                 <MenuItem value={10}>Show 10</MenuItem>
