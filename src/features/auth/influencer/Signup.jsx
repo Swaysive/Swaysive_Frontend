@@ -17,10 +17,10 @@ import { IoCloseCircleOutline } from "react-icons/io5";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    // firstName: "",
+    // lastName: "",
     email: "",
-    phoneNumber: "",
+    // phoneNumber: "",
     password: "",
     confirmPassword: "",
   });
@@ -31,7 +31,7 @@ const Register = () => {
   const { handleRegister } = useAuth();
 
   const [passwordRequirements, setPasswordRequirements] = useState({
-    length: false, // ✅ added
+    length: false,
     capital: false,
     small: false,
     number: false,
