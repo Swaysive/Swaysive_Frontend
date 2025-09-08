@@ -62,6 +62,8 @@ export default function NavbarWithSidebar({ children }) {
     setAnchorEl(null);
   };
 
+  console.log("authData in layout:", authData);
+
   const onLogout = async () => {
     handleMenuClose();
     try {
@@ -133,8 +135,9 @@ export default function NavbarWithSidebar({ children }) {
       path: "/influencer-home/settings",
     },
   ];
-  const menuItems =
-    authData?.role === "Seller" ? sellerMenuItems : sellerMenuItems;
+ const menuItems =
+  authData?.user?.role === "seller" ? sellerMenuItems : influencerMenuItems;
+
 
   return (
     <Box sx={{ display: "flex" }}>
