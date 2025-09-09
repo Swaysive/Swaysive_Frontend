@@ -60,27 +60,12 @@ const ProductDetailsPage = () => {
   const [variants, setVariants] = useState([]);
   const [influencers, setInfluencers] = useState([]);
   const [assignedInfluencer, setAssignedInfluencer] = useState(null);
-  const [analytics, setAnalytics] = useState([
-    {
-      date: "2025-09-01",
-      price: 29.99,
-      traffic: 1200,
-      unitsSold: 50,
-      conversionRate: "4.2%",
-      trend: "increase",
-    },
-    {
-      date: "2025-09-02",
-      price: 29.99,
-      traffic: 1100,
-      unitsSold: 45,
-      conversionRate: "4.1%",
-      trend: "decrease",
-    },
-    // Add more mock rows as needed
-  ]);
+  const [analytics, setAnalytics] = useState([]);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [analyticsPage, setAnalyticsPage] = useState(1);
   const [analyticsPageSize, setAnalyticsPageSize] = useState(5);
+  const [discountCodes, setDiscountCodes] = useState([]);
+  const [discountCodesLoading, setDiscountCodesLoading] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -128,6 +113,40 @@ const ProductDetailsPage = () => {
     };
     fetchInfluencers();
   }, []);
+
+  useEffect(() => {
+    const fetchDiscountCodes = async () => {
+      if (!product?._id) return;
+      setDiscountCodesLoading(true);
+      try {
+        const res = await catalogApi.productCodes(product._id);
+        if (res.data.status === "success") {
+          setDiscountCodes(res.data.data);
+        }
+      } catch (e) {
+        setDiscountCodes([]);
+      }
+      setDiscountCodesLoading(false);
+    };
+    fetchDiscountCodes();
+  }, [product?._id]);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      if (!product?._id) return;
+      setAnalyticsLoading(true);
+      try {
+        const res = await catalogApi.productAnalytics(product._id);
+        if (res.data.status === "success") {
+          setAnalytics(res.data.data);
+        }
+      } catch (e) {
+        setAnalytics([]);
+      }
+      setAnalyticsLoading(false);
+    };
+    fetchAnalytics();
+  }, [product?._id]);
 
   const handleAssign = () => {
     localStorage.setItem("influencer", "true");
@@ -279,11 +298,11 @@ const ProductDetailsPage = () => {
                   <Grid item xs={6}>
                     <div className="mb-2" style={{ color: "#667085" }}>
                       <strong className="text-dark">ASIN:</strong>{" "}
-                      {product?.overview.variant_sku}
+                      {product?.overview?.variant_sku}
                     </div>
                     <div className="mb-2" style={{ color: "#667085" }}>
                       <strong className="text-dark">Price:</strong> $
-                      {product?.overview.price}
+                      {product?.overview?.price}
                     </div>
 
                     <div className="d-flex align-items-center mb-2 ">
@@ -364,7 +383,7 @@ const ProductDetailsPage = () => {
                 {influencer ? (
                   <div>
                     <Avatar
-                      src="https://randomuser.me/api/portraits/men/1.jpg"
+                      src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
                       alt="user"
                       sx={{ width: 180, height: 180, margin: "0 auto 10px" }}
                     />
@@ -497,6 +516,75 @@ const ProductDetailsPage = () => {
           </div>
         </div>
 
+        {/* Discount Codes Table */}
+        <div className="mt-4">
+          <Typography variant="h6" gutterBottom>
+            Discount Codes
+          </Typography>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead style={{ backgroundColor: "#F0F0F2" }}>
+                <TableRow>
+                  <TableCell>Discount Code</TableCell>
+                  <TableCell>Type</TableCell>
+                  <TableCell>Amount</TableCell>
+                  <TableCell>Applies To</TableCell>
+                  <TableCell>Valid From</TableCell>
+                  <TableCell>Valid To</TableCell>
+                  <TableCell>Status</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {discountCodesLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={7} align="center">
+                      Loading...
+                    </TableCell>
+                  </TableRow>
+                ) : discountCodes.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} align="center">
+                      No discount codes found.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  discountCodes.map((code, idx) => (
+                    <TableRow key={idx}>
+                      <TableCell>{code.discountCode}</TableCell>
+                      <TableCell>{code.type}</TableCell>
+                      <TableCell>
+                        {code.type === "percentage"
+                          ? `${code.amount}%`
+                          : `$${code.amount}`}
+                      </TableCell>
+                      <TableCell>
+                        {code.appliesTo.length} variant(s)
+                      </TableCell>
+                      <TableCell>
+                        {code.validFrom
+                          ? new Date(code.validFrom).toLocaleDateString()
+                          : "-"}
+                      </TableCell>
+                      <TableCell>
+                        {code.validTo
+                          ? new Date(code.validTo).toLocaleDateString()
+                          : "-"}
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          label={code.status === "active" ? "Active" : "Inactive"}
+                          size="small"
+                          color={code.status === "active" ? "success" : "default"}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
+
         {/* Analytics Table */}
         <div className="mt-4">
           <Typography variant="h6" gutterBottom>
@@ -515,28 +603,40 @@ const ProductDetailsPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {analyticsPaginated.map((row, idx) => (
-                  <TableRow key={idx}>
-                    <TableCell>{row.date}</TableCell>
-                    <TableCell>${row.price}</TableCell>
-                    <TableCell>{row.traffic}</TableCell>
-                    <TableCell>{row.unitsSold}</TableCell>
-                    <TableCell>{row.conversionRate}</TableCell>
-                    <TableCell>
-                      <span>
-                        {row.trend === "increase" ? (
-                          <ArrowUpwardIcon
-                            sx={{ color: "green", fontSize: 18 }}
-                          />
-                        ) : (
-                          <ArrowDownwardIcon
-                            sx={{ color: "red", fontSize: 18 }}
-                          />
-                        )}
-                      </span>
+                {analyticsLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      Loading...
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : analytics.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      No analytics data found.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  analytics.map((row, idx) => (
+                    <TableRow key={idx}>
+                      <TableCell>{row.date}</TableCell>
+                      <TableCell>${row.price}</TableCell>
+                      <TableCell>{row.clicks}</TableCell>
+                      <TableCell>{row.unitsSold}</TableCell>
+                      <TableCell>{row.conversionRate}</TableCell>
+                      <TableCell>
+                        <span>
+                          {row.change > 0 ? (
+                            <ArrowUpwardIcon sx={{ color: "green", fontSize: 18 }} />
+                          ) : row.change < 0 ? (
+                            <ArrowDownwardIcon sx={{ color: "red", fontSize: 18 }} />
+                          ) : (
+                            "-"
+                          )}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -570,8 +670,9 @@ const ProductDetailsPage = () => {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onInvite={handleInviteClick}
-        productId={product?.overview._id}
+        productId={product?._id}
         influencers={influencers}
+        variants={variants}
         onAssign={handleAssignInfluencer}
       />
 

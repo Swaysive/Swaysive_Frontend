@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -17,12 +17,32 @@ import { HiArrowsUpDown } from "react-icons/hi2";
 import { LuFilter } from "react-icons/lu";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { influencerApi } from "../../../api/influencerApi"; // <-- import your API
 
 const MyProductsPage = () => {
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
   const [filterAll, setFilterAll] = useState("All");
   const [sortOrder, setSortOrder] = useState("Newest Assigned");
+  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const response = await influencerApi.getProducts();
+        if (response.data.status === "success") {
+          setProducts(response.data.data);
+        }
+      } catch (error) {
+        toast.error("Failed to fetch products");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   const handleCopyLink = async (url) => {
     try {
@@ -47,41 +67,59 @@ const MyProductsPage = () => {
       render: (value, row) => (
         <Box display="flex" alignItems="center" gap={1}>
           <Avatar
-            src={row.image}
-            alt={row.product}
+            src={row.images?.[1] || row.images?.[0] || ProteinShaker}
+            alt={row.productTitle}
             variant="rounded"
             sx={{ width: 40, height: 40 }}
           />
           <Typography variant="body2" fontWeight={600}>
-            {row.product}
+            {row.productTitle}
           </Typography>
         </Box>
       ),
     },
-    { id: "brand", label: "Brand", width: "15%" },
+    {
+      id: "brand",
+      label: "Brand",
+      width: "15%",
+      render: (value, row) => <Typography>{row.brand}</Typography>,
+    },
     {
       id: "commission",
       label: "Commission",
       width: "10%",
-      render: (value) => <Typography>{value}%</Typography>,
+      render: (value, row) => <Typography>{row.commission}%</Typography>,
     },
-    { id: "unitsSold", label: "Units Sold", width: "10%" },
+    {
+      id: "unitsSold",
+      label: "Units Sold",
+      width: "10%",
+      render: (value, row) => <Typography>{row.unitsSold}</Typography>,
+    },
     {
       id: "totalEarned",
       label: "Total Earned",
       width: "10%",
-      render: (value) => <Typography>${value}</Typography>,
+      render: (value, row) => <Typography>${row.totalEarned}</Typography>,
     },
     {
       id: "status",
       label: "Status",
       width: "10%",
-      render: (value) => {
+      render: (value, row) => {
         const colorMap = {
-          Active: "green",
-          Paused: "#999",
-          Ended: "red",
+          active: "green",
+          paused: "#999",
+          ended: "red",
         };
+        const statusLabel =
+          row.status === "active"
+            ? "Active"
+            : row.status === "paused"
+            ? "Paused"
+            : row.status === "ended"
+            ? "Ended"
+            : row.status;
         return (
           <Box display="flex" alignItems="center" gap={1}>
             <Box
@@ -89,16 +127,16 @@ const MyProductsPage = () => {
                 width: 8,
                 height: 8,
                 borderRadius: "50%",
-                backgroundColor: colorMap[value] || "#ccc",
+                backgroundColor: colorMap[row.status?.toLowerCase()] || "#ccc",
               }}
             />
             <Typography
               sx={{
-                color: colorMap[value] || "#000",
+                color: colorMap[row.status?.toLowerCase()] || "#000",
                 fontWeight: 500,
               }}
             >
-              {value}
+              {statusLabel}
             </Typography>
           </Box>
         );
@@ -115,8 +153,9 @@ const MyProductsPage = () => {
           startIcon={<ContentCopyIcon />}
           onClick={(e) => {
             e.stopPropagation();
-            handleCopyLink(row.url);
+            handleCopyLink(row.affiliateLink);
           }}
+          disabled={!row.affiliateLink} // Disable if affiliateLink is null or empty
           style={{
             color: "#344256",
             border: "#E1E7EF 1px solid",
@@ -129,17 +168,30 @@ const MyProductsPage = () => {
     },
   ];
 
-  const rows = Array.from({ length: 20 }).map((_, i) => ({
-    id: i + 1,
-    product: "Premium Protein Shaker",
-    brand: "Helimix",
-    commission: 15,
-    unitsSold: 256,
-    totalEarned: "856.32",
-    status: i % 3 === 0 ? "Active" : i % 3 === 1 ? "Paused" : "Ended",
-    image: ProteinShaker, 
-    url: "https://example.com/product-link",
-  }));
+  // Filtering and sorting can be applied here if needed
+  const filteredProducts =
+    filterAll === "All"
+      ? products
+      : products.filter(
+          (p) => p.status?.toLowerCase() === filterAll.toLowerCase()
+        );
+
+  // Sorting logic (example for units sold and earnings)
+  let sortedProducts = [...filteredProducts];
+  if (sortOrder === "Units Sold (High to Low)") {
+    sortedProducts.sort((a, b) => b.unitsSold - a.unitsSold);
+  } else if (sortOrder === "Units Sold (Low to High)") {
+    sortedProducts.sort((a, b) => a.unitsSold - b.unitsSold);
+  } else if (sortOrder === "Earnings High to Low") {
+    sortedProducts.sort((a, b) => b.totalEarned - a.totalEarned);
+  } else if (sortOrder === "Earnings Low to High") {
+    sortedProducts.sort((a, b) => a.totalEarned - b.totalEarned);
+  }
+
+  const paginatedRows = sortedProducts.slice(
+    (page - 1) * rowsPerPage,
+    page * rowsPerPage
+  );
 
   return (
     <Box p={3}>
@@ -261,11 +313,12 @@ const MyProductsPage = () => {
       {columns.length > 0 ? (
         <ReusableTable
           columns={columns}
-          rows={rows}
+          rows={paginatedRows}
           page={page}
           rowsPerPage={rowsPerPage}
-          totalCount={rows.length}
+          totalCount={sortedProducts.length}
           onPageChange={(newPage) => setPage(newPage)}
+          loading={loading}
         />
       ) : (
         <Box

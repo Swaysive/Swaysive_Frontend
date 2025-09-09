@@ -7,7 +7,7 @@ import Home from "../features/dashboard/Home";
 import BrandTable from "../features/dashboard/Brands/BrandTable";
 import { useAuth } from "../context/Auth";
 import ProductTable from "../features/dashboard/Products/ProductTable";
-import LayoutRoute from "./LayoutRoute"; 
+import LayoutRoute from "./LayoutRoute";
 import InfluencerTable from "../features/dashboard/Influencers/InfluencerTable";
 import ProductDetailsPage from "../features/dashboard/Products/ProductDetailsPage";
 import InfluencerDetails from "../features/dashboard/Influencers/InfluencerDetails";
@@ -33,23 +33,37 @@ const AppRoutes = () => {
       <Routes>
         {authData ? (
           <>
-            {onboard ? (
+            {/* ✅ Apply onboard check only for sellers */}
+            {role === "seller" && !onboard ? (
+              <Route path="/*" element={<SubscriptionPLans />} />
+            ) : (
               <Route element={<LayoutRoute />}>
-                
                 {/* ✅ Seller role routes */}
                 {role === "seller" && (
                   <>
                     <Route path="/" element={<Home />} />
                     <Route path="/pricing" element={<Pricing />} />
                     <Route path="/seller-home/dashboard" element={<Home />} />
-                    <Route path="/seller-home/brands" element={<BrandTable />} />
+                    <Route
+                      path="/seller-home/brands"
+                      element={<BrandTable />}
+                    />
                     <Route
                       path="/brands/details/:brandId"
                       element={<BrandDetailsPage />}
                     />
-                    <Route path="/seller-home/products" element={<ProductTable />} />
-                    <Route path="/seller-home/payments" element={<PaymentTable />} />
-                    <Route path="/seller-home/reports" element={<ReportTable />} />
+                    <Route
+                      path="/seller-home/products"
+                      element={<ProductTable />}
+                    />
+                    <Route
+                      path="/seller-home/payments"
+                      element={<PaymentTable />}
+                    />
+                    <Route
+                      path="/seller-home/reports"
+                      element={<ReportTable />}
+                    />
                     <Route
                       path="/create-discount-code"
                       element={<CreateDiscountCode />}
@@ -58,9 +72,10 @@ const AppRoutes = () => {
                       path="/products/details/:id"
                       element={<ProductDetailsPage />}
                     />
-
-                    {/* If seller also manages influencers */}
-                    <Route path="/seller-home/influencer" element={<InfluencerTable />} />
+                    <Route
+                      path="/seller-home/influencer"
+                      element={<InfluencerTable />}
+                    />
                     <Route
                       path="/seller-home/influencers/details/:id"
                       element={<InfluencerDetails />}
@@ -91,8 +106,6 @@ const AppRoutes = () => {
                   </>
                 )}
               </Route>
-            ) : (
-              <Route path="/" element={<SubscriptionPLans />} />
             )}
           </>
         ) : (

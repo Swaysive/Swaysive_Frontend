@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -14,13 +14,19 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../../context/Auth";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import { usersApi } from "../../../api/usersApi";
+import { useNavigate } from "react-router-dom";
 
-const Register = () => {
+const InfluencerSignup = () => {
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+  const emailParam = searchParams.get("email");
+  const decodedEmail = emailParam ? decodeURIComponent(emailParam) : "";
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    // firstName: "",
-    // lastName: "",
-    email: "",
-    // phoneNumber: "",
+    firstName: "",
+    lastName: "",
     password: "",
     confirmPassword: "",
   });
@@ -39,16 +45,9 @@ const Register = () => {
   });
   const [isTypingPassword, setIsTypingPassword] = useState(false);
 
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const selectedRole = queryParams.get("role");
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
-  const validateEmail = (email) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
   const handlePasswordChange = (e) => {
     const value = e.target.value;
@@ -67,36 +66,16 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
 
-    const {
-      // firstName,
-      // lastName,
-      email,
-      // phoneNumber,
-      password,
-      confirmPassword,
-    } = formData;
+    const { firstName, lastName, password, confirmPassword } = formData;
 
-    if (
-      // !firstName ||
-      // !lastName ||
-      !email ||
-      // !phoneNumber ||
-      !password ||
-      !confirmPassword
-    ) {
+    if (!firstName || !lastName || !password || !confirmPassword) {
       toast.error("All fields are required.");
       setLoading(false);
       return;
     }
 
-    if (!validateEmail(email)) {
-      toast.error("Please enter a valid email address.");
-      setLoading(false);
-      return;
-    }
-
     if (password !== confirmPassword) {
-      toast.error("Passwords does not match.");
+      toast.error("Passwords do not match.");
       setLoading(false);
       return;
     }
@@ -109,20 +88,17 @@ const Register = () => {
 
     try {
       const payload = {
-        // firstName,
-        // lastName,
-        role: selectedRole || "ORG_ADMIN",
-        email,
-        // phoneNumber,
+        token: token,
+        firstName,
+        lastName,
         password,
-        confirmPassword,
-        agreedToTerms: agree,
       };
 
-      const response = await handleRegister(payload);
+      const response = await usersApi.acceptInvitation(payload);
 
-      if (response.status === "success") {
+      if (response.data.status === "success") {
         toast.success("Registration successful");
+        navigate("/");
       } else {
         toast.error("Registration failed, please try again.");
       }
@@ -141,7 +117,35 @@ const Register = () => {
         <img src={Logo} alt="Logo" style={GlobalStyles.logo} />
 
         <form onSubmit={handleSubmit} style={GlobalStyles.customForm}>
-          {/* Email Field */}
+          {/* First Name and Last Name Fields */}
+          <div className="d-flex mb-3">
+            <div className="me-2" style={{ flex: 1 }}>
+              <label style={GlobalStyles.inputLabel}>First Name</label>
+              <TextField
+                label="First Name"
+                type="text"
+                name="firstName"
+                fullWidth
+                value={formData.firstName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <label style={GlobalStyles.inputLabel}>Last Name</label>
+              <TextField
+                label="Last Name"
+                type="text"
+                name="lastName"
+                fullWidth
+                value={formData.lastName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+
+          {/* Email Field (non-editable) */}
           <div className="mb-3">
             <label style={GlobalStyles.inputLabel}>Email</label>
             <TextField
@@ -149,11 +153,15 @@ const Register = () => {
               type="email"
               name="email"
               fullWidth
-              value={formData.email}
-              onChange={handleChange}
+              value={decodedEmail}
+              InputProps={{
+                readOnly: true,
+              }}
               required
             />
           </div>
+
+          {/* Password Field */}
           <div className="mb-3">
             <label style={GlobalStyles.inputLabel}>Password</label>
             <TextField
@@ -178,7 +186,7 @@ const Register = () => {
               }}
             />
             {isTypingPassword && (
-              <ul style={{ listStyleType: "none", padding: 0, marginTop:"15px" }}>
+              <ul style={{ listStyleType: "none", padding: 0, marginTop: "15px" }}>
                 <li style={{ display: "flex", alignItems: "center" }}>
                   {passwordRequirements.length ? (
                     <IoIosCheckmarkCircleOutline color="green" size={18} />
@@ -194,7 +202,6 @@ const Register = () => {
                     Password must be at least 8 characters
                   </span>
                 </li>
-
                 <li style={{ display: "flex", alignItems: "center" }}>
                   {passwordRequirements.capital ? (
                     <IoIosCheckmarkCircleOutline color="green" size={18} />
@@ -210,7 +217,6 @@ const Register = () => {
                     Contains at least one uppercase
                   </span>
                 </li>
-
                 <li style={{ display: "flex", alignItems: "center" }}>
                   {passwordRequirements.small ? (
                     <IoIosCheckmarkCircleOutline color="green" size={18} />
@@ -226,7 +232,6 @@ const Register = () => {
                     Contains at least one lowercase
                   </span>
                 </li>
-
                 <li style={{ display: "flex", alignItems: "center" }}>
                   {passwordRequirements.number ? (
                     <IoIosCheckmarkCircleOutline color="green" size={18} />
@@ -242,7 +247,6 @@ const Register = () => {
                     Contains at least one number (0-9)
                   </span>
                 </li>
-
                 <li style={{ display: "flex", alignItems: "center" }}>
                   {passwordRequirements.special ? (
                     <IoIosCheckmarkCircleOutline color="green" size={18} />
@@ -288,7 +292,7 @@ const Register = () => {
             />
           </div>
 
-          {/* ✅ Terms and Privacy Checkbox */}
+          {/* Terms and Privacy Checkbox */}
           <div className="mb-3">
             <FormControlLabel
               control={
@@ -332,4 +336,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default InfluencerSignup;

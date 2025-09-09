@@ -10,6 +10,9 @@ import {
   Button,
   Grid,
   InputAdornment,
+  Checkbox,
+  Box,
+  ListItemText,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
@@ -21,12 +24,14 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { toast } from 'react-toastify';
 
-const randomAvatars = [
-  "https://randomuser.me/api/portraits/men/1.jpg",
-  "https://randomuser.me/api/portraits/women/2.jpg",
-  "https://randomuser.me/api/portraits/men/3.jpg",
-  "https://randomuser.me/api/portraits/women/4.jpg"
-];
+// const randomAvatars = [
+//   "https://randomuser.me/api/portraits/men/1.jpg",
+//   "https://randomuser.me/api/portraits/women/2.jpg",
+//   "https://randomuser.me/api/portraits/men/3.jpg",
+//   "https://randomuser.me/api/portraits/women/4.jpg"
+// ];
+
+const randomAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png"
 
 const swayFee = 1.5; // Fixed
 
@@ -36,6 +41,7 @@ const AssignInfluencerModal = ({
   onInvite,
   productId,
   influencers = [],
+  variants = [],
   onAssign,
   onSuccess
 }) => {
@@ -45,6 +51,8 @@ const AssignInfluencerModal = ({
   const [commission, setCommission] = useState("");
   const [generatedUrl, setGeneratedUrl] = useState(null);
   const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [selectedVariants, setSelectedVariants] = useState([]);
+  const [affiliateLinks, setAffiliateLinks] = useState([]); // <-- new state
 
   // Assign influencer to product
   const handleAssign = async () => {
@@ -66,22 +74,27 @@ const AssignInfluencerModal = ({
 
   const total = commission ? parseFloat(commission) + swayFee : "";
 
-  // Generate affiliate link
+  // Multi-select handler for variants
+  const handleVariantChange = (event) => {
+    setSelectedVariants(event.target.value);
+  };
+
+  // Generate affiliate link (update to handle multiple links)
   const handleGenerate = async () => {
     try {
-      const reesponse =await catalogApi.generateAffiliateLink({
+      const response = await catalogApi.generateAffiliateLink({
         productId,
         influencerId: selectedInfluencerId,
         commissionRate: Number(total),
+        variantIds: selectedVariants,
       });
-      setGeneratedUrl(reesponse.data.data.affiliateLink)
+      // Response: { status, message, data: [ { variantId, affiliateLink, ... } ] }
+      setAffiliateLinks(response.data.data || []);
       // setSuccessModalOpen(true);
-      if (onSuccess) onSuccess();
     } catch (error) {
       const errorMessage =
-              error.response?.data?.message || "An unexpected error occurred.";
-            toast.error(errorMessage);
-      // Optionally show error
+        error.response?.data?.message || "An unexpected error occurred.";
+      toast.error(errorMessage);
     }
   };
 
@@ -93,12 +106,12 @@ const AssignInfluencerModal = ({
     setCommission("");
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(generatedUrl);
+  const handleCopy = (url) => {
+    navigator.clipboard.writeText(url);
   };
 
-  const handleOpen = () => {
-    window.open(generatedUrl, "_blank");
+  const handleOpen = (url) => {
+    window.open(url, "_blank");
   };
 
   const handleSuccessModalClose = () => {
@@ -137,9 +150,43 @@ const AssignInfluencerModal = ({
             {influencers.map((inf, idx) => (
               <MenuItem key={inf.id} value={inf.id}>
                 <div className="d-flex align-items-center">
-                  <Avatar src={inf.image} className="me-2" />
+                  <Avatar src={randomAvatar} className="me-2" />
                   <span>{inf.name}</span>
                 </div>
+              </MenuItem>
+            ))}
+          </TextField>
+
+          {/* Multi-select Variants Dropdown (moved below influencer input) */}
+          <TextField
+            select
+            fullWidth
+            label="Select Variants"
+            value={selectedVariants}
+            onChange={handleVariantChange}
+            SelectProps={{
+              multiple: true,
+              renderValue: (selected) =>
+                selected
+                  .map(
+                    (id) =>
+                      variants.find((v) => v._id === id)?.variant_sku || ""
+                  )
+                  .join(", "),
+            }}
+            className="mb-3"
+          >
+            {variants.map((variant) => (
+              <MenuItem key={variant._id} value={variant._id}>
+                <Checkbox checked={selectedVariants.indexOf(variant._id) > -1} />
+                <Avatar
+                  src={variant.images?.[1] || ""}
+                  sx={{ width: 32, height: 22, mr: 1 }}
+                />
+                <ListItemText
+                  primary={variant.variant_title}
+                  secondary={variant.variant_sku}
+                />
               </MenuItem>
             ))}
           </TextField>
@@ -213,7 +260,7 @@ const AssignInfluencerModal = ({
                   fullWidth
                   variant="contained"
                   sx={{ mt: 3, backgroundColor: "#000" }}
-                  disabled={!commission}
+                  disabled={!commission || selectedVariants.length === 0}
                   onClick={handleGenerate}
                   // sx={{ mt: 2 }}
                 >
@@ -224,29 +271,36 @@ const AssignInfluencerModal = ({
           )}
 
             {/* URL Display */}
-          {generatedUrl && (
-            <Grid item xs={12}>
-              <Typography fontSize={13} mb={0.5}>
-                URL
+          {affiliateLinks.length > 0 && (
+            <div className="mb-3">
+              <Typography fontSize={13} mb={1} fontWeight={600}>
+                Affiliate Links
               </Typography>
-              <TextField
-                fullWidth
-                value={generatedUrl}
-                disabled
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={handleCopy}>
-                        <ContentCopyIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton onClick={handleOpen}>
-                        <OpenInNewIcon fontSize="small" />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
+              {affiliateLinks.map((linkObj, idx) => (
+                <Box key={linkObj.variantId} mb={2}>
+                  <Typography fontSize={12} mb={0.5}>
+                    Variant SKU: {variants.find(v => v._id === linkObj.variantId)?.variant_sku || linkObj.variantId}
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    value={linkObj.affiliateLink}
+                    disabled
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={() => handleCopy(linkObj.affiliateLink)}>
+                            <ContentCopyIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton onClick={() => handleOpen(linkObj.affiliateLink)}>
+                            <OpenInNewIcon fontSize="small" />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Box>
+              ))}
+            </div>
           )}
 
           {/* Done Button */}
@@ -274,9 +328,9 @@ const AssignInfluencerModal = ({
       <Dialog open={successModalOpen} onClose={handleSuccessModalClose}>
         <DialogContent className="text-center py-4 px-5">
           <CheckCircleIcon style={{ fontSize: 50, color: "green" }} />
-          <h5 className="fw-bold mt-3 mb-3">Affiliate Link Generated!</h5>
+          <h5 className="fw-bold mt-3 mb-3">Affiliate Links Generated!</h5>
           <Typography className="text-muted mb-0">
-            The affiliate link has been generated successfully.
+            The affiliate links have been generated successfully.
           </Typography>
           <Button
             variant="contained"

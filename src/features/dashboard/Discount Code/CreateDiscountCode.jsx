@@ -74,6 +74,16 @@ export default function CreateDiscountCode() {
     fetchProductAndVariants();
   }, [productId]);
 
+  // Check if any variant has a discount
+  const anyVariantHasDiscount = variants.some((v) => v.hasDiscount);
+
+  // Set default variationType if any variant has discount
+  useEffect(() => {
+    if (anyVariantHasDiscount) {
+      setVariationType("selected");
+    }
+  }, [anyVariantHasDiscount]);
+
   // Handle variant selection
   const handleVariantToggle = (variantId) => {
     setSelectedVariants((prev) =>
@@ -109,10 +119,9 @@ export default function CreateDiscountCode() {
     };
 
     try {
-
        const res = await catalogApi.createCouponsCode({
         data: payload,
-        productId: productId,
+        productId: productApiId,
       });
         if (res.data.status === "success") {
           setDiscountCode(res.data.data.discountCode);
@@ -239,8 +248,16 @@ export default function CreateDiscountCode() {
                 setVariationType("all");
                 setSelectedVariants([]);
               }}
+              disabled={anyVariantHasDiscount} // Disable if any variant has discount
             />
-            <label className="form-check-label">All Variations (default)</label>
+            <label className="form-check-label" style={{ color: anyVariantHasDiscount ? "#bbb" : undefined }}>
+              All Variations (default)
+              {anyVariantHasDiscount && (
+                <span className="ms-2 text-danger" style={{ fontSize: 12 }}>
+                  (Disabled: at least one variant already has a discount)
+                </span>
+              )}
+            </label>
           </div>
           <div className="form-check mt-2">
             <input
@@ -289,37 +306,51 @@ export default function CreateDiscountCode() {
                   padding: 8,
                 }}
               >
-                {variants.map((variant) => (
-                  <div
-                    key={variant._id}
-                    className="d-flex align-items-center py-1"
-                    style={{
-                      borderBottom: "1px solid #f0f0f0",
-                      cursor: "pointer",
-                      background: selectedVariants.includes(variant._id)
-                        ? "#e6f4ea"
-                        : "transparent",
-                    }}
-                    onClick={() => handleVariantToggle(variant._id)}
-                  >
-                    <Checkbox
-                      checked={selectedVariants.includes(variant._id)}
-                      tabIndex={-1}
-                      disableRipple
-                      sx={{ marginRight: 1 }}
-                      inputProps={{ "aria-labelledby": `variant-${variant._id}` }}
-                    />
-                    <Avatar
-                      src={variant.images?.[1] || ""}
-                      alt={variant.variant_title}
-                      sx={{ width: 32, height: 32, mr: 2 }}
-                    />
-                    <div>
-                      <div style={{ fontWeight: 500 }}>{variant.variant_title}</div>
-                      <div style={{ fontSize: 13, color: "#888" }}>{variant.variant_sku}</div>
+                {variants.map((variant) => {
+                  const isDisabled = variant.hasDiscount;
+                  return (
+                    <div
+                      key={variant._id}
+                      className="d-flex align-items-center py-1"
+                      style={{
+                        borderBottom: "1px solid #f0f0f0",
+                        cursor: isDisabled
+                          ? "not-allowed"
+                          : "pointer",
+                        background: selectedVariants.includes(variant._id)
+                          ? "#e6f4ea"
+                          : "transparent",
+                        opacity: isDisabled ? 0.5 : 1,
+                        pointerEvents: isDisabled ? "none" : "auto",
+                        filter: isDisabled ? "blur(1px) grayscale(0.5)" : "none",
+                      }}
+                      onClick={() => !isDisabled && handleVariantToggle(variant._id)}
+                    >
+                      <Checkbox
+                        checked={selectedVariants.includes(variant._id)}
+                        tabIndex={-1}
+                        disableRipple
+                        sx={{ marginRight: 1 }}
+                        inputProps={{ "aria-labelledby": `variant-${variant._id}` }}
+                        disabled={isDisabled}
+                      />
+                      <Avatar
+                        src={variant.images?.[1] || ""}
+                        alt={variant.variant_title}
+                        sx={{ width: 32, height: 32, mr: 2 }}
+                      />
+                      <div>
+                        <div style={{ fontWeight: 500 }}>{variant.variant_title}</div>
+                        <div style={{ fontSize: 13, color: "#888" }}>{variant.variant_sku}</div>
+                        {isDisabled && (
+                          <div style={{ fontSize: 12, color: "#d9534f" }}>
+                            Already has a discount
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
