@@ -39,7 +39,8 @@ function Pricing() {
     {
       duration: "Go Ultimate",
       amount: "$800",
-      slogan: "For large Amazon brands or agencies managing multiple stores and hundreds of influencers.",
+      slogan:
+        "For large Amazon brands or agencies managing multiple stores and hundreds of influencers.",
       features: [
         "Unlimited Amazon stores",
         "Unlimited influencers",
@@ -48,7 +49,7 @@ function Pricing() {
         "Customizable campaign rules & tiers",
         "Integrations with HubSpot and Slack",
         "Dedicated account manager",
-        "SLA-backed support (24/7 priority)"
+        "SLA-backed support (24/7 priority)",
       ],
       buttontext: "Go Ultimate",
     },
@@ -97,7 +98,7 @@ function Pricing() {
         <Box
           sx={{
             width: "80%",
-            height: "660px",
+            height: "700px",
             borderRadius: "37px",
             backgroundColor: "#D9D9D969",
             border: "1px solid #D4D4D4",
@@ -120,10 +121,13 @@ function Pricing() {
                   backgroundColor: "#FFFFFF",
                   boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                   transition: "all 0.2s ease",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
                   "&:hover": {
-                    transform: "scale(1.05)",
+                    transform: "scale(1.03)",
                     backgroundColor: "#000",
-                    border: "6px solid #D4D4D480", 
+                    border: "6px solid #D4D4D480",
                     "& .feature-text": { color: "#fff" },
                     "& .card-title": { color: "#fff" },
                     "& .card-amount": { color: "#fff" },
@@ -145,7 +149,7 @@ function Pricing() {
                   },
                 }}
               >
-                <Box p={2.5}>
+                <Box p={2.5} flexGrow={1}>
                   <Box
                     display={"flex"}
                     alignItems={"center"}
@@ -162,34 +166,32 @@ function Pricing() {
                     >
                       {subscription.duration}
                     </Typography>
-                    {index === 1 && (
-                      <Box
-                        className="monthly-box"
+                    <Box
+                      className="monthly-box"
+                      sx={{
+                        width: "74px",
+                        height: "27px",
+                        backgroundColor: "black",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: "4px",
+                        transition: "all 0.3s ease",
+                      }}
+                    >
+                      <Typography
+                        className="monthly-text"
                         sx={{
-                          width: "74px",
-                          height: "27px",
-                          backgroundColor: "black",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          borderRadius: "4px",
+                          fontFamily: "Poppins",
+                          fontSize: "12px",
+                          fontWeight: "500",
+                          color: "white",
                           transition: "all 0.3s ease",
                         }}
                       >
-                        <Typography
-                          className="monthly-text"
-                          sx={{
-                            fontFamily: "Poppins",
-                            fontSize: "12px",
-                            fontWeight: "500",
-                            color: "white",
-                            transition: "all 0.3s ease",
-                          }}
-                        >
-                          Monthly
-                        </Typography>
-                      </Box>
-                    )}
+                        Monthly
+                      </Typography>
+                    </Box>
                   </Box>
                   <Typography
                     className="card-amount"
@@ -238,26 +240,12 @@ function Pricing() {
                             borderRadius: "50%",
                             backgroundColor: "#EBEFF0",
                             flexShrink: 0,
+                            "& svg": {
+                              color: "#B9BEC1",
+                            },
                           }}
                         >
-                          <Box
-                            className="icon-wrapper"
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              width: 20,
-                              height: 20,
-                              borderRadius: "50%",
-                              backgroundColor: "#EBEFF0",
-                              flexShrink: 0,
-                              "& svg": {
-                                color: "#B9BEC1",
-                              },
-                            }}
-                          >
-                            <BiCheck size={18} />
-                          </Box>
+                          <BiCheck size={18} />
                         </Box>
                         <Typography
                           className="feature-text"
@@ -272,24 +260,24 @@ function Pricing() {
                       </Box>
                     ))}
                   </Box>
-                  <Box py={2}>
-                    <Button
-                      className="card-btn"
-                      variant="outlined"
-                      sx={{
-                        border: "1px solid #DFE2E7",
-                        fontFamily: "Poppins",
-                        textTransform: "none",
-                        backgroundColor: "#262626",
-                        color: "white",
-                        width: "100%",
-                        py: 1.2,
-                        borderRadius: "8px",
-                      }}
-                    >
-                      {subscription.buttontext}
-                    </Button>
-                  </Box>
+                </Box>
+                <Box p={2}>
+                  <Button
+                    className="card-btn"
+                    variant="outlined"
+                    sx={{
+                      border: "1px solid #DFE2E7",
+                      fontFamily: "Poppins",
+                      textTransform: "none",
+                      backgroundColor: "#262626",
+                      color: "white",
+                      width: "100%",
+                      py: 1.2,
+                      borderRadius: "8px",
+                    }}
+                  >
+                    {subscription.buttontext}
+                  </Button>
                 </Box>
               </Box>
             ))}

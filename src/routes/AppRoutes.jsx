@@ -22,6 +22,7 @@ import InfluencerPayments from "../features/influencerDashboard/InfluencerPaymen
 import InfluencerSettings from "../features/influencerDashboard/InfluencerSettings";
 import Pricing from "../components/New Pricing/Pricing";
 // import { useAuth } from "../context/Auth";
+import TrackandSales from "../components/Seller Track&Sales/TrackandSales"
 
 import InfluencerHome from "../features/influencerDashboard/Home";
 import MyProductsPage from "../features/dashboard/Influencers/MyProducts";
@@ -62,6 +63,10 @@ const AppRoutes = () => {
                 <Route
                   path="/products/details/:id"
                   element={<ProductDetailsPage />}
+                />
+                 <Route
+                  path="/seller-home/trackandsales"
+                  element={<TrackandSales />}
                 />
 
                 {/* <Route path="/plans" element={<SubscriptionPLans />} />  */}

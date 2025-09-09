@@ -101,7 +101,7 @@ export default function NavbarWithSidebar({ children }) {
     {
       text: "Track & Sales",
       icon: <MonetizationOnIcon size={25} />,
-      path: "/seller-home/track&sales",
+      path: "/seller-home/trackandsales",
     },
 
     { text: "Payments", icon: <Payments />, path: "/seller-home/payments" },
