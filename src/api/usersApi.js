@@ -26,6 +26,10 @@ export const usersApi = {
     return apiInstance.post("/invitation/send", data);
   },
 
+  acceptInvitation: async (data) => {
+    return apiInstance.post("/invitation/accept", data);
+  },
+
   subscriptionChange: async () => {
     return apiInstance.post("/subscription/change");
   },

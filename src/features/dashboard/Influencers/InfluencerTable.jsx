@@ -17,12 +17,13 @@ import { usersApi } from "../../../api/usersApi";
 import { toast } from "react-toastify";
 
 // 4 random avatars
-const randomAvatars = [
-  "https://randomuser.me/api/portraits/men/1.jpg",
-  "https://randomuser.me/api/portraits/women/2.jpg",
-  "https://randomuser.me/api/portraits/men/3.jpg",
-  "https://randomuser.me/api/portraits/women/4.jpg"
-];
+// const randomAvatars = [
+//   "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+//   "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+//   "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+//   "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+// ];
+const randomAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png"
 
 const getBrandChip = (brand) => (
   <Chip label={brand} color="primary" size="small" className="me-1 mb-1" />
@@ -47,7 +48,8 @@ const InfluencerTable = () => {
           const mapped = response.data.data.map((user, idx) => ({
             id: user.id,
             name: `${user.firstName} ${user.lastName}`,
-            avatar: randomAvatars[idx % randomAvatars.length],
+            // avatar: randomAvatars[idx % randomAvatars.length],
+            avatar: randomAvatar,
             brands: ["Helimix"], // Placeholder, update if you have real data
             status: user.status === "active" ? "Active" : "Pending",
             socials: { fb: "1.5M", ig: "1.5M" }, // Placeholder
@@ -99,7 +101,7 @@ const InfluencerTable = () => {
   };
 
   const handleInfluencerClick = (id) => {
-    navigate(`/influencers/details/${id}`);
+    navigate(`/seller-home/influencers/details/${id}`);
   };
 
   return (

@@ -22,8 +22,8 @@ const ReusableTable = ({
   onRowClick,
   showPagination = true,
 }) => {
-  const startIndex = (page - 1) * rowsPerPage;
-  const displayedRows = rows.slice(startIndex, startIndex + rowsPerPage);
+  // ✅ For backend pagination, use rows directly
+  const displayedRows = rows;
 
   return (
     <Box>
@@ -41,7 +41,6 @@ const ReusableTable = ({
                     width: col.width || "auto",
                     padding: "8px",
                   }}
-                  //  style={{padding:'8px'}}
                 >
                   {col.label}
                 </TableCell>
@@ -65,7 +64,7 @@ const ReusableTable = ({
                   {columns.map((col) => (
                     <TableCell key={col.id} sx={{ padding: "8px" }}>
                       {col.render
-                        ? col.render(row[col.id], row) // Use custom render if provided
+                        ? col.render(row[col.id], row)
                         : row[col.id] ?? "-"}
                     </TableCell>
                   ))}

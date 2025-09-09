@@ -36,6 +36,8 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useNavigate, useParams } from "react-router-dom";
 import { catalogApi } from "../../../api/catalogApi";
 import { usersApi } from "../../../api/usersApi";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
 const randomAvatars = [
   "https://randomuser.me/api/portraits/men/1.jpg",
@@ -58,6 +60,12 @@ const ProductDetailsPage = () => {
   const [variants, setVariants] = useState([]);
   const [influencers, setInfluencers] = useState([]);
   const [assignedInfluencer, setAssignedInfluencer] = useState(null);
+  const [analytics, setAnalytics] = useState([]);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [analyticsPage, setAnalyticsPage] = useState(1);
+  const [analyticsPageSize, setAnalyticsPageSize] = useState(5);
+  const [discountCodes, setDiscountCodes] = useState([]);
+  const [discountCodesLoading, setDiscountCodesLoading] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -68,7 +76,7 @@ const ProductDetailsPage = () => {
         if (response.data.status === "success") {
           setProduct(response.data.data);
           setVariants(response.data.data.variants || []);
-          setInfluencer(response.data.data.overview.influencer)
+          setInfluencer(response.data.data.overview.influencer);
           // Set active status based on first variant or product status
           if (
             response.data.data.variants &&
@@ -105,6 +113,40 @@ const ProductDetailsPage = () => {
     };
     fetchInfluencers();
   }, []);
+
+  useEffect(() => {
+    const fetchDiscountCodes = async () => {
+      if (!product?._id) return;
+      setDiscountCodesLoading(true);
+      try {
+        const res = await catalogApi.productCodes(product._id);
+        if (res.data.status === "success") {
+          setDiscountCodes(res.data.data);
+        }
+      } catch (e) {
+        setDiscountCodes([]);
+      }
+      setDiscountCodesLoading(false);
+    };
+    fetchDiscountCodes();
+  }, [product?._id]);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      if (!product?._id) return;
+      setAnalyticsLoading(true);
+      try {
+        const res = await catalogApi.productAnalytics(product._id);
+        if (res.data.status === "success") {
+          setAnalytics(res.data.data);
+        }
+      } catch (e) {
+        setAnalytics([]);
+      }
+      setAnalyticsLoading(false);
+    };
+    fetchAnalytics();
+  }, [product?._id]);
 
   const handleAssign = () => {
     localStorage.setItem("influencer", "true");
@@ -153,13 +195,35 @@ const ProductDetailsPage = () => {
   const handleCreateCoupon = () => {
     // navigate(`/create-discount-code/${product.overview._id}`);
     navigate("/create-discount-code", {
-    state: { productApiId: product._id, productId: product.overview._id, productTitle: product?.title, productPrice:product?.overview.price, productAsin:product?.overview.variant_sku  }
-  });
+      state: {
+        productApiId: product._id,
+        productId: product.overview._id,
+        productTitle: product?.title,
+        productPrice: product?.overview.price,
+        productAsin: product?.overview.variant_sku,
+      },
+    });
   };
 
   // Paginated variants
   const startIndex = (currentPage - 1) * pageSize;
   const paginatedVariants = variants.slice(startIndex, startIndex + pageSize);
+
+  // Analytics pagination
+  const analyticsTotalPages = Math.ceil(analytics.length / analyticsPageSize);
+  const analyticsPaginated = analytics.slice(
+    (analyticsPage - 1) * analyticsPageSize,
+    analyticsPage * analyticsPageSize
+  );
+
+  const handleAnalyticsPageChange = (event, value) => {
+    setAnalyticsPage(value);
+  };
+
+  const handleAnalyticsPageSizeChange = (event) => {
+    setAnalyticsPageSize(event.target.value);
+    setAnalyticsPage(1);
+  };
 
   return (
     <>
@@ -234,11 +298,11 @@ const ProductDetailsPage = () => {
                   <Grid item xs={6}>
                     <div className="mb-2" style={{ color: "#667085" }}>
                       <strong className="text-dark">ASIN:</strong>{" "}
-                      {product?.overview.variant_sku}
+                      {product?.overview?.variant_sku}
                     </div>
                     <div className="mb-2" style={{ color: "#667085" }}>
                       <strong className="text-dark">Price:</strong> $
-                      {product?.overview.price}
+                      {product?.overview?.price}
                     </div>
 
                     <div className="d-flex align-items-center mb-2 ">
@@ -262,15 +326,16 @@ const ProductDetailsPage = () => {
                   </Grid>
                   <Grid item xs={6}>
                     <div className="mb-2" style={{ color: "#667085" }}>
-                      <strong className="text-dark">Brand:</strong> {product?.brand?.name}
+                      <strong className="text-dark">Brand:</strong>{" "}
+                      {product?.brand?.name}
                     </div>
                     <div className="mb-2" style={{ color: "#667085" }}>
-                      <strong className="text-dark">Category:</strong> 
+                      <strong className="text-dark">Category:</strong>
                       {product?.overview?.best_sellers_rank?.[0]?.category}
                     </div>
                     <div className="mb-2" style={{ color: "#667085" }}>
                       <strong className="text-dark">Best Seller Rank: </strong>
-                     {product?.overview?.best_sellers_rank?.[0]?.rank}
+                      {product?.overview?.best_sellers_rank?.[0]?.rank}
                       {/* {product?.overview?.best_seller_rank?.[0]?.rank} */}
                     </div>
                     <div>
@@ -318,7 +383,7 @@ const ProductDetailsPage = () => {
                 {influencer ? (
                   <div>
                     <Avatar
-                      src="https://randomuser.me/api/portraits/men/1.jpg"
+                      src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
                       alt="user"
                       sx={{ width: 180, height: 180, margin: "0 auto 10px" }}
                     />
@@ -450,13 +515,164 @@ const ProductDetailsPage = () => {
             </div>
           </div>
         </div>
+
+        {/* Discount Codes Table */}
+        <div className="mt-4">
+          <Typography variant="h6" gutterBottom>
+            Discount Codes
+          </Typography>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead style={{ backgroundColor: "#F0F0F2" }}>
+                <TableRow>
+                  <TableCell>Discount Code</TableCell>
+                  <TableCell>Type</TableCell>
+                  <TableCell>Amount</TableCell>
+                  <TableCell>Applies To</TableCell>
+                  <TableCell>Valid From</TableCell>
+                  <TableCell>Valid To</TableCell>
+                  <TableCell>Status</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {discountCodesLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={7} align="center">
+                      Loading...
+                    </TableCell>
+                  </TableRow>
+                ) : discountCodes.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} align="center">
+                      No discount codes found.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  discountCodes.map((code, idx) => (
+                    <TableRow key={idx}>
+                      <TableCell>{code.discountCode}</TableCell>
+                      <TableCell>{code.type}</TableCell>
+                      <TableCell>
+                        {code.type === "percentage"
+                          ? `${code.amount}%`
+                          : `$${code.amount}`}
+                      </TableCell>
+                      <TableCell>
+                        {code.appliesTo.length} variant(s)
+                      </TableCell>
+                      <TableCell>
+                        {code.validFrom
+                          ? new Date(code.validFrom).toLocaleDateString()
+                          : "-"}
+                      </TableCell>
+                      <TableCell>
+                        {code.validTo
+                          ? new Date(code.validTo).toLocaleDateString()
+                          : "-"}
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          label={code.status === "active" ? "Active" : "Inactive"}
+                          size="small"
+                          color={code.status === "active" ? "success" : "default"}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
+
+        {/* Analytics Table */}
+        <div className="mt-4">
+          <Typography variant="h6" gutterBottom>
+            Analytics
+          </Typography>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead style={{ backgroundColor: "#F0F0F2" }}>
+                <TableRow>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Price</TableCell>
+                  <TableCell>Traffic</TableCell>
+                  <TableCell>Units Sold</TableCell>
+                  <TableCell>Conversion Rate</TableCell>
+                  <TableCell>Increased/Decreased</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {analyticsLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      Loading...
+                    </TableCell>
+                  </TableRow>
+                ) : analytics.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      No analytics data found.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  analytics.map((row, idx) => (
+                    <TableRow key={idx}>
+                      <TableCell>{row.date}</TableCell>
+                      <TableCell>${row.price}</TableCell>
+                      <TableCell>{row.clicks}</TableCell>
+                      <TableCell>{row.unitsSold}</TableCell>
+                      <TableCell>{row.conversionRate}</TableCell>
+                      <TableCell>
+                        <span>
+                          {row.change > 0 ? (
+                            <ArrowUpwardIcon sx={{ color: "green", fontSize: 18 }} />
+                          ) : row.change < 0 ? (
+                            <ArrowDownwardIcon sx={{ color: "red", fontSize: 18 }} />
+                          ) : (
+                            "-"
+                          )}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <div className="d-flex justify-content-between align-items-center mt-3">
+            <Pagination
+              count={analyticsTotalPages}
+              page={analyticsPage}
+              onChange={handleAnalyticsPageChange}
+              shape="rounded"
+              size="small"
+            />
+            <div className="d-flex align-items-center gap-2">
+              <Typography variant="body2">
+                Showing {analyticsPaginated.length} of {analytics.length}{" "}
+                entries
+              </Typography>
+              <Select
+                size="small"
+                value={analyticsPageSize}
+                onChange={handleAnalyticsPageSizeChange}
+              >
+                <MenuItem value={5}>Show 5</MenuItem>
+                <MenuItem value={10}>Show 10</MenuItem>
+                <MenuItem value={25}>Show 25</MenuItem>
+              </Select>
+            </div>
+          </div>
+        </div>
       </div>
       <AssignInfluencerModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onInvite={handleInviteClick}
-        productId={product?.overview._id}
+        productId={product?._id}
         influencers={influencers}
+        variants={variants}
         onAssign={handleAssignInfluencer}
       />
 

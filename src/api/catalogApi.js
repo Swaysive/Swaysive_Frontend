@@ -69,12 +69,20 @@ export const catalogApi = {
     return apiInstance.post(`/products/${productId}/discounts`, data);
   },
 
+  productAnalytics: async (productId) => {
+    return apiInstance.get(`/products/${productId}/analytics`);
+  },
+
+  productCodes: async (productId) => {
+    return apiInstance.get(`/products/${productId}/codes`);
+  },
+
   assignInfluencerToProduct: async ({productId,influencerId}) => {
     return apiInstance.post(`/products/${productId}/influencers/${influencerId}`);
   },
 
-  generateAffiliateLink: async ({productId,influencerId,commissionRate}) => {
-    return apiInstance.post(`/products/${productId}/influencers/${influencerId}/generate-affiliate-link`,{commissionRate});
+  generateAffiliateLink: async ({productId,influencerId,commissionRate,variantIds}) => {
+    return apiInstance.post(`/products/${productId}/influencers/${influencerId}/generate-affiliate-links`,{commissionRate,variantIds});
   },
 
 

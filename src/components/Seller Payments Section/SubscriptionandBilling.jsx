@@ -215,11 +215,11 @@ const SubscriptionandBilling = () => {
 
             {/* Upgrade Button */}
             <Box px={4}>
-              {plan.name == "Free" && (
+              {/* {plan.name == "Free" && ( */}
                 <Button variant="outlined" color="dark" onClick={handleUpgrade}>
                   Upgrade Plan
                 </Button>
-              )}
+              {/* )}
               {plan.name == "Pro" && (
                 <Button
                   variant="outlined"
@@ -232,7 +232,7 @@ const SubscriptionandBilling = () => {
                 >
                   Cancel Plan
                 </Button>
-              )}
+              )} */}
             </Box>
           </div>
 
@@ -251,8 +251,8 @@ const SubscriptionandBilling = () => {
               Features:
             </Typography>
             <ul className="list-unstyled">
-              {(planFeatures[plan.name] || []).map((feature, index) => (
-                <li key={index} className="d-flex align-items-center mb-2">
+              {(plan.features || []).map((feature, index) => (
+                <li key={feature.id || index} className="d-flex align-items-center mb-2">
                   <img src={TickIcon} alt="" />
                   <Typography
                     variant="body2"
@@ -263,7 +263,10 @@ const SubscriptionandBilling = () => {
                       fontWeight: "400",
                     }}
                   >
-                    {feature}
+                    {feature.description}
+                    {feature.value && (
+                      <>: <b>{feature.value}</b> {feature.unit ? feature.unit : ""}</>
+                    )}
                   </Typography>
                 </li>
               ))}
