@@ -8,6 +8,7 @@ import {
   Avatar,
   Stack,
   Divider,
+  CircularProgress
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DescriptionIcon from "@mui/icons-material/Description";
@@ -196,7 +197,18 @@ export default function InfluencerDashboard() {
       launchtime: "Five days ago",
     },
   ];
-
+  if (loading) {
+      return (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="60vh"
+        >
+          <CircularProgress />
+        </Box>
+      );
+    }
   return (
     <Box p={3} bgcolor="#f9f9f9" minHeight="100vh">
       <Grid container spacing={2}>

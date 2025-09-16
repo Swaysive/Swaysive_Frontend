@@ -17,27 +17,8 @@ import StarIcon from "../../assets/icons/staricon.svg";
 import CreditCard from "../../assets/icons/atmcardsvg.svg";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
 
-const planFeatures = {
-  Free: [
-    "Connect 1 Amazon seller account",
-    "Invite up to 2 influencers",
-    "Generate unlimited affiliate tracking links",
-    "Create unique Amazon coupon codes",
-    "Basic real-time clicks & total sales",
-    // "Access guided onboarding tour & sample campaign templates",
-  ],
-  Pro: [
-    "1 Store connection",
-    "Unlimited ASINs",
-    "Access to Track & Sales",
-    "Advanced analytics dashboard",
-    "Advanced Influencer Management",
-    "Affiliate Link Generator",
-    // "Priority email & in-app chat support",
-    // "Dedicated success manager onboarding call",
-  ],
-};
 const CreditCardDummyData = [
   {
     img: CreditCard,
@@ -52,6 +33,7 @@ const SubscriptionandBilling = () => {
   const [loading, setLoading] = useState(true);
   const [plan, setPlan] = useState(null);
   const [subscription, setSubscription] = useState(null);
+  const navigate = useNavigate();
 
   const fetchCurrentPlan = async () => {
     try {
@@ -72,14 +54,7 @@ const SubscriptionandBilling = () => {
   }, []);
 
   const handleUpgrade = async () => {
-    try {
-      await usersApi.subscriptionChange();
-      toast.success("Plan upgrade initiated!");
-      fetchCurrentPlan();
-      // Optionally, refetch plan/subscription or redirect
-    } catch (error) {
-      toast.error("Failed to upgrade plan.");
-    }
+    navigate("/pricing", { state: { currentPlanId: plan.id } });
   };
 
   if (loading) {
@@ -216,9 +191,9 @@ const SubscriptionandBilling = () => {
             {/* Upgrade Button */}
             <Box px={4}>
               {/* {plan.name == "Free" && ( */}
-                <Button variant="outlined" color="dark" onClick={handleUpgrade}>
-                  Upgrade Plan
-                </Button>
+              <Button variant="outlined" color="dark" onClick={handleUpgrade}>
+                Upgrade Plan
+              </Button>
               {/* )}
               {plan.name == "Pro" && (
                 <Button
@@ -252,7 +227,10 @@ const SubscriptionandBilling = () => {
             </Typography>
             <ul className="list-unstyled">
               {(plan.features || []).map((feature, index) => (
-                <li key={feature.id || index} className="d-flex align-items-center mb-2">
+                <li
+                  key={feature.id || index}
+                  className="d-flex align-items-center mb-2"
+                >
                   <img src={TickIcon} alt="" />
                   <Typography
                     variant="body2"
@@ -265,7 +243,10 @@ const SubscriptionandBilling = () => {
                   >
                     {feature.description}
                     {feature.value && (
-                      <>: <b>{feature.value}</b> {feature.unit ? feature.unit : ""}</>
+                      <>
+                        : <b>{feature.value}</b>{" "}
+                        {feature.unit ? feature.unit : ""}
+                      </>
                     )}
                   </Typography>
                 </li>
@@ -536,14 +517,38 @@ const SubscriptionandBilling = () => {
                 </Box>
               </Box>
             ))}
-            <Box display={"flex"} justifyContent={"start"} alignItems={"center"} p={2}>
-              <Box display={"flex"} px={3} alignItems={"center"} sx={{width:"70%" , height:"64px" , backgroundColor:"#F6F7F9", borderRadius:"6px"}}>
-              <Typography variant="caption"  sx={{fontFamily:"Poppins", fontSize:"12px", fontWeight:"400", color:"#6D6F71"}}>
-                This card will be charged automatically at the end of each month
-                for platform fees (1.5% per unit sold) and influencer <br />
-                commissions you owe.
-              </Typography>
-            </Box>
+            <Box
+              display={"flex"}
+              justifyContent={"start"}
+              alignItems={"center"}
+              p={2}
+            >
+              <Box
+                display={"flex"}
+                px={3}
+                alignItems={"center"}
+                sx={{
+                  width: "70%",
+                  height: "64px",
+                  backgroundColor: "#F6F7F9",
+                  borderRadius: "6px",
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontFamily: "Poppins",
+                    fontSize: "12px",
+                    fontWeight: "400",
+                    color: "#6D6F71",
+                  }}
+                >
+                  This card will be charged automatically at the end of each
+                  month for platform fees (1.5% per unit sold) and influencer{" "}
+                  <br />
+                  commissions you owe.
+                </Typography>
+              </Box>
             </Box>
           </Box>
           <Button

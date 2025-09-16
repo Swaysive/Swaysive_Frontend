@@ -19,6 +19,7 @@ import {
   Select,
   MenuItem,
   InputAdornment,
+  CircularProgress,
 } from "@mui/material";
 import { Facebook, Instagram, Search } from "@mui/icons-material";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
@@ -34,6 +35,7 @@ const InfluencerDetails = () => {
   const [pageSize, setPageSize] = useState(5);
   const [data, setData] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -53,6 +55,9 @@ const InfluencerDetails = () => {
         setData(firstThree);
       } catch (error) {
         console.error("Error fetching products:", error);
+      }
+      finally{
+        setLoading(false)
       }
     };
 
@@ -80,7 +85,18 @@ const InfluencerDetails = () => {
     setPageSize(event.target.value);
     setCurrentPage(1);
   };
-
+  if (loading) {
+      return (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="60vh"
+        >
+          <CircularProgress />
+        </Box>
+      );
+    }
   return (
     <div className="py-4" style={{ overflowX: "hidden" }}>
       <div className="col-12 mb-4">

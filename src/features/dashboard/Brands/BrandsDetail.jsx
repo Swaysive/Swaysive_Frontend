@@ -16,6 +16,7 @@ import ProductTable from "../../../components/ReusableTable/ProductTable";
 import { useParams } from "react-router-dom";
 import { catalogApi } from "../../../api/catalogApi";
 import DashboardHeader from "../../../components/Headers/DashboardHeader";
+import { CircularProgress } from "@mui/material";
 
 const columns = ["Products", "Brand", "Influencer", "Campaign Status"];
 
@@ -27,6 +28,9 @@ const BrandsDetail = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [search, setSearch] = useState("");
+  const [brandLoading, setBrandLoading] = useState(true);
+  const [productsLoading, setProductsLoading] = useState(true);
+  const loading = brandLoading || productsLoading;
 
   // Fetch brand detail
   useEffect(() => {
@@ -38,6 +42,8 @@ const BrandsDetail = () => {
         }
       } catch (e) {
         setBrand(null);
+      } finally {
+        setBrandLoading(false);
       }
     };
     fetchBrand();
@@ -60,6 +66,8 @@ const BrandsDetail = () => {
         }
       } catch (e) {
         setProducts([]);
+      } finally {
+        setProductsLoading(false);
       }
     };
     fetchProducts();
@@ -84,7 +92,18 @@ const BrandsDetail = () => {
     influencer: "-", // You can fill this if you have influencer info
     status: p.status === "active" ? "Active" : "Inactive",
   }));
-
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="60vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
   return (
     <div className="row" style={{ marginTop: "50px" }}>
       <div className="col-12 mb-4">
@@ -180,18 +199,17 @@ const BrandsDetail = () => {
               onChange={(e, value) => setPage(value)}
               shape="rounded"
               sx={{
-                      "& .MuiPaginationItem-root": {
-                        color: "#000000",
-                      },
-                      "& .MuiPaginationItem-root.Mui-selected": {
-                        backgroundColor: "#000000",
-                        color: "#ffffff",
-                      },
-                    }}
+                "& .MuiPaginationItem-root": {
+                  color: "#000000",
+                },
+                "& .MuiPaginationItem-root.Mui-selected": {
+                  backgroundColor: "#000000",
+                  color: "#ffffff",
+                },
+              }}
             />
             <Box display="flex" alignItems="center" gap={1}>
-              <Typography variant="body2"
-              >
+              <Typography variant="body2">
                 Showing {rows.length} of {totalCount} entries
               </Typography>
               <Select
@@ -200,7 +218,6 @@ const BrandsDetail = () => {
                 onChange={(e) => {
                   setPageSize(e.target.value);
                   setPage(1);
-                  
                 }}
               >
                 <MenuItem value={5}>Show 5</MenuItem>

@@ -1,67 +1,82 @@
-import React from "react";
-import { Box, Typography, Button } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Typography, Button, CircularProgress } from "@mui/material";
+import { BiCheck } from "react-icons/bi";
+import { plansApi } from "../../api/plansApi";
+import { usersApi } from "../../api/usersApi";
+import { toast } from "react-toastify";
+import { useNavigate, useLocation } from "react-router-dom";
 import BubbleLeft from "../../assets/images/bubbles-left1.png";
 import BubbleRight from "../../assets/images/bubbles-right.png";
-import { BiCheck } from "react-icons/bi";
 
-function Pricing() {
-  const subscriptions = [
-    {
-      duration: "Basic",
-      amount: "$297",
-      slogan: "Try every feature without commitment.",
-      features: [
-        "Connect 1 Amazon store",
-        "Extended discount validity (for 30+ days)",
-        "Track basic sales & clicks",
-        "Manage up to 3 influencers",
-        "Simple campaign dashboard",
-        "Email support",
-      ],
-      buttontext: "Start with basic",
-    },
-    {
-      duration: "Pro Subscription",
-      amount: "$497",
-      slogan: "Scale your influencer program with advanced tools.",
-      features: [
-        "Connect up to 3 Amazon stores ",
-        "Extended discount validity (for 30+ days)",
-        "Manage up to 100 influencers ",
-        "Advanced attribution tracking (beyond Amazon’s default window)",
-        "Campaign performance analytics (CTR, conversions, revenue uplift)",
-        "Commission & payout automation",
-        "Influencer dashboard with real-time tracking",
-        "Priority email + chat support",
-      ],
-      buttontext: "Start with pro",
-    },
-    {
-      duration: "Go Ultimate",
-      amount: "$800",
-      slogan:
-        "For large Amazon brands or agencies managing multiple stores and hundreds of influencers.",
-      features: [
-        "Unlimited Amazon stores",
-        "Unlimited influencers",
-        "Full multi-store management in one portal ",
-        "Advanced analytics & insights ",
-        "Customizable campaign rules & tiers",
-        "Integrations with HubSpot and Slack",
-        "Dedicated account manager",
-        "SLA-backed support (24/7 priority)",
-      ],
-      buttontext: "Go Ultimate",
-    },
-  ];
+export default function Pricing() {
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get current plan id from navigation state
+  const currentPlanId = location.state?.currentPlanId || null;
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        const response = await plansApi.getAllPlans();
+        if (response.data.status === "success") {
+          setPlans(response.data.data);
+        } else {
+          toast.error(response.data.message || "Failed to fetch plans.");
+        }
+      } catch (error) {
+        toast.error("Error fetching plans.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPlans();
+  }, []);
+
+  const handlePlanSelect = async (plan) => {
+    setSubmitting(true);
+    try {
+      const payload = {
+        step: 2,
+        planId: plan.id,
+      };
+      const response = await usersApi.userOnboard(payload);
+      if (response.data.status === "success") {
+        window.location.href = response.data.data.sessionUrl;
+      } else {
+        toast.error(response.data.message || "Failed to activate plan.");
+      }
+    } catch (error) {
+      toast.error("Error activating plan.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="60vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ position: "relative" }}>
+      {/* Background bubbles */}
       <Box
         component="img"
         src={BubbleLeft}
         alt=""
-        sx={{ position: "absolute", top: -50, left: -13, width: "20%" }}
+        sx={{ position: "absolute", top: 20, left: -13, width: "20%" }}
       />
       <Box
         component="img"
@@ -69,6 +84,8 @@ function Pricing() {
         alt=""
         sx={{ position: "absolute", bottom: 0, right: -14, width: "20%" }}
       />
+
+      {/* Heading */}
       <Typography
         variant="h4"
         sx={{
@@ -94,6 +111,7 @@ function Pricing() {
         After your trial, continue with our Pro subscription. <br /> Payment
         details required now; you won’t be billed until after Day 60.
       </Typography>
+
       <Box display={"flex"} justifyContent={"center"}>
         <Box
           sx={{
@@ -109,183 +127,157 @@ function Pricing() {
             zIndex: 10,
           }}
         >
-          <Box display="flex" gap={5}>
-            {subscriptions.map((subscription, index) => (
-              <Box
-                key={index}
-                sx={{
-                  width: "300px",
-                  minHeight: "534px",
-                  borderRadius: "12px",
-                  border: "1px solid #EBE9E9",
-                  backgroundColor: "#FFFFFF",
-                  boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                  transition: "all 0.2s ease",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  "&:hover": {
-                    transform: "scale(1.03)",
-                    backgroundColor: "#000",
-                    border: "6px solid #D4D4D480",
-                    "& .feature-text": { color: "#fff" },
-                    "& .card-title": { color: "#fff" },
-                    "& .card-amount": { color: "#fff" },
-                    "& .card-btn": {
-                      backgroundColor: "#fff",
-                      color: "#000",
-                      border: "1px solid #fff",
+          <Box display="flex" gap={5} alignItems="stretch">
+            {plans.map((plan) => {
+              const isCurrent = plan.id === currentPlanId; // compare with current plan
+
+              return (
+                <Box
+                  key={plan.id}
+                  sx={{
+                    width: "300px",
+                    borderRadius: "12px",
+                    border: "1px solid #EBE9E9",
+                    backgroundColor: "#FFFFFF",
+                    boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                    transition: "all 0.3s ease",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    opacity: isCurrent ? 0.6 : 1,
+                    pointerEvents: isCurrent ? "none" : "auto",
+                    "&:hover": {
+                      backgroundColor: "#000000",
+                      border: "4px solid #565656",
+                      transform: "translateY(-8px) scale(1.03)",
+                      boxShadow: "0px 12px 24px rgba(0,0,0,0.3)",
+                      "& .plan-text": { color: "#FFFFFF" },
+                      "& .plan-desc": { color: "#B9BEC1" },
+                      "& .monthly-badge": { backgroundColor: "#FFFFFF", color: "#000000" },
+                      "& .check-icon": {
+                        backgroundColor: "#FFFFFF",
+                        "& svg": { color: "#000000" },
+                      },
+                      "& .plan-btn": {
+                        backgroundColor: "#FFFFFF",
+                        color: "#000000",
+                        border: "1px solid #DFE2E7",
+                      },
                     },
-                    "& .icon-wrapper": {
-                      backgroundColor: "#fff",
-                      "& svg": { color: "#000" },
-                    },
-                    "& .monthly-box": {
-                      backgroundColor: "#fff",
-                    },
-                    "& .monthly-text": {
-                      color: "#000",
-                    },
-                  },
-                }}
-              >
-                <Box p={2.5} flexGrow={1}>
-                  <Box
-                    display={"flex"}
-                    alignItems={"center"}
-                    justifyContent={"space-between"}
-                  >
-                    <Typography
-                      className="card-title"
-                      variant="h5"
-                      sx={{
-                        fontFamily: "Poppins",
-                        fontSize: "16px",
-                        fontWeight: "600",
-                      }}
-                    >
-                      {subscription.duration}
-                    </Typography>
-                    <Box
-                      className="monthly-box"
-                      sx={{
-                        width: "74px",
-                        height: "27px",
-                        backgroundColor: "black",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        borderRadius: "4px",
-                        transition: "all 0.3s ease",
-                      }}
-                    >
+                  }}
+                >
+                  <Box p={2.5} flexGrow={1}>
+                    {/* Title */}
+                    <Box display="flex" alignItems="center" justifyContent="space-between">
                       <Typography
-                        className="monthly-text"
+                        variant="h5"
+                        className="plan-text"
+                        sx={{ fontFamily: "Poppins", fontSize: "16px", fontWeight: "600" }}
+                      >
+                        {plan.name}
+                      </Typography>
+                      <Box
+                        className="monthly-badge"
                         sx={{
-                          fontFamily: "Poppins",
-                          fontSize: "12px",
-                          fontWeight: "500",
+                          width: "74px",
+                          height: "27px",
+                          backgroundColor: "black",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          borderRadius: "4px",
                           color: "white",
-                          transition: "all 0.3s ease",
                         }}
                       >
-                        Monthly
-                      </Typography>
-                    </Box>
-                  </Box>
-                  <Typography
-                    className="card-amount"
-                    gap={2}
-                    display={"flex"}
-                    alignItems={"center"}
-                    variant="h5"
-                    sx={{
-                      fontFamily: "Poppins",
-                      fontSize: "36px",
-                      fontWeight: "800",
-                      py: 2,
-                    }}
-                  >
-                    {subscription.amount}
-                    <Typography
-                      component="span"
-                      sx={{
-                        fontFamily: "Poppins",
-                        fontSize: "12px",
-                        fontWeight: "400",
-                        color: "#B9BEC1",
-                        ml: 0.5,
-                      }}
-                    >
-                      {subscription.slogan}
-                    </Typography>
-                  </Typography>
-                  <Box>
-                    {subscription.features.map((feature, fIndex) => (
-                      <Box
-                        key={fIndex}
-                        display="flex"
-                        gap={1.5}
-                        alignItems="center"
-                        py={0.8}
-                      >
-                        <Box
-                          className="icon-wrapper"
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: 20,
-                            height: 20,
-                            borderRadius: "50%",
-                            backgroundColor: "#EBEFF0",
-                            flexShrink: 0,
-                            "& svg": {
-                              color: "#B9BEC1",
-                            },
-                          }}
-                        >
-                          <BiCheck size={18} />
-                        </Box>
-                        <Typography
-                          className="feature-text"
-                          sx={{
-                            fontFamily: "Poppins",
-                            fontSize: "13px",
-                            fontWeight: "300",
-                          }}
-                        >
-                          {feature}
+                        <Typography sx={{ fontFamily: "Poppins", fontSize: "12px", fontWeight: "500" }}>
+                          Monthly
                         </Typography>
                       </Box>
-                    ))}
+                    </Box>
+
+                    {/* Price */}
+                    <Typography
+                      display="flex"
+                      gap={2}
+                      alignItems="center"
+                      variant="h5"
+                      className="plan-text"
+                      sx={{ fontFamily: "Poppins", fontSize: "36px", fontWeight: "800", py: 2 }}
+                    >
+                      ${plan.price}
+                      <Typography
+                        component="span"
+                        className="plan-desc"
+                        sx={{ fontFamily: "Poppins", fontSize: "12px", fontWeight: "400", color: "#B9BEC1", ml: 0.5 }}
+                      >
+                        {plan.metadata?.description}
+                      </Typography>
+                    </Typography>
+
+                    {/* Features */}
+                    <Box>
+                      {plan.features.map((feature) => (
+                        <Box key={feature.id} display="flex" gap={1.5} alignItems="center" py={0.8}>
+                          <Box
+                            className="check-icon"
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              width: 20,
+                              height: 20,
+                              borderRadius: "50%",
+                              backgroundColor: "#EBEFF0",
+                              flexShrink: 0,
+                              "& svg": { color: "#B9BEC1" },
+                            }}
+                          >
+                            <BiCheck size={18} />
+                          </Box>
+                          <Typography
+                            className="plan-text"
+                            sx={{ fontFamily: "Poppins", fontSize: "13px", fontWeight: "300" }}
+                          >
+                            {feature.description}
+                            {feature.value && (
+                              <>
+                                : <b>{feature.value}</b> {feature.unit ? feature.unit : ""}
+                              </>
+                            )}
+                          </Typography>
+                        </Box>
+                      ))}
+                    </Box>
+                  </Box>
+
+                  {/* Button */}
+                  <Box p={2.5}>
+                    <Button
+                      variant="outlined"
+                      className="plan-btn"
+                      sx={{
+                        border: "1px solid #DFE2E7",
+                        fontFamily: "Poppins",
+                        textTransform: "none",
+                        backgroundColor: "#262626",
+                        color: "white",
+                        width: "100%",
+                        py: 1.2,
+                        borderRadius: "8px",
+                        transition: "all 0.3s ease",
+                      }}
+                      disabled={isCurrent || submitting}
+                      onClick={() => handlePlanSelect(plan)}
+                    >
+                      {isCurrent ? "Selected Plan" : "Choose Plan"}
+                    </Button>
                   </Box>
                 </Box>
-                <Box p={2}>
-                  <Button
-                    className="card-btn"
-                    variant="outlined"
-                    sx={{
-                      border: "1px solid #DFE2E7",
-                      fontFamily: "Poppins",
-                      textTransform: "none",
-                      backgroundColor: "#262626",
-                      color: "white",
-                      width: "100%",
-                      py: 1.2,
-                      borderRadius: "8px",
-                    }}
-                  >
-                    {subscription.buttontext}
-                  </Button>
-                </Box>
-              </Box>
-            ))}
+              );
+            })}
           </Box>
         </Box>
       </Box>
     </Box>
   );
 }
-
-export default Pricing;

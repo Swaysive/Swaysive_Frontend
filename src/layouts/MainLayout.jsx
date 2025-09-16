@@ -2,12 +2,12 @@
 import React from "react";
 import { GrHomeRounded } from "react-icons/gr";
 import { RiShoppingBag3Line } from "react-icons/ri";
-// import PaymentsSvg from "../../src/assets/icons/payments.svg"
 import { IoSettingsOutline } from "react-icons/io5";
 import { PiVanBold } from "react-icons/pi";
 import { TbUsers } from "react-icons/tb";
 import { VscGraph } from "react-icons/vsc";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import { TbMessage2 } from "react-icons/tb";
 
 import {
   AppBar,
@@ -30,13 +30,7 @@ import {
   Search,
   FilterList,
   Notifications,
-  Dashboard,
-  Inventory2,
-  Store,
-  Groups,
   Payments,
-  BarChart,
-  Settings,
   Menu as MenuIcon,
   ChevronLeft,
 } from "@mui/icons-material";
@@ -52,7 +46,7 @@ export default function NavbarWithSidebar({ children }) {
   const [open, setOpen] = React.useState(true);
   const { handleLogout, authData } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation(); // Get current route
+  const location = useLocation(); // current route
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -61,8 +55,6 @@ export default function NavbarWithSidebar({ children }) {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
-
-  console.log("authData in layout:", authData);
 
   const onLogout = async () => {
     handleMenuClose();
@@ -77,6 +69,7 @@ export default function NavbarWithSidebar({ children }) {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
   const sellerMenuItems = [
     {
       text: "Dashboard",
@@ -98,12 +91,16 @@ export default function NavbarWithSidebar({ children }) {
       icon: <TbUsers size={25} />,
       path: "/seller-home/influencer",
     },
+     {
+      text: "Messages",
+      icon: <TbMessage2 size={25} />,
+      path: "/seller-home/messages",
+    },
     {
       text: "Track & Sales",
       icon: <MonetizationOnIcon size={25} />,
       path: "/seller-home/trackandsales",
     },
-
     { text: "Payments", icon: <Payments />, path: "/seller-home/payments" },
     {
       text: "Reports",
@@ -135,13 +132,25 @@ export default function NavbarWithSidebar({ children }) {
       path: "/influencer-home/settings",
     },
   ];
- const menuItems =
-  authData?.user?.role === "seller" ? sellerMenuItems : influencerMenuItems;
 
+  const menuItems =
+    authData?.user?.role === "seller" ? sellerMenuItems : influencerMenuItems;
+
+  // ✅ Hide Navbar + Sidebar on /pricing route
+  if (location.pathname === "/pricing") {
+    return (
+      <Box sx={{ display: "flex" }}>
+        <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
+          {children}
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
+      {/* Navbar */}
       <AppBar
         position="fixed"
         elevation={0}
@@ -197,6 +206,8 @@ export default function NavbarWithSidebar({ children }) {
           </Box>
         </Toolbar>
       </AppBar>
+
+      {/* Sidebar */}
       <Drawer
         variant="permanent"
         open={open}
@@ -215,9 +226,8 @@ export default function NavbarWithSidebar({ children }) {
       >
         <Toolbar />
         <Divider />
-
         <List>
-          {menuItems.map(({ text, icon, path }, index) => (
+          {menuItems.map(({ text, icon, path }) => (
             <ListItem
               button
               key={text}
@@ -253,6 +263,8 @@ export default function NavbarWithSidebar({ children }) {
           ))}
         </List>
       </Drawer>
+
+      {/* Main content */}
       <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
         <Toolbar />
         {children}

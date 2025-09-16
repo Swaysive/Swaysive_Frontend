@@ -9,6 +9,7 @@ import {
   Checkbox,
   ListItemText,
   InputAdornment,
+  CircularProgress
 } from "@mui/material";
 import ProteinShaker from "../../../assets/icons/proteinshaker.svg";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -192,7 +193,18 @@ const MyProductsPage = () => {
     (page - 1) * rowsPerPage,
     page * rowsPerPage
   );
-
+  if (loading) {
+      return (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="60vh"
+        >
+          <CircularProgress />
+        </Box>
+      );
+    }
   return (
     <Box p={3}>
       <ToastContainer />

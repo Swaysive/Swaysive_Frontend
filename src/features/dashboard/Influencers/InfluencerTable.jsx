@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Chip, Avatar,
-  TextField, InputAdornment, Box, Typography, Select, MenuItem, IconButton, Dialog, DialogContent
+  TextField, InputAdornment, Box, Typography, Select, MenuItem, IconButton, Dialog, DialogContent, CircularProgress
 } from "@mui/material";
 import { Search, FilterList } from "@mui/icons-material";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import DashboardHeader from "../../../components/Headers/DashboardHeader";
-import FacebookIcon from "../../../assets/icons/facebook-icon.svg";
-import InstagramIcon from "../../../assets/icons/instagram-icon.svg";
+// import FacebookIcon from "../../../assets/icons/facebook-icon.svg";
+// import InstagramIcon from "../../../assets/icons/instagram-icon.svg";
 import "./InfluencerTable.css";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/Close';
@@ -35,6 +35,7 @@ const InfluencerTable = () => {
   const [pageSize, setPageSize] = useState(5);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
@@ -59,6 +60,9 @@ const InfluencerTable = () => {
         }
       } catch (error) {
         toast.error("Failed to fetch influencers.");
+      }
+      finally{
+        setLoading(false)
       }
     };
     fetchInfluencers();
@@ -103,7 +107,18 @@ const InfluencerTable = () => {
   const handleInfluencerClick = (id) => {
     navigate(`/seller-home/influencers/details/${id}`);
   };
-
+  if (loading) {
+      return (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="60vh"
+        >
+          <CircularProgress />
+        </Box>
+      );
+    }
   return (
     <div className="row" style={{ marginTop: "50px" }}>
       <div className="col-12 mb-4">

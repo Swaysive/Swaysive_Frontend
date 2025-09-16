@@ -19,6 +19,7 @@ import {
   Select,
   MenuItem,
   InputAdornment,
+  CircularProgress
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DashboardHeader from "../../../components/Headers/DashboardHeader";
@@ -31,6 +32,7 @@ const ProductTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [products, setProducts] = useState([]);
   const [pageSize, setPageSize] = useState(5);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -52,6 +54,9 @@ const ProductTable = () => {
       } catch (error) {
         console.error("Error fetching products:", error);
       }
+      finally{
+        setLoading(false)
+      }
     };
 
     fetchProducts();
@@ -72,7 +77,18 @@ const ProductTable = () => {
   const handleProductClick = (product) => {
     navigate(`/products/details/${product._id}`);
   };
-
+  if (loading) {
+      return (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="60vh"
+        >
+          <CircularProgress />
+        </Box>
+      );
+    }
   return (
     <div className="row" style={{ marginTop: "50px" }}>
       <div className="col-12 mb-4">

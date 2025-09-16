@@ -1,10 +1,7 @@
-
-import { createApiInstance } from '../instance/axiosInstance';
+import { createApiInstance } from "../instance/axiosInstance";
 // import { API_BASE_URL } from '@env';
 
-
-
-const apiInstance = createApiInstance('plans');
+const apiInstance = createApiInstance("plans");
 
 export const plansApi = {
   /**
@@ -13,9 +10,7 @@ export const plansApi = {
    * @returns {Promise}
    */
 
-
   getAllPlans: async () => {
-    return apiInstance.get('/');
+    return apiInstance.get("/");
   },
-
 };

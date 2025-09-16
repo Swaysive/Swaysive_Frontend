@@ -23,11 +23,12 @@ import {
   Box,
   Dialog,
   DialogContent,
+  CircularProgress,
 } from "@mui/material";
-import { Edit } from "@mui/icons-material";
+// import { Edit } from "@mui/icons-material";
 import "./ProductDetailsPage.css";
-import FacebookIcon from "../../../assets/icons/facebook-icon.svg";
-import InstagramIcon from "../../../assets/icons/instagram-icon.svg";
+// import FacebookIcon from "../../../assets/icons/facebook-icon.svg";
+// import InstagramIcon from "../../../assets/icons/instagram-icon.svg";
 import DashboardHeader from "../../../components/Headers/DashboardHeader";
 import threeDots from "../../../assets/icons/three-dots-icons.svg";
 import AssignInfluencerModal from "../../../components/Assign Influencer Modal/AssignInfluencerModal";
@@ -68,6 +69,15 @@ const ProductDetailsPage = () => {
   const [discountCodesLoading, setDiscountCodesLoading] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
+  const [productdetailloading, setProductDetailLoading] = useState(true);
+  const [influencersloading, setInfluencersLoading] = useState(true);
+  const [discountcodeloading, setDiscountCodeLoading] = useState(true);
+  const [analyticloading, setAnalyticLoading] = useState(true);
+  const loading =
+    productdetailloading ||
+    influencersloading ||
+    discountcodeloading ||
+    analyticloading;
 
   useEffect(() => {
     const fetchProductDetail = async () => {
@@ -87,6 +97,8 @@ const ProductDetailsPage = () => {
         }
       } catch (error) {
         // Handle error (toast, etc.)
+      } finally {
+        setProductDetailLoading(false);
       }
     };
     fetchProductDetail();
@@ -109,6 +121,8 @@ const ProductDetailsPage = () => {
         }
       } catch (e) {
         setInfluencers([]);
+      } finally {
+        setInfluencersLoading(false);
       }
     };
     fetchInfluencers();
@@ -125,6 +139,8 @@ const ProductDetailsPage = () => {
         }
       } catch (e) {
         setDiscountCodes([]);
+      } finally {
+        setDiscountCodeLoading(false);
       }
       setDiscountCodesLoading(false);
     };
@@ -142,6 +158,8 @@ const ProductDetailsPage = () => {
         }
       } catch (e) {
         setAnalytics([]);
+      } finally {
+        setAnalyticLoading(false);
       }
       setAnalyticsLoading(false);
     };
@@ -225,6 +243,18 @@ const ProductDetailsPage = () => {
     setAnalyticsPage(1);
   };
 
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="60vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
   return (
     <>
       <div className="py-4">
@@ -557,9 +587,7 @@ const ProductDetailsPage = () => {
                           ? `${code.amount}%`
                           : `$${code.amount}`}
                       </TableCell>
-                      <TableCell>
-                        {code.appliesTo.length} variant(s)
-                      </TableCell>
+                      <TableCell>{code.appliesTo.length} variant(s)</TableCell>
                       <TableCell>
                         {code.validFrom
                           ? new Date(code.validFrom).toLocaleDateString()
@@ -572,9 +600,13 @@ const ProductDetailsPage = () => {
                       </TableCell>
                       <TableCell>
                         <Chip
-                          label={code.status === "active" ? "Active" : "Inactive"}
+                          label={
+                            code.status === "active" ? "Active" : "Inactive"
+                          }
                           size="small"
-                          color={code.status === "active" ? "success" : "default"}
+                          color={
+                            code.status === "active" ? "success" : "default"
+                          }
                         />
                       </TableCell>
                     </TableRow>
@@ -626,9 +658,13 @@ const ProductDetailsPage = () => {
                       <TableCell>
                         <span>
                           {row.change > 0 ? (
-                            <ArrowUpwardIcon sx={{ color: "green", fontSize: 18 }} />
+                            <ArrowUpwardIcon
+                              sx={{ color: "green", fontSize: 18 }}
+                            />
                           ) : row.change < 0 ? (
-                            <ArrowDownwardIcon sx={{ color: "red", fontSize: 18 }} />
+                            <ArrowDownwardIcon
+                              sx={{ color: "red", fontSize: 18 }}
+                            />
                           ) : (
                             "-"
                           )}

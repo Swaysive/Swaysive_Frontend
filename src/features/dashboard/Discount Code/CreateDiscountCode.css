@@ -1,25 +1,24 @@
 .step-circle {
-  width: 35px;
-  height: 35px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: 2px solid #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: white;
-  color: #999;
-  font-weight: 500;
+  background-color: #fff;
+  font-weight: bold;
+  font-size: 16px;
+  color: #333;
 }
 
 .step-circle.active {
-  border-color: black;
-  background-color: black;
-  color: white;
+  border-color: #000;
+  background-color: #000;
+  color: #fff;
 }
+
 
 .step-line {
   height: 2px;
-  width: 50px;
+  width: 100px;
   background-color: #ccc;
   margin: 0 15px;
 }
@@ -30,7 +29,8 @@
 }
 
 .step-label {
-  font-size: 14px;
+  font-size: 18px;
+  font-weight: 400;
 }
 
 
@@ -47,3 +47,7 @@
   display: block;
   margin-bottom: 4px;
 }
+.form-check-label{
+  font-size: 14px;
+}
+

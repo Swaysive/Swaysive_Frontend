@@ -22,10 +22,11 @@ import InfluencerPayments from "../features/influencerDashboard/InfluencerPaymen
 import InfluencerSettings from "../features/influencerDashboard/InfluencerSettings";
 import Pricing from "../components/New Pricing/Pricing";
 // import { useAuth } from "../context/Auth";
-import TrackandSales from "../components/Seller Track&Sales/TrackandSales"
+import TrackandSales from "../components/Seller Track&Sales/TrackandSales";
 
 import InfluencerHome from "../features/influencerDashboard/Home";
 import MyProductsPage from "../features/dashboard/Influencers/MyProducts";
+import Messages from "../features/dashboard/Messages/Messages";
 
 const AppRoutes = () => {
   const { authData, onboard } = useAuth();
@@ -68,6 +69,10 @@ const AppRoutes = () => {
                       element={<ReportTable />}
                     />
                     <Route
+                      path="/seller-home/trackandsales"
+                      element={<TrackandSales />}
+                    />
+                    <Route
                       path="/create-discount-code"
                       element={<CreateDiscountCode />}
                     />
@@ -78,6 +83,10 @@ const AppRoutes = () => {
                     <Route
                       path="/seller-home/influencer"
                       element={<InfluencerTable />}
+                    />
+                    <Route
+                      path="/seller-home/messages"
+                      element={<Messages/>}
                     />
                     <Route
                       path="/seller-home/influencers/details/:id"

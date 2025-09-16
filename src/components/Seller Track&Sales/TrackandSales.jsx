@@ -8,11 +8,25 @@ import {
   Menu,
   MenuItem,
   Divider,
+  Popper,
+  ClickAwayListener,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { FiDownload, FiCalendar, FiChevronDown } from "react-icons/fi";
 import DashboardHeader from "../Headers/DashboardHeader";
 import StatementTable from "../Seller Payments Section/StatementTable";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
+import { PieChart, Pie, Cell, Legend } from "recharts";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function TrackandSales() {
   const [viewFullTable, setViewFullTable] = useState(false);
@@ -23,13 +37,24 @@ function TrackandSales() {
   const handleOpen = (setter) => (event) => setter(event.currentTarget);
   const handleClose = (setter) => () => setter(null);
 
+  // Custom calendar state
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [calendarAnchor, setCalendarAnchor] = useState(null);
+
+  const handleCalendarToggle = (event) => {
+    setCalendarAnchor(calendarAnchor ? null : event.currentTarget);
+  };
+
+  const handleCalendarClose = () => {
+    setCalendarAnchor(null);
+  };
+
   const columns = [
     { label: "Influencer", field: "influencer" },
     { label: "Product", field: "product", align: "center" },
     { label: "Campaign Link", field: "campaignlink", align: "center" },
     { label: "Units Sold", field: "unitssold", align: "center" },
     { label: "Units Price", field: "unitsprice", align: "center" },
-
     { label: "Total Revenue", field: "totalrevenue", align: "center" },
     {
       label: "Commission %",
@@ -77,39 +102,39 @@ function TrackandSales() {
       unitsprice: "$25",
       totalrevenue: "$2768.60",
       commission: "10%",
-      commissiondollar: "$415",
+      commissiondollar: "$3015",
       swayssivefee: "$62.37",
-      netrevenue: "$478.21",
+      netrevenue: "$3,680.19",
       status: "Active",
     },
     {
-      influencer: "John Smith",
+      influencer: "Sarah Lee",
       product: "Helimix 2.0",
       campaignlink: "LINK-8735",
       unitssold: 160,
       unitsprice: "$25",
       totalrevenue: "$2768.60",
       commission: "10%",
-      commissiondollar: "$415",
+      commissiondollar: "$2015",
       swayssivefee: "$62.37",
-      netrevenue: "$478.21",
+      netrevenue: "$2,180.19",
       status: "Active",
     },
     {
-      influencer: "John Smith",
+      influencer: "Maria L",
       product: "Helimix 2.0",
       campaignlink: "LINK-8735",
       unitssold: 160,
       unitsprice: "$25",
       totalrevenue: "$2768.60",
       commission: "10%",
-      commissiondollar: "$415",
+      commissiondollar: "$1500",
       swayssivefee: "$62.37",
-      netrevenue: "$478.21",
+      netrevenue: "$1478.21",
       status: "Active",
     },
     {
-      influencer: "John Smith",
+      influencer: "Steven",
       product: "Helimix 2.0",
       campaignlink: "LINK-8735",
       unitssold: 160,
@@ -122,7 +147,7 @@ function TrackandSales() {
       status: "Expired",
     },
     {
-      influencer: "John Smith",
+      influencer: "Eve",
       product: "Helimix 2.0",
       campaignlink: "LINK-8735",
       unitssold: 160,
@@ -136,9 +161,20 @@ function TrackandSales() {
     },
   ];
 
+  const chartData = rows.map((row, index) => ({
+    name: row.campaignlink || `Link ${index + 1}`,
+    revenue: parseFloat(row.netrevenue.replace(/[^0-9.-]+/g, "")),
+  }));
+
+  const COLORS = ["#21C45D", "#3D3D3D", "#FF9800", "#2196F3", "#D83A52"];
+
+  const pieData = rows.map((row, index) => ({
+    name: row.influencer,
+    value: Number(row.commissiondollar.replace(/[^0-9.-]+/g, "")),
+  }));
+
   return (
     <Box sx={{ marginTop: "50px" }}>
-      {/* ✅ Always render header on both views */}
       <DashboardHeader
         headerText="Track & Sales"
         bodyText={
@@ -195,20 +231,15 @@ function TrackandSales() {
                   sx: { backgroundColor: "#fff", color: "#000", minWidth: 120 },
                 }}
               >
-                <MenuItem onClick={handleClose(setAnchorElExport)}>
-                  CSV
-                </MenuItem>
+                <MenuItem onClick={handleClose(setAnchorElExport)}>CSV</MenuItem>
                 <Divider />
-                <MenuItem onClick={handleClose(setAnchorElExport)}>
-                  PDF
-                </MenuItem>
+                <MenuItem onClick={handleClose(setAnchorElExport)}>PDF</MenuItem>
                 <Divider />
-                <MenuItem onClick={handleClose(setAnchorElExport)}>
-                  XLSX
-                </MenuItem>
+                <MenuItem onClick={handleClose(setAnchorElExport)}>XLSX</MenuItem>
               </Menu>
             </Box>
           </Box>
+
           <Box display="flex" gap={1}>
             <Button
               variant="outlined"
@@ -243,18 +274,50 @@ function TrackandSales() {
             >
               Last 30 days
             </Button>
-            <Button
-              variant="outlined"
-              startIcon={<FiCalendar />}
-              sx={{
-                color: "#2A2A2A",
-                borderColor: "#2A2A2A",
-                backgroundColor: "#fff",
-                textTransform: "none",
-              }}
-            >
-              Custom
-            </Button>
+
+            {/* Custom Calendar Dropdown */}
+            <Box>
+              <Button
+                variant="outlined"
+                onClick={handleCalendarToggle}
+                startIcon={<FiCalendar />}
+                sx={{
+                  color: "#2A2A2A",
+                  borderColor: "#2A2A2A",
+                  backgroundColor: "#fff",
+                  textTransform: "none",
+                }}
+              >
+                Custom
+              </Button>
+              <Popper
+                open={Boolean(calendarAnchor)}
+                anchorEl={calendarAnchor}
+                placement="bottom-start"
+                style={{ zIndex: 1300 }}
+              >
+                <ClickAwayListener onClickAway={handleCalendarClose}>
+                  <Box
+                    sx={{
+                      p: 1,
+                      bgcolor: "white",
+                      border: "1px solid #ddd",
+                      borderRadius: "8px",
+                      boxShadow: 2,
+                    }}
+                  >
+                    <DatePicker
+                      selected={selectedDate}
+                      onChange={(date) => {
+                        setSelectedDate(date);
+                        handleCalendarClose();
+                      }}
+                      inline
+                    />
+                  </Box>
+                </ClickAwayListener>
+              </Popper>
+            </Box>
 
             {/* Stores Dropdown */}
             <Box>
@@ -370,6 +433,150 @@ function TrackandSales() {
           />
         </Box>
       )}
+
+      {/* Charts Section */}
+      <Box
+        sx={{
+          display: "flex",
+          gap: 2,
+          mt: 4,
+        }}
+      >
+        {/* Bar Chart */}
+        <Box
+          sx={{
+            border: "1px solid #DFE2E7",
+            borderRadius: "8px",
+            p: 2,
+            width: "55%",
+          }}
+        >
+          <Typography
+            sx={{
+              fontFamily: "Poppins",
+              fontWeight: 700,
+              fontSize: "14px",
+              mb: 2,
+            }}
+          >
+            Revenue by Link
+          </Typography>
+
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#E0E0E0" />
+              <XAxis
+                dataKey="name"
+                tick={{ fontSize: 10, fontFamily: "Poppins" }}
+              />
+              <YAxis
+                domain={[0, 6000]}
+                ticks={[0, 1500, 3000, 4500, 6000]}
+                tick={{ fontSize: 10, fontFamily: "Poppins" }}
+              />
+              <Tooltip />
+              <Bar dataKey="revenue" fill="#3D3D3D" radius={[6, 6, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </Box>
+
+        {/* Pie Chart */}
+        <Box
+          sx={{
+            border: "1px solid #DFE2E7",
+            borderRadius: "8px",
+            p: 2,
+            width: "45%",
+          }}
+        >
+          <Typography
+            sx={{
+              fontFamily: "Poppins",
+              fontWeight: 700,
+              fontSize: "14px",
+              mb: 2,
+            }}
+          >
+            Revenue Distribution by Influencer
+          </Typography>
+
+          <ResponsiveContainer width="100%" height={250}>
+            <PieChart>
+              <Pie
+                data={pieData}
+                dataKey="value"
+                nameKey="name"
+                cx="60%"
+                cy="50%"
+                outerRadius={100}
+                label={false}
+              >
+                {pieData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+
+              {/* Custom Legend */}
+              <Legend
+                layout="vertical"
+                align="left"
+                verticalAlign="middle"
+                content={({ payload }) => (
+                  <Box>
+                    {payload.map((entry, index) => (
+                      <Box
+                        key={`legend-item-${index}`}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          mb: 1,
+                          fontFamily: "Poppins",
+                          fontSize: "12px",
+                          fontWeight: 500,
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            width: 10,
+                            height: 10,
+                            borderRadius: "50%",
+                            backgroundColor: entry.color,
+                            mr: 1,
+                          }}
+                        />
+                        <Typography
+                          style={{ color: entry.color }}
+                          sx={{
+                            fontWeight: 400,
+                            fontFamily: "Poppins",
+                            fontSize: "12px",
+                          }}
+                        >
+                          {entry.value}
+                          <span
+                            style={{
+                              marginLeft: "auto",
+                              fontWeight: 400,
+                              fontFamily: "Poppins",
+                              color: entry.color,
+                            }}
+                          >
+                            -${pieData[index].value}
+                          </span>
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+              />
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </Box>
+      </Box>
     </Box>
   );
 }

@@ -1,9 +1,6 @@
 
 import { createApiInstance } from '../instance/axiosInstance';
 // import { API_BASE_URL } from '@env';
-
-
-
 const apiInstance = createApiInstance('influencers');
 
 export const influencerApi = {
