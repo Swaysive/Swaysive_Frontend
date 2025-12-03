@@ -86,12 +86,10 @@ const ProductDetailsPage = () => {
         if (response.data.status === "success") {
           setProduct(response.data.data);
           setVariants(response.data.data.variants || []);
-          setInfluencer(response.data.data.overview.influencer);
-          // Set active status based on first variant or product status
-          if (
-            response.data.data.variants &&
-            response.data.data.variants[0]?.status === "active"
-          ) {
+          // Get influencer from overview
+          setInfluencer(response.data.data.overview?.influencer);
+          // Set active status based on overview or first variant
+          if (response.data.data.overview?.status === "active") {
             setActive("Active");
           }
         }
@@ -102,8 +100,6 @@ const ProductDetailsPage = () => {
       }
     };
     fetchProductDetail();
-    // const value = localStorage.getItem("influencer") === "true";
-    // setInfluencer(false);
   }, [id]);
 
   // Fetch influencers on mount
@@ -114,7 +110,9 @@ const ProductDetailsPage = () => {
         if (res.data.status === "success") {
           const infs = res.data.data.map((inf, idx) => ({
             ...inf,
-            name: `${inf.firstName} ${inf.lastName}`,
+            firstName: inf.first, // Map to firstName for consistency
+            lastName: inf.last,   // Map to lastName for consistency
+            name: `${inf.first} ${inf.last}`,
             image: randomAvatars[idx % randomAvatars.length],
           }));
           setInfluencers(infs);
@@ -130,41 +128,49 @@ const ProductDetailsPage = () => {
 
   useEffect(() => {
     const fetchDiscountCodes = async () => {
-      if (!product?._id) return;
+      if (!product?.id) {
+        setDiscountCodeLoading(false);
+        return;
+      }
       setDiscountCodesLoading(true);
       try {
-        const res = await catalogApi.productCodes(product._id);
+        const res = await catalogApi.productCodes(product.id);
         if (res.data.status === "success") {
           setDiscountCodes(res.data.data);
         }
       } catch (e) {
+        console.error("Error fetching discount codes:", e);
         setDiscountCodes([]);
       } finally {
+        setDiscountCodesLoading(false);
         setDiscountCodeLoading(false);
       }
-      setDiscountCodesLoading(false);
     };
     fetchDiscountCodes();
-  }, [product?._id]);
+  }, [product?.id]);
 
   useEffect(() => {
     const fetchAnalytics = async () => {
-      if (!product?._id) return;
+      if (!product?.id) {
+        setAnalyticLoading(false);
+        return;
+      }
       setAnalyticsLoading(true);
       try {
-        const res = await catalogApi.productAnalytics(product._id);
+        const res = await catalogApi.productAnalytics(product.id);
         if (res.data.status === "success") {
           setAnalytics(res.data.data);
         }
       } catch (e) {
+        console.error("Error fetching analytics:", e);
         setAnalytics([]);
       } finally {
+        setAnalyticsLoading(false);
         setAnalyticLoading(false);
       }
-      setAnalyticsLoading(false);
     };
     fetchAnalytics();
-  }, [product?._id]);
+  }, [product?.id]);
 
   const handleAssign = () => {
     localStorage.setItem("influencer", "true");
@@ -214,8 +220,8 @@ const ProductDetailsPage = () => {
     // navigate(`/create-discount-code/${product.overview._id}`);
     navigate("/create-discount-code", {
       state: {
-        productApiId: product._id,
-        productId: product.overview._id,
+        productApiId: product.id,
+        productId: product.overview.id,
         productTitle: product?.title,
         productPrice: product?.overview.price,
         productAsin: product?.overview.variant_sku,
@@ -418,26 +424,8 @@ const ProductDetailsPage = () => {
                       sx={{ width: 180, height: 180, margin: "0 auto 10px" }}
                     />
                     <Typography variant="subtitle1" className="fw-bold">
-                      {influencer.firstName} {influencer.lastName}
+                      {influencer.first} {influencer.last}
                     </Typography>
-                    {/* <Typography variant="body2" color="textSecondary">
-                      {influencer.firstName}
-                    </Typography> */}
-                    {/* <div className="d-flex justify-content-center align-items-center mt-2 gap-2">
-                      <img src={FacebookIcon} alt="fb" width="16" />
-                      <span style={{ color: "#667085", fontSize: "14px" }}>
-                        1.5 M
-                      </span>
-                      <img
-                        src={InstagramIcon}
-                        alt="ig"
-                        width="16"
-                        className="ms-3"
-                      />
-                      <span style={{ color: "#667085", fontSize: "14px" }}>
-                        1.5 M
-                      </span>
-                    </div> */}
                   </div>
                 ) : (
                   <Button
@@ -706,7 +694,8 @@ const ProductDetailsPage = () => {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onInvite={handleInviteClick}
-        productId={product?._id}
+        productId={product?.id}
+        product={product}
         influencers={influencers}
         variants={variants}
         onAssign={handleAssignInfluencer}

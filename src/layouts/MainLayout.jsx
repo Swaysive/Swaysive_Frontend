@@ -8,6 +8,7 @@ import { TbUsers } from "react-icons/tb";
 import { VscGraph } from "react-icons/vsc";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import { TbMessage2 } from "react-icons/tb";
+import { MdLogout } from "react-icons/md";
 
 import {
   AppBar,
@@ -96,22 +97,22 @@ export default function NavbarWithSidebar({ children }) {
       icon: <TbMessage2 size={25} />,
       path: "/seller-home/messages",
     },
-    {
-      text: "Track & Sales",
-      icon: <MonetizationOnIcon size={25} />,
-      path: "/seller-home/trackandsales",
-    },
+    // {
+    //   text: "Track & Sales",
+    //   icon: <MonetizationOnIcon size={25} />,
+    //   path: "/seller-home/trackandsales",
+    // },
     { text: "Payments", icon: <Payments />, path: "/seller-home/payments" },
-    {
-      text: "Reports",
-      icon: <VscGraph size={25} />,
-      path: "/seller-home/reports",
-    },
-    {
-      text: "Settings",
-      icon: <IoSettingsOutline size={25} />,
-      path: "/seller-home/settings",
-    },
+    // {
+    //   text: "Reports",
+    //   icon: <VscGraph size={25} />,
+    //   path: "/seller-home/reports",
+    // },
+    // {
+    //   text: "Settings",
+    //   icon: <IoSettingsOutline size={25} />,
+    //   path: "/seller-home/settings",
+    // },
   ];
 
   const influencerMenuItems = [
@@ -175,16 +176,16 @@ export default function NavbarWithSidebar({ children }) {
           </Box>
 
           <Box className="d-flex align-items-center">
-            <Tooltip title="Search">
+            {/* <Tooltip title="Search">
               <IconButton color="default">
                 <Search />
               </IconButton>
-            </Tooltip>
-            <Tooltip title="Filter">
+            </Tooltip> */}
+            {/* <Tooltip title="Filter">
               <IconButton color="default">
                 <FilterList />
               </IconButton>
-            </Tooltip>
+            </Tooltip> */}
             <Tooltip title="Notifications">
               <IconButton color="default">
                 <Notifications />
@@ -199,9 +200,6 @@ export default function NavbarWithSidebar({ children }) {
               onClose={handleMenuClose}
             >
               <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-              <MenuItem onClick={onLogout} className="text-danger">
-                Logout
-              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
@@ -221,12 +219,15 @@ export default function NavbarWithSidebar({ children }) {
             background: "linear-gradient(90deg, #3c3c3c 0%, #0c0c0c 100%)",
             color: "#fff",
             marginTop: "64px",
+            height: "calc(100vh - 64px)",
+            display: "flex",
+            flexDirection: "column",
           },
         }}
       >
         <Toolbar />
         <Divider />
-        <List>
+        <List sx={{ flexGrow: 1 }}>
           {menuItems.map(({ text, icon, path }) => (
             <ListItem
               button
@@ -262,6 +263,36 @@ export default function NavbarWithSidebar({ children }) {
             </ListItem>
           ))}
         </List>
+        <Divider />
+        <Box sx={{ p: 2 }}>
+          <ListItem
+            button
+            onClick={onLogout}
+            sx={{
+              px: 2,
+              bgcolor: "#0c0c0c",
+              borderRadius: 1,
+              "&:hover": {
+                bgcolor: "#0c0c0c",
+              },
+              cursor: "pointer",
+            }}
+          >
+            <ListItemIcon sx={{ color: "white" }}>
+              <MdLogout size={25} />
+            </ListItemIcon>
+            {open && (
+              <ListItemText
+                sx={{
+                  color: "white",
+                  fontFamily: "Poppins",
+                  fontSize: "24px",
+                }}
+                primary="Logout"
+              />
+            )}
+          </ListItem>
+        </Box>
       </Drawer>
 
       {/* Main content */}

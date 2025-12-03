@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Logo from '../../assets/icons/swaysive-logo.png';
@@ -9,7 +10,8 @@ import { toast } from 'react-toastify'; // Example toast library
 const ForgetPassword = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const { handleForgetPassword } = useAuth(); // Assuming this function handles the API call
+  const { handleForgotPassword } = useAuth(); // Assuming this function handles the API call
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setEmail(e.target.value);
@@ -31,17 +33,23 @@ const ForgetPassword = () => {
       const requestBody = { email };
 
       // Call the forget password function from context and capture response
-      const response = await handleForgetPassword(requestBody);
+      const response = await handleForgotPassword(requestBody);
 
-      if (response.status === "success") {
+      if (response && response.status === "success") {
         toast.success("Verification code sent to your email.");
-        // Optionally redirect or provide further instructions
+        // Navigate to OTP verification screen
+        navigate('/otp-verify', {
+          state: { email, type: 'password-reset' }
+        });
       } else {
-        toast.error(response.message || "Failed to send verification code.");
+        toast.error(response?.message || "Failed to send verification code.");
       }
     } catch (error) {
+      console.error("Forgot password error:", error);
       const errorMessage =
-        error.response?.data?.message || "An unexpected error occurred.";
+        error?.response?.data?.message || 
+        error?.message || 
+        "An unexpected error occurred. Please try again.";
       toast.error(errorMessage);
     } finally {
       setLoading(false); // Set loading to false after the request

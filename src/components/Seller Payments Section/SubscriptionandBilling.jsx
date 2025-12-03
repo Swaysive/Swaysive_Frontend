@@ -19,20 +19,12 @@ import { FiEdit } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 
-const CreditCardDummyData = [
-  {
-    img: CreditCard,
-    account: "Visa •••• 4821",
-    expirydate: "Exp 11/27",
-    nameoncard: "Name on Card: John Smith",
-    billingaddress: "Billing Address: 45 Main Street, Austin, TX, USA",
-  },
-];
-
 const SubscriptionandBilling = () => {
   const [loading, setLoading] = useState(true);
   const [plan, setPlan] = useState(null);
   const [subscription, setSubscription] = useState(null);
+  const [billingMethods, setBillingMethods] = useState([]);
+  const [billingLoading, setBillingLoading] = useState(true);
   const navigate = useNavigate();
 
   const fetchCurrentPlan = async () => {
@@ -49,12 +41,32 @@ const SubscriptionandBilling = () => {
     }
   };
 
+  const fetchBillingMethods = async () => {
+    try {
+      const response = await usersApi.getBillingMethods();
+      if (response.data.status === "success") {
+        setBillingMethods(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching billing methods:", error);
+      toast.error("Failed to load billing methods");
+    } finally {
+      setBillingLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchCurrentPlan();
+    fetchBillingMethods();
   }, []);
 
   const handleUpgrade = async () => {
     navigate("/pricing", { state: { currentPlanId: plan.id } });
+  };
+
+  const getCardBrandImage = (brand) => {
+    // You can customize this to return different images based on card brand
+    return CreditCard;
   };
 
   if (loading) {
@@ -297,93 +309,107 @@ const SubscriptionandBilling = () => {
             borderRadius: "8px",
           }}
         >
-          {CreditCardDummyData.map((data, index) => (
-            <Box
-              key={index}
-              display={"flex"}
-              justifyContent={"space-between"}
-              alignItems={"center"}
-              gap={2}
-              p={2}
-            >
-              <Box display={"flex"} alignItems={"center"} gap={2}>
-                <Box>
-                  <img src={data.img} alt="" />
-                </Box>
-                <Box>
-                  <Typography
-                    sx={{
-                      fontFamily: "Poppins",
-                      fontSize: "15px",
-                      fontWeight: "400",
-                      display: "flex",
-                      gap: 1,
-                    }}
-                  >
-                    {data.account}
-                    <Typography
+          {billingLoading ? (
+            <Box display="flex" justifyContent="center" p={4}>
+              <CircularProgress size={30} />
+            </Box>
+          ) : billingMethods.length === 0 ? (
+            <Box p={3}>
+              <Typography
+                sx={{
+                  fontFamily: "Poppins",
+                  fontSize: "14px",
+                  fontWeight: "400",
+                  color: "#727272",
+                  textAlign: "center",
+                }}
+              >
+                No payment methods found
+              </Typography>
+            </Box>
+          ) : (
+            billingMethods
+              .filter((method) => method.type === "payment")
+              .map((method, index) => (
+                <Box
+                  key={method.stripe_id}
+                  display={"flex"}
+                  justifyContent={"space-between"}
+                  alignItems={"center"}
+                  gap={2}
+                  p={2}
+                >
+                  <Box display={"flex"} alignItems={"center"} gap={2}>
+                    <Box>
+                      <img src={getCardBrandImage(method.brand)} alt="" />
+                    </Box>
+                    <Box>
+                      <Typography
+                        sx={{
+                          fontFamily: "Poppins",
+                          fontSize: "15px",
+                          fontWeight: "400",
+                          display: "flex",
+                          gap: 1,
+                        }}
+                      >
+                        {method.brand.charAt(0).toUpperCase() + method.brand.slice(1)} •••• {method.last_4}
+                        <Typography
+                          sx={{
+                            fontFamily: "Poppins",
+                            fontSize: "13px",
+                            fontWeight: "400",
+                            color: "#727272",
+                          }}
+                        >
+                          Exp {method.exp_month}/{method.exp_year}
+                        </Typography>
+                        {method.is_default && (
+                          <Chip
+                            label="Default"
+                            size="small"
+                            sx={{
+                              backgroundColor: "#14A63D21",
+                              color: "#14A63D",
+                              height: "20px",
+                              fontSize: "11px",
+                            }}
+                          />
+                        )}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box display={"flex"} gap={2}>
+                    <Button
+                      startIcon={<FiEdit />}
+                      variant="outlined"
+                      color="dark"
                       sx={{
+                        border: "1px solid #DFE2E7",
                         fontFamily: "Poppins",
-                        fontSize: "13px",
-                        fontWeight: "400",
-                        color: "#727272",
+                        textTransform: "none",
+                        borderRadius: "6px",
                       }}
                     >
-                      {data.expirydate}
-                    </Typography>
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "Poppins",
-                      fontSize: "13px",
-                      fontWeight: "400",
-                      color: "#727272",
-                    }}
-                  >
-                    {data.nameoncard}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "Poppins",
-                      fontSize: "13px",
-                      fontWeight: "400",
-                      color: "#727272",
-                    }}
-                  >
-                    {data.billingaddress}
-                  </Typography>
+                      Edit
+                    </Button>
+                    <Button
+                      startIcon={<RiDeleteBinLine />}
+                      variant="outlined"
+                      sx={{
+                        border: "1px solid #D83A52",
+                        fontFamily: "Poppins",
+                        textTransform: "none",
+                        borderRadius: "6px",
+                        color: "#D83A52",
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </Box>
                 </Box>
-              </Box>
-              <Box display={"flex"} gap={2}>
-                <Button
-                  startIcon={<FiEdit />}
-                  variant="outlined"
-                  color="dark"
-                  sx={{
-                    border: "1px solid #DFE2E7",
-                    fontFamily: "Poppins",
-                    textTransform: "none",
-                    borderRadius: "6px",
-                  }}
-                >
-                  Edit
-                </Button>
-                <Button
-                  startIcon={<RiDeleteBinLine />}
-                  variant="outlined"
-                  sx={{
-                    border: "1px solid #D83A52",
-                    fontFamily: "Poppins",
-                    textTransform: "none",
-                    borderRadius: "6px",
-                    color: "#D83A52",
-                  }}
-                >
-                  Remove
-                </Button>
-              </Box>
-            </Box>
-          ))}
+              ))
+          )}
         </Box>
         <Button
           variant="outlined"
@@ -398,6 +424,8 @@ const SubscriptionandBilling = () => {
           Add New Card
         </Button>
       </Box>
+
+      {/* Platform Fee & Commission Payment Method - same logic */}
       <Box sx={{ mt: 3 }}>
         <Typography
           variant="h5"
@@ -430,93 +458,107 @@ const SubscriptionandBilling = () => {
               borderRadius: "8px",
             }}
           >
-            {CreditCardDummyData.map((data, index) => (
-              <Box
-                key={index}
-                display={"flex"}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-                gap={2}
-                p={2}
-              >
-                <Box display={"flex"} alignItems={"center"} gap={2}>
-                  <Box>
-                    <img src={data.img} alt="" />
-                  </Box>
-                  <Box>
-                    <Typography
-                      sx={{
-                        fontFamily: "Poppins",
-                        fontSize: "15px",
-                        fontWeight: "400",
-                        display: "flex",
-                        gap: 1,
-                      }}
-                    >
-                      {data.account}
-                      <Typography
+            {billingLoading ? (
+              <Box display="flex" justifyContent="center" p={4}>
+                <CircularProgress size={30} />
+              </Box>
+            ) : billingMethods.length === 0 ? (
+              <Box p={3}>
+                <Typography
+                  sx={{
+                    fontFamily: "Poppins",
+                    fontSize: "14px",
+                    fontWeight: "400",
+                    color: "#727272",
+                    textAlign: "center",
+                  }}
+                >
+                  No payment methods found
+                </Typography>
+              </Box>
+            ) : (
+              billingMethods
+                .filter((method) => method.type === "platform_fee")
+                .map((method, index) => (
+                  <Box
+                    key={method.stripe_id}
+                    display={"flex"}
+                    justifyContent={"space-between"}
+                    alignItems={"center"}
+                    gap={2}
+                    p={2}
+                  >
+                    <Box display={"flex"} alignItems={"center"} gap={2}>
+                      <Box>
+                        <img src={getCardBrandImage(method.brand)} alt="" />
+                      </Box>
+                      <Box>
+                        <Typography
+                          sx={{
+                            fontFamily: "Poppins",
+                            fontSize: "15px",
+                            fontWeight: "400",
+                            display: "flex",
+                            gap: 1,
+                          }}
+                        >
+                          {method.brand.charAt(0).toUpperCase() + method.brand.slice(1)} •••• {method.last_4}
+                          <Typography
+                            sx={{
+                              fontFamily: "Poppins",
+                              fontSize: "13px",
+                              fontWeight: "400",
+                              color: "#727272",
+                            }}
+                          >
+                            Exp {method.exp_month}/{method.exp_year}
+                          </Typography>
+                          {method.is_default && (
+                            <Chip
+                              label="Default"
+                              size="small"
+                              sx={{
+                                backgroundColor: "#14A63D21",
+                                color: "#14A63D",
+                                height: "20px",
+                                fontSize: "11px",
+                              }}
+                            />
+                          )}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Box display={"flex"} gap={2}>
+                      <Button
+                        startIcon={<FiEdit />}
+                        variant="outlined"
+                        color="dark"
                         sx={{
+                          border: "1px solid #DFE2E7",
                           fontFamily: "Poppins",
-                          fontSize: "13px",
-                          fontWeight: "400",
-                          color: "#727272",
+                          textTransform: "none",
+                          borderRadius: "6px",
                         }}
                       >
-                        {data.expirydate}
-                      </Typography>
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontFamily: "Poppins",
-                        fontSize: "13px",
-                        fontWeight: "400",
-                        color: "#727272",
-                      }}
-                    >
-                      {data.nameoncard}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontFamily: "Poppins",
-                        fontSize: "13px",
-                        fontWeight: "400",
-                        color: "#727272",
-                      }}
-                    >
-                      {data.billingaddress}
-                    </Typography>
+                        Edit
+                      </Button>
+                      <Button
+                        startIcon={<RiDeleteBinLine />}
+                        variant="outlined"
+                        sx={{
+                          border: "1px solid #D83A52",
+                          fontFamily: "Poppins",
+                          textTransform: "none",
+                          borderRadius: "6px",
+                          color: "#D83A52",
+                        }}
+                      >
+                        Remove
+                      </Button>
+                    </Box>
                   </Box>
-                </Box>
-                <Box display={"flex"} gap={2}>
-                  <Button
-                    startIcon={<FiEdit />}
-                    variant="outlined"
-                    color="dark"
-                    sx={{
-                      border: "1px solid #DFE2E7",
-                      fontFamily: "Poppins",
-                      textTransform: "none",
-                      borderRadius: "6px",
-                    }}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    startIcon={<RiDeleteBinLine />}
-                    variant="outlined"
-                    sx={{
-                      border: "1px solid #D83A52",
-                      fontFamily: "Poppins",
-                      textTransform: "none",
-                      borderRadius: "6px",
-                      color: "#D83A52",
-                    }}
-                  >
-                    Remove
-                  </Button>
-                </Box>
-              </Box>
-            ))}
+                ))
+            )}
             <Box
               display={"flex"}
               justifyContent={"start"}

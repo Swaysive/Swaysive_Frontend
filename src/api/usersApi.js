@@ -30,12 +30,16 @@ export const usersApi = {
     return apiInstance.post("/invitation/accept", data);
   },
 
-  subscriptionChange: async () => {
-    return apiInstance.post("/subscription/change");
+  subscriptionChange: async (payload) => {
+    return apiInstance.post("/subscription/change", payload);
   },
 
   viewInvitations: async () => {
     return apiInstance.get("/invitation/view");
+  },
+
+  getBillingMethods: async () => {
+    return apiInstance.get("/billing-methods");
   },
 
   getUsers: async ({ type }) => {

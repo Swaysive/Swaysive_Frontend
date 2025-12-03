@@ -47,7 +47,7 @@ const BrandTable = () => {
       try {
         const response = await catalogApi.getBrands({ page: 1, limit: 1 });
         if (response.data.status === "success") {
-          setBrands(response.data.data.result);
+          setBrands(response.data.data.items);
           setTotalRecords(response.data.data.pagination.totalRecords);
           setTotalPages(response.data.data.pagination.totalPages);
         }
@@ -130,7 +130,7 @@ const BrandTable = () => {
                     <Checkbox />
                   </TableCell>
                   <TableCell
-                    onClick={() => navigate(`/brands/details/${brand._id}`)}
+                    onClick={() => navigate(`/brands/details/${brand.id}`)}
                     style={{ cursor: "pointer" }}
                   >
                     <Box display="flex" alignItems="center" gap={1}>

@@ -19,24 +19,33 @@ const processQueue = (error, token = null) => {
 };
 
 // Use .env for base URL or hard-code it
-const API_BASE_URL = 'https://temp.swaysive.io';
+const API_BASE_URL = 'https://dev-api.swaysive.io';
 
 export const createApiInstance = (prefix = '') => {
   const instance = axios.create({
-    baseURL: `${API_BASE_URL}/api/${prefix}`,
+    baseURL: `${API_BASE_URL}/${prefix}`,
     headers: {
       'Content-Type': 'application/json',
+    },
+    validateStatus: function (status) {
+      return status >= 200 && status < 400; // Accept 2xx and 3xx as valid responses
     },
   });
 
   instance.interceptors.request.use(async config => {
     const token = localStorage.getItem('accessToken');
     const sessionToken = localStorage.getItem('sessionToken');
-    const uuid = await getDeviceUUID(); // Make sure this works on web
+    const installationId = localStorage.getItem('x-installation-id');
 
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    if (sessionToken) config.headers.session = sessionToken;
-    if (uuid) config.headers['x-installation-id'] = uuid;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    if (sessionToken) {
+      config.headers.session = sessionToken;
+    }
+    if (installationId) {
+      config.headers['x-installation-id'] = installationId;
+    }
 
     return config;
   }, error => Promise.reject(error));

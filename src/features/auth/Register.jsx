@@ -144,8 +144,8 @@ const Register = () => {
     <div className="container d-flex justify-content-center align-items-center">
       <div className="card p-4" style={GlobalStyles.card}>
         <img src={Logo} alt="Logo" style={GlobalStyles.logo} />
-        <GoogleSignInButton />
-        <OrDivider />
+        {/* <GoogleSignInButton />
+        <OrDivider /> */}
         <form onSubmit={handleSubmit} style={GlobalStyles.customForm}>
           {/* First Name and Last Name Fields */}
           <div className="d-flex mb-3">

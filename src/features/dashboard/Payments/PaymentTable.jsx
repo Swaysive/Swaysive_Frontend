@@ -31,8 +31,8 @@ const PaymentTable = () => {
 
   const buttons = [
     { id: "subscription", label: "Subscription & Billing" },
-    { id: "statements", label: "Statements & History" },
-    { id: "settings", label: "Settings & Alerts" },
+    // { id: "statements", label: "Statements & History" },
+    // { id: "settings", label: "Settings & Alerts" },
   ];
 
   return (
@@ -76,11 +76,11 @@ const PaymentTable = () => {
       {/* Buttons Row */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
         {/* Navigation Buttons */}
-        <Box>
+        {/* <Box>
           <Box
             mx={2}
             sx={{
-              width: "617px",
+              width: "217px",
               height: "60px",
               borderRadius: "12px",
               backgroundColor: "#ECECF0",
@@ -125,7 +125,7 @@ const PaymentTable = () => {
               </Button>
             ))}
           </Box>
-        </Box>
+        </Box> */}
 
         {/* Filter Dropdown (only when statements is active) */}
         {active === "statements" && !viewFullTable && !viewFullReport && (

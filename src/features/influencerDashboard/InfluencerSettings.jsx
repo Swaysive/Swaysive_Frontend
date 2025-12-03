@@ -423,7 +423,7 @@ function InfluencerSettings() {
       </Box>
 
       {/* Notification Preferences */}
-      <Box p={3} sx={{ border: "1px solid #E0E0E0", mt: 3, borderRadius: 2 }}>
+      {/* <Box p={3} sx={{ border: "1px solid #E0E0E0", mt: 3, borderRadius: 2 }}>
         <Typography sx={{ fontFamily: "Poppins", fontSize: "18px", fontWeight: "700" }}>
           Notification Preferences
         </Typography>
@@ -482,7 +482,7 @@ function InfluencerSettings() {
             Reset to Defaults
           </Button>
         </Box>
-      </Box>
+      </Box> */}
 
       <ToastContainer />
     </Box>

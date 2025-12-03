@@ -15,7 +15,6 @@ import {
   ListItemText,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import AddIcon from '@mui/icons-material/Add';
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { catalogApi } from "../../api/catalogApi";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle"
@@ -23,13 +22,6 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle"
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { toast } from 'react-toastify';
-
-// const randomAvatars = [
-//   "https://randomuser.me/api/portraits/men/1.jpg",
-//   "https://randomuser.me/api/portraits/women/2.jpg",
-//   "https://randomuser.me/api/portraits/men/3.jpg",
-//   "https://randomuser.me/api/portraits/women/4.jpg"
-// ];
 
 const randomAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png"
 
@@ -39,6 +31,7 @@ const AssignInfluencerModal = ({
   open,
   onClose,
   onInvite,
+  product,
   productId,
   influencers = [],
   variants = [],
@@ -53,6 +46,8 @@ const AssignInfluencerModal = ({
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [selectedVariants, setSelectedVariants] = useState([]);
   const [affiliateLinks, setAffiliateLinks] = useState([]); // <-- new state
+
+  console.log("Product ID in Modal:", product);
 
   // Assign influencer to product
   const handleAssign = async () => {
@@ -83,10 +78,11 @@ const AssignInfluencerModal = ({
   const handleGenerate = async () => {
     try {
       const response = await catalogApi.generateAffiliateLink({
-        productId,
+        // productId,
         influencerId: selectedInfluencerId,
         commissionRate: Number(total),
-        variantIds: selectedVariants,
+        // variantIds: selectedVariants,
+        productId: selectedVariants,
       });
       // Response: { status, message, data: [ { variantId, affiliateLink, ... } ] }
       setAffiliateLinks(response.data.data || []);
@@ -158,7 +154,51 @@ const AssignInfluencerModal = ({
           </TextField>
 
           {/* Multi-select Variants Dropdown (moved below influencer input) */}
+          {/* Temporarily showing product instead of variants */}
           <TextField
+            select
+            fullWidth
+            label="Select Product"
+            value={selectedVariants}
+            onChange={handleVariantChange}
+            SelectProps={{
+              multiple: false,
+              renderValue: (selected) => product?.title || "",
+            }}
+            className="mb-3"
+          >
+            {product && (
+              <MenuItem value={product.id} sx={{ whiteSpace: 'normal', py: 1.5,width: '500px' }}>
+                <Box display="flex" alignItems="flex-start" gap={1} width="100%">
+                  <Avatar
+                    src={product.images?.[1] || ""}
+                    sx={{ width: 40, height: 40, flexShrink: 0, mt: 0.5 }}
+                  />
+                  <ListItemText
+                    primary={product.title}
+                    secondary={product.overview?.variant_sku}
+                    primaryTypographyProps={{
+                      sx: {
+                        whiteSpace: 'normal',
+                        wordWrap: 'break-word',
+                        fontSize: '14px',
+                        lineHeight: 1.4,
+                      }
+                    }}
+                    secondaryTypographyProps={{
+                      sx: {
+                        fontSize: '12px',
+                        mt: 0.5,
+                      }
+                    }}
+                  />
+                </Box>
+              </MenuItem>
+            )}
+          </TextField>
+
+          {/* COMMENTED OUT - Original Variants Dropdown */}
+          {/* <TextField
             select
             fullWidth
             label="Select Variants"
@@ -170,15 +210,15 @@ const AssignInfluencerModal = ({
                 selected
                   .map(
                     (id) =>
-                      variants.find((v) => v._id === id)?.variant_sku || ""
+                      variants.find((v) => v.id === id)?.variant_sku || ""
                   )
                   .join(", "),
             }}
             className="mb-3"
           >
             {variants.map((variant) => (
-              <MenuItem key={variant._id} value={variant._id}>
-                <Checkbox checked={selectedVariants.indexOf(variant._id) > -1} />
+              <MenuItem key={variant.id} value={variant.id}>
+                <Checkbox checked={selectedVariants.indexOf(variant.id) > -1} />
                 <Avatar
                   src={variant.images?.[1] || ""}
                   sx={{ width: 32, height: 22, mr: 1 }}
@@ -189,7 +229,7 @@ const AssignInfluencerModal = ({
                 />
               </MenuItem>
             ))}
-          </TextField>
+          </TextField> */}
 
           {/* Assign Button */}
           {selectedInfluencer && !showCommission && (
@@ -260,9 +300,8 @@ const AssignInfluencerModal = ({
                   fullWidth
                   variant="contained"
                   sx={{ mt: 3, backgroundColor: "#000" }}
-                  disabled={!commission || selectedVariants.length === 0}
+                  disabled={!commission || !selectedVariants} // Changed from array check
                   onClick={handleGenerate}
-                  // sx={{ mt: 2 }}
                 >
                   Generate Affiliate Link
                 </Button>
@@ -279,7 +318,7 @@ const AssignInfluencerModal = ({
               {affiliateLinks.map((linkObj, idx) => (
                 <Box key={linkObj.variantId} mb={2}>
                   <Typography fontSize={12} mb={0.5}>
-                    Variant SKU: {variants.find(v => v._id === linkObj.variantId)?.variant_sku || linkObj.variantId}
+                    Variant SKU: {variants.find(v => v.id === linkObj.variantId)?.variant_sku || linkObj.variantId}
                   </Typography>
                   <TextField
                     fullWidth

@@ -6,16 +6,11 @@ import {
   Button,
   MenuItem,
   Avatar,
-  Checkbox,
-  ListItemText,
-  InputAdornment,
   CircularProgress
 } from "@mui/material";
 import ProteinShaker from "../../../assets/icons/proteinshaker.svg";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ReusableTable from "../../../components/ReusableTable/ReusableTable";
-import { HiArrowsUpDown } from "react-icons/hi2";
-import { LuFilter } from "react-icons/lu";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { influencerApi } from "../../../api/influencerApi"; // <-- import your API
@@ -230,7 +225,7 @@ const MyProductsPage = () => {
           size="small"
           sx={{ flex: 1, minWidth: 250 }}
         />
-        <TextField
+        {/* <TextField
           select
           size="small"
           value={filterAll}
@@ -263,9 +258,9 @@ const MyProductsPage = () => {
             <Checkbox checked={filterAll === "Ended"} size="small" />
             <ListItemText primary="Ended" />
           </MenuItem>
-        </TextField>
+        </TextField> */}
 
-        <TextField
+        {/* <TextField
           select
           size="small"
           value={sortOrder}
@@ -318,7 +313,7 @@ const MyProductsPage = () => {
             />
             <ListItemText primary="Earnings (Low → High)" />
           </MenuItem>
-        </TextField>
+        </TextField> */}
       </Box>
 
       {/* Table */}

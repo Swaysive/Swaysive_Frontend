@@ -213,6 +213,18 @@ export const AuthProvider = ({ children }) => {
             return { status: 'success', message: 'Email Verified', response: response};
         } catch (error) {
             console.error('Password reset failed', error);
+            throw error; // Re-throw the error so it can be caught in the component
+        }
+    };
+
+    // Verify OTP for forgot password
+    const handleVerifyForgotPasswordEmail = async (data) => {
+        try {
+            const response = await verifyEmail(data);
+            return { status: 'success', message: 'OTP Verified', response: response};
+        } catch (error) {
+            console.error('OTP verification failed', error);
+            throw error;
         }
     };
 
@@ -275,7 +287,8 @@ export const AuthProvider = ({ children }) => {
             handleResetPassword,
             fetchUserProfile,
             handleResendEmail,
-            handleForgotPassword
+            handleForgotPassword,
+            handleVerifyForgotPasswordEmail
         }}>
             {children}
         </AuthContext.Provider>

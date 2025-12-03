@@ -274,15 +274,15 @@ export default function InfluencerDashboard() {
             />
           </Paper>
 
-          <Paper elevation={1} sx={{ p: 2 }}>
+          {/* <Paper elevation={1} sx={{ p: 2 }}>
             <InfluencerImpactChart />
-          </Paper>
+          </Paper> */}
         </Grid>
 
         {/* RIGHT COLUMN */}
         <Grid item xs={12} md={4}>
           {/* Quick Actions */}
-          <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: "12px" }}>
+          {/* <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: "12px" }}>
             <Typography
               variant="subtitle1"
               fontWeight="bold"
@@ -325,7 +325,7 @@ export default function InfluencerDashboard() {
             >
               Download statement
             </Button>
-          </Paper>
+          </Paper> */}
 
           <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: "12px" }}>
             <Typography
@@ -382,7 +382,7 @@ export default function InfluencerDashboard() {
           </Paper>
 
           {/* Recent Notifications */}
-          <Paper elevation={1} sx={{ pb: 2, borderRadius: "12px" }}>
+          {/* <Paper elevation={1} sx={{ pb: 2, borderRadius: "12px" }}>
             <Typography
               p={2}
               variant="subtitle1"
@@ -410,7 +410,6 @@ export default function InfluencerDashboard() {
                   </Typography>
                 </Box>
 
-                {/* Divider between items, except after the last one */}
                 {idx < notifications.length && (
                   <Divider
                     sx={{
@@ -431,7 +430,7 @@ export default function InfluencerDashboard() {
                 View All Notifications
               </Link>
             </Typography>
-          </Paper>
+          </Paper> */}
         </Grid>
       </Grid>
     </Box>

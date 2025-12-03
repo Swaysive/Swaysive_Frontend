@@ -133,7 +133,7 @@ export default function CreateDiscountCode() {
         productId: productApiId,
       });
       if (res.data.status === "success") {
-        setDiscountCode(res.data.data.discountCode);
+        setDiscountCode(res.data.data.code);
         setSuccessModalOpen(true);
       }
       // await catalogApi.createCouponsCode({
@@ -306,7 +306,7 @@ export default function CreateDiscountCode() {
               />
               <small className="text-muted font-poppins">Between 1–80%</small>
             </Box>
-            <Box
+            {/* <Box
               mt={2}
               p={2}
               sx={{ border: "1px solid #EAECF0", borderRadius: "6px" }}
@@ -370,7 +370,7 @@ export default function CreateDiscountCode() {
               <small className="text-muted font-poppins">
                 0/100 characters
               </small>
-            </Box>
+            </Box> */}
 
             <h5 className="mt-4 mb-3 font-poppins">Applies To Variations</h5>
             <h6 className="font-poppins">
@@ -420,10 +420,10 @@ export default function CreateDiscountCode() {
                     <small className="text-muted">No variants selected</small>
                   )}
                   {variants
-                    .filter((v) => selectedVariants.includes(v._id))
+                    .filter((v) => selectedVariants.includes(v.id))
                     .map((v) => (
                       <span
-                        key={v._id}
+                        key={v.id}
                         className="badge bg-dark border me-2 d-inline-flex align-items-center"
                         style={{ fontSize: 14, padding: "6px 10px" }}
                       >
@@ -433,7 +433,7 @@ export default function CreateDiscountCode() {
                           style={{ marginLeft: 6, cursor: "pointer" }}
                           onClick={() =>
                             setSelectedVariants((prev) =>
-                              prev.filter((id) => id !== v._id)
+                              prev.filter((id) => id !== v.id)
                             )
                           }
                         />
@@ -454,12 +454,12 @@ export default function CreateDiscountCode() {
                     const isDisabled = variant.hasDiscount;
                     return (
                       <div
-                        key={variant._id}
+                        key={variant.id}
                         className="d-flex align-items-center py-1"
                         style={{
                           borderBottom: "1px solid #f0f0f0",
                           cursor: isDisabled ? "not-allowed" : "pointer",
-                          background: selectedVariants.includes(variant._id)
+                          background: selectedVariants.includes(variant.id)
                             ? "#e6f4ea"
                             : "transparent",
                           opacity: isDisabled ? 0.5 : 1,
@@ -469,19 +469,19 @@ export default function CreateDiscountCode() {
                             : "none",
                         }}
                         onClick={() =>
-                          !isDisabled && handleVariantToggle(variant._id)
+                          !isDisabled && handleVariantToggle(variant.id)
                         }
                       >
                         <Checkbox
-                          checked={selectedVariants.includes(variant._id)}
+                          checked={selectedVariants.includes(variant.id)}
                           tabIndex={-1}
                           disableRipple
                           sx={{ marginRight: 1 }}
                           inputProps={{
-                            "aria-labelledby": `variant-${variant._id}`,
+                            "aria-labelledby": `variant-${variant.id}`,
                           }}
                           disabled={isDisabled}
-                        />
+                        /> 
                         <Avatar
                           src={variant.images?.[1] || ""}
                           alt={variant.variant_title}

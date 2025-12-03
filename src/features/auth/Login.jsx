@@ -77,8 +77,8 @@ const Login = () => {
     <div className="container d-flex justify-content-center align-items-center vh-100">
       <div className="card p-4" style={GlobalStyles.card}>
         <img src={Logo} alt="Logo" style={GlobalStyles.logo} />
-        <GoogleSignInButton />
-        <OrDivider />
+        {/* <GoogleSignInButton /> */}
+        {/* <OrDivider /> */}
         <form onSubmit={handleSubmit} style={GlobalStyles.customForm}>
           <div className="mb-3">
             <label style={GlobalStyles.inputLabel}>Email</label>

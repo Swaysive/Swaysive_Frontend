@@ -91,27 +91,28 @@ const OTPVerification = () => {
       let response;
       if (type === "email-verification") {
         response = await handleVerifyEmail({ email, otp: verificationCode });
-      } else {
+        if (response.status === "success") {
+          toast.success("Email verified successfully!");
+          navigate("/");
+        }
+      } else if (type === "password-reset") {
         response = await handleVerifyForgotPasswordEmail({
           email,
           otp: verificationCode,
         });
+        if (response.status === "success") {
+          toast.success("OTP verified successfully!");
+          navigate('/reset-password', {
+            state: { email, otpCode: verificationCode },
+          });
+        }
       }
-      if (response.status === "success") {
-        toast.success("Email verified successfully!");
-        navigate("/");
-        // if (type === 'email-verification') {
-        //   navigate('/auth/login');
-        // } else if (type === 'password-reset') {
-        //   navigate('/auth/reset-password', {
-        //     state: { email, otpCode: verificationCode },
-        //   });
-        // }
-      } else {
-        toast.error(response || "Verification failed. Please try again.");
+      
+      if (response && response.status !== "success") {
+        toast.error(response.message || "Verification failed. Please try again.");
       }
     } catch (error) {
-      toast.error("Failed to verify OTP. Please check your network.");
+      toast.error(error?.message || "Failed to verify OTP. Please check your network.");
     }
   };
 

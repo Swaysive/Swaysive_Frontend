@@ -48,7 +48,7 @@ const InfluencerTable = () => {
           // Map API data and assign a random avatar
           const mapped = response.data.data.map((user, idx) => ({
             id: user.id,
-            name: `${user.firstName} ${user.lastName}`,
+            name: `${user.first} ${user.last}`,
             // avatar: randomAvatars[idx % randomAvatars.length],
             avatar: randomAvatar,
             brands: ["Helimix"], // Placeholder, update if you have real data
@@ -144,13 +144,13 @@ const InfluencerTable = () => {
             sx={{ width: 300 }}
           />
           <Box>
-            <Button
+            {/* <Button
               variant="outlined"
               startIcon={<FilterList />}
               sx={{ mr: 1, color: "#000", borderColor: "#000" }}
             >
               Filter
-            </Button>
+            </Button> */}
             <Button
               variant="contained"
               sx={{ backgroundColor: "#000" }}

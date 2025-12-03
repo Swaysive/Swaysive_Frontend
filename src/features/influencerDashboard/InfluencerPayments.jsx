@@ -138,7 +138,7 @@ function InfluencerPayments() {
           >
             Add Payment Method
           </Button>
-          <Button
+          {/* <Button
             variant="contained"
             startIcon={<LuDownload />}
             sx={{
@@ -150,7 +150,7 @@ function InfluencerPayments() {
             }}
           >
             Download Latest Statement
-          </Button>
+          </Button> */}
         </Box>
       </Box>
 

@@ -39,7 +39,7 @@ const ProductTable = () => {
     const fetchProducts = async () => {
       try {
         const response = await catalogApi.getProducts({ page: 1, limit: 20 });
-        const fetchedProducts = response.data.data.result;
+        const fetchedProducts = response.data.data.items;
 
         const isActive = localStorage.getItem("active") === "true";
         console.log("Active status from localStorage:", isActive);
@@ -75,7 +75,7 @@ const ProductTable = () => {
   };
 
   const handleProductClick = (product) => {
-    navigate(`/products/details/${product._id}`);
+    navigate(`/products/details/${product.id}`);
   };
   if (loading) {
       return (
@@ -119,20 +119,20 @@ const ProductTable = () => {
             sx={{ width: 300 }}
           />
           <Box>
-            <Button
+            {/* <Button
               variant="outlined"
               endIcon={<ArrowDropDownIcon />}
               sx={{ mr: 1, color: "#000", borderColor: "#000" }}
             >
               Actions
-            </Button>
-            <Button
+            </Button> */}
+            {/* <Button
               variant="outlined"
               sx={{ color: "#000", borderColor: "#000" }}
               endIcon={<FileDownloadIcon />}
             >
               Export
-            </Button>
+            </Button> */}
           </Box>
         </Box>
 
@@ -141,9 +141,9 @@ const ProductTable = () => {
           <Table>
             <TableHead sx={{ backgroundColor: "#F0F0F2" }}>
               <TableRow>
-                <TableCell padding="checkbox">
+                {/* <TableCell padding="checkbox">
                   <Checkbox />
-                </TableCell>
+                </TableCell> */}
                 <TableCell>Products</TableCell>
                 <TableCell>Brand</TableCell>
                 <TableCell>Influencer</TableCell>
@@ -152,10 +152,10 @@ const ProductTable = () => {
             </TableHead>
             <TableBody>
               {displayedProducts.map((item) => (
-                <TableRow key={item.asin} hover>
-                  <TableCell padding="checkbox">
+                <TableRow key={item.ASIN} hover>
+                  {/* <TableCell padding="checkbox">
                     <Checkbox />
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>
                     <Box
                       display="flex"

@@ -40,17 +40,24 @@ export default function Pricing() {
     setSubmitting(true);
     try {
       const payload = {
-        step: 2,
         planId: plan.id,
       };
-      const response = await usersApi.userOnboard(payload);
-      if (response.data.status === "success") {
-        window.location.href = response.data.data.sessionUrl;
-      } else {
-        toast.error(response.data.message || "Failed to activate plan.");
-      }
+      const response = await usersApi.subscriptionChange(payload);
+      
+      // Handle both success status and redirect responses
+      // if (response.data.status === "success" && response.data.data?.sessionUrl) {
+      //   window.location.href = response.data.data.sessionUrl;
+      // } else {
+        toast.error(response.data.message || "Failed to change plan.");
+        navigate('/seller-home/payments');
+      // }
     } catch (error) {
-      toast.error("Error activating plan.");
+      // Check if the error response contains the sessionUrl (303 redirect case)
+      if (error.response?.data?.status === "success" && error.response?.data?.data?.sessionUrl) {
+        window.location.href = error.response.data.data.sessionUrl;
+      } else {
+        toast.error(error.response?.data?.message || "Error changing plan.");
+      }
     } finally {
       setSubmitting(false);
     }

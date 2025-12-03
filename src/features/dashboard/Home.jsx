@@ -38,7 +38,7 @@ function Home() {
           </div>
           <div className="col-md-2 col-lg-2">
             <StatCard
-              label="Running Campaigns"
+              label="Live Campaign"
               count={12}
               change={3}
               isPositive={true}
@@ -54,7 +54,7 @@ function Home() {
           </div>
           <div className="col-md-2 col-lg-2">
             <StatCard
-              label="Pending Reviews"
+              label="Review Queue"
               count={4}
               change={2}
               isPositive={false}
@@ -62,7 +62,7 @@ function Home() {
           </div>
           <div className="col-md-2 col-lg-2">
             <StatCard
-              label="Avg Response Time"
+              label="Response Time"
               count={3.2}
               change={0.5}
               isPositive={false}

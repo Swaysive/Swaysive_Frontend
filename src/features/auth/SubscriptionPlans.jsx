@@ -203,6 +203,30 @@ export default function SubscriptionPlans() {
                         {plan.metadata?.description}
                       </Typography>
                     </Typography>
+                     <Box py={2}>
+                      <Button
+                        className="card-btn"
+                        variant="outlined"
+                        sx={{
+                          border: "1px solid #DFE2E7",
+                          fontFamily: "Poppins",
+                          textTransform: "none",
+                          backgroundColor: "#262626",
+                          color: "white",
+                          width: "100%",
+                          py: 1.2,
+                          borderRadius: "8px",
+                        }}
+                        disabled={submitting}
+                        onClick={() => handlePlanSelect(plan)}
+                      >
+                        {plan.name === "Basic"
+                          ? "Start with basic"
+                          : plan.name === "Professional"
+                          ? "Start with pro"
+                          : "Go Ultimate"}
+                      </Button>
+                    </Box>
                     <Box>
                       {plan.features.map((feature) => (
                         <Box
@@ -246,30 +270,7 @@ export default function SubscriptionPlans() {
                         </Box>
                       ))}
                     </Box>
-                    <Box py={2}>
-                      <Button
-                        className="card-btn"
-                        variant="outlined"
-                        sx={{
-                          border: "1px solid #DFE2E7",
-                          fontFamily: "Poppins",
-                          textTransform: "none",
-                          backgroundColor: "#262626",
-                          color: "white",
-                          width: "100%",
-                          py: 1.2,
-                          borderRadius: "8px",
-                        }}
-                        disabled={submitting}
-                        onClick={() => handlePlanSelect(plan)}
-                      >
-                        {plan.name === "Basic"
-                          ? "Start with basic"
-                          : plan.name === "Professional"
-                          ? "Start with pro"
-                          : "Go Ultimate"}
-                      </Button>
-                    </Box>
+                   
                   </Box>
                 </Box>
               ))}

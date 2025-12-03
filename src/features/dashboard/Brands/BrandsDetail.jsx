@@ -59,9 +59,9 @@ const BrandsDetail = () => {
           brandId,
         });
         if (res.data.status === "success") {
-          setProducts(res.data.data.result);
+          setProducts(res.data.data.items);
           setTotalCount(
-            res.data.data.totalRecords || res.data.data.result.length
+            res.data.data.pagination.total || res.data.data.result.length
           );
         }
       } catch (e) {

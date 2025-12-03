@@ -21,6 +21,7 @@ import CreateDiscountCode from "../features/dashboard/Discount Code/CreateDiscou
 import InfluencerPayments from "../features/influencerDashboard/InfluencerPayments";
 import InfluencerSettings from "../features/influencerDashboard/InfluencerSettings";
 import Pricing from "../components/New Pricing/Pricing";
+
 // import { useAuth } from "../context/Auth";
 import TrackandSales from "../components/Seller Track&Sales/TrackandSales";
 
