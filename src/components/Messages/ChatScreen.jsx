@@ -20,7 +20,7 @@ function ChatScreen({ messages, user }) {
 
   const handleSend = () => {
     if (!newMessage.trim()) return;
-    console.log("Send:", newMessage);
+    // console.log("Send:", newMessage);
     setNewMessage("");
   };
   return (

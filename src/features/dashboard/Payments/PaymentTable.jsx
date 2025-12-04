@@ -31,8 +31,6 @@ const PaymentTable = () => {
 
   const buttons = [
     { id: "subscription", label: "Subscription & Billing" },
-    // { id: "statements", label: "Statements & History" },
-    // { id: "settings", label: "Settings & Alerts" },
   ];
 
   return (
@@ -75,57 +73,7 @@ const PaymentTable = () => {
 
       {/* Buttons Row */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        {/* Navigation Buttons */}
-        {/* <Box>
-          <Box
-            mx={2}
-            sx={{
-              width: "217px",
-              height: "60px",
-              borderRadius: "12px",
-              backgroundColor: "#ECECF0",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: 3,
-            }}
-          >
-            {buttons.map((btn) => (
-              <Button
-                key={btn.id}
-                onClick={() => {
-                  setActive(btn.id);
-                  setViewFullTable(false);
-                  setViewFullReport(false); // reset when switching tabs
-                }}
-                sx={{
-                  background:
-                    active === btn.id
-                      ? "linear-gradient(270deg, #020202 -12.5%, #434343 100%)"
-                      : "transparent",
-                  color: active === btn.id ? "white" : "black",
-                  fontFamily: "Poppins",
-                  fontSize: "14px",
-                  borderRadius: "8px",
-                  textTransform: "none",
-                  px: 2,
-                  py: 1.2,
-                  border: "none",
-                  boxShadow: "none",
-                  "&:hover": {
-                    background:
-                      active === btn.id
-                        ? "linear-gradient(270deg, #020202 -12.5%, #434343 100%)"
-                        : "transparent",
-                    color: active === btn.id ? "white" : "black",
-                  },
-                }}
-              >
-                {btn.label}
-              </Button>
-            ))}
-          </Box>
-        </Box> */}
+
 
         {/* Filter Dropdown (only when statements is active) */}
         {active === "statements" && !viewFullTable && !viewFullReport && (

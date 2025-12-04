@@ -22,7 +22,7 @@ const Onboard = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Store Data:', formData);
+    // console.log('Store Data:', formData);
     setFormVisible(false); // Close form after submission
     setShowDashboard(true); // Show dashboard after form submission
   };

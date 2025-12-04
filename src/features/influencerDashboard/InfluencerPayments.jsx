@@ -138,20 +138,6 @@ function InfluencerPayments() {
           >
             Add Payment Method
           </Button>
-          {/* <Button
-            variant="contained"
-            startIcon={<LuDownload />}
-            sx={{
-              backgroundColor: "#F8F7FC",
-              color: "black",
-              fontFamily: "Poppins",
-              fontSize: "12px",
-              borderRadius: "6px",
-            }}
-          >
-            Download Latest Statement
-          </Button> */}
-        </Box>
       </Box>
 
       {/* Cards Section */}
@@ -728,6 +714,7 @@ function InfluencerPayments() {
           </Box>
         )}
       </Box>
+    </Box>
     </Box>
   );
 }

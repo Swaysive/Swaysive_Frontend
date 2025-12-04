@@ -1,15 +1,15 @@
+
 import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
-  TextField,
-  Button,
-  MenuItem,
+  TextField, // Keep TextField for the search input
+  Button, // Keep Button as it's used in columns
   Avatar,
   CircularProgress
 } from "@mui/material";
 import ProteinShaker from "../../../assets/icons/proteinshaker.svg";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy"; // Keep ContentCopyIcon as it's used in columns
 import ReusableTable from "../../../components/ReusableTable/ReusableTable";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -221,99 +221,10 @@ const MyProductsPage = () => {
       {/* Search & Filters */}
       <Box display="flex" flexWrap="wrap" gap={2} alignItems="center" m={2}>
         <TextField
-          placeholder="Search products or brands in Helimix..."
+          placeholder="Search product..."
           size="small"
           sx={{ flex: 1, minWidth: 250 }}
         />
-        {/* <TextField
-          select
-          size="small"
-          value={filterAll}
-          onChange={(e) => setFilterAll(e.target.value)}
-          sx={{ minWidth: 220 }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <LuFilter size={20} />
-              </InputAdornment>
-            ),
-          }}
-          SelectProps={{
-            renderValue: (selected) => selected,
-          }}
-        >
-          <MenuItem value="All">
-            <Checkbox checked={filterAll === "All"} size="small" />
-            <ListItemText primary="All" />
-          </MenuItem>
-          <MenuItem value="Active">
-            <Checkbox checked={filterAll === "Active"} size="small" />
-            <ListItemText primary="Active" />
-          </MenuItem>
-          <MenuItem value="Paused">
-            <Checkbox checked={filterAll === "Paused"} size="small" />
-            <ListItemText primary="Paused" />
-          </MenuItem>
-          <MenuItem value="Ended">
-            <Checkbox checked={filterAll === "Ended"} size="small" />
-            <ListItemText primary="Ended" />
-          </MenuItem>
-        </TextField> */}
-
-        {/* <TextField
-          select
-          size="small"
-          value={sortOrder}
-          onChange={(e) => setSortOrder(e.target.value)}
-          sx={{ minWidth: 220 }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <HiArrowsUpDown size={20} />
-              </InputAdornment>
-            ),
-          }}
-          SelectProps={{
-            renderValue: (selected) => selected,
-          }}
-        >
-          <MenuItem value="Newest Assigned">
-            <Checkbox checked={sortOrder === "Newest Assigned"} size="small" />
-            <ListItemText primary="Newest Assigned" />
-          </MenuItem>
-
-          <MenuItem value="Units Sold (High to Low)">
-            <Checkbox
-              checked={sortOrder === "Units Sold (High to Low)"}
-              size="small"
-            />
-            <ListItemText primary="Units Sold (High → Low)" />
-          </MenuItem>
-
-          <MenuItem value="Units Sold (Low to High)">
-            <Checkbox
-              checked={sortOrder === "Units Sold (Low to High)"}
-              size="small"
-            />
-            <ListItemText primary="Units Sold (Low → High)" />
-          </MenuItem>
-
-          <MenuItem value="Earnings High to Low">
-            <Checkbox
-              checked={sortOrder === "Earnings High to Low"}
-              size="small"
-            />
-            <ListItemText primary="Earnings (High → Low)" />
-          </MenuItem>
-
-          <MenuItem value="Earnings Low to High">
-            <Checkbox
-              checked={sortOrder === "Earnings Low to High"}
-              size="small"
-            />
-            <ListItemText primary="Earnings (Low → High)" />
-          </MenuItem>
-        </TextField> */}
       </Box>
 
       {/* Table */}

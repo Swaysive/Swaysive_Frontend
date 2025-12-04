@@ -42,14 +42,14 @@ const ProductTable = () => {
         const fetchedProducts = response.data.data.items;
 
         const isActive = localStorage.getItem("active") === "true";
-        console.log("Active status from localStorage:", isActive);
+        // console.log("Active status from localStorage:", isActive);
 
         const updatedProducts = fetchedProducts.map((product, index) => ({
           ...product,
           status: isActive && index === 0 ? "Active" : "Inactive",
         }));
 
-        console.log("Products fetched successfully:", updatedProducts);
+        // console.log("Products fetched successfully:", updatedProducts);
         setProducts(updatedProducts);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -126,13 +126,7 @@ const ProductTable = () => {
             >
               Actions
             </Button> */}
-            {/* <Button
-              variant="outlined"
-              sx={{ color: "#000", borderColor: "#000" }}
-              endIcon={<FileDownloadIcon />}
-            >
-              Export
-            </Button> */}
+
           </Box>
         </Box>
 

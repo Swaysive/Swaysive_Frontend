@@ -41,7 +41,7 @@ const InfluencerDetails = () => {
     const fetchProducts = async () => {
       try {
         const response = await catalogApi.getProducts();
-        console.log("Products fetched successfully:", response.data.products);
+        // console.log("Products fetched successfully:", response.data.products);
 
         const isActive = localStorage.getItem("active") === "true";
 

@@ -144,13 +144,7 @@ const InfluencerTable = () => {
             sx={{ width: 300 }}
           />
           <Box>
-            {/* <Button
-              variant="outlined"
-              startIcon={<FilterList />}
-              sx={{ mr: 1, color: "#000", borderColor: "#000" }}
-            >
-              Filter
-            </Button> */}
+
             <Button
               variant="contained"
               sx={{ backgroundColor: "#000" }}

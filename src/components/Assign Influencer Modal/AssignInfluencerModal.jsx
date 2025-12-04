@@ -47,7 +47,7 @@ const AssignInfluencerModal = ({
   const [selectedVariants, setSelectedVariants] = useState([]);
   const [affiliateLinks, setAffiliateLinks] = useState([]); // <-- new state
 
-  console.log("Product ID in Modal:", product);
+  // console.log("Product ID in Modal:", product);
 
   // Assign influencer to product
   const handleAssign = async () => {

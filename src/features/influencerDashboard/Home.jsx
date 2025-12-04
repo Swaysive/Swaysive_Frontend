@@ -10,12 +10,9 @@ import {
   Divider,
   CircularProgress
 } from "@mui/material";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import DescriptionIcon from "@mui/icons-material/Description";
+
 import ReusableTable from "../../components/ReusableTable/ReusableTable";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-import InfluencerImpactChart from "../influencerDashboard/InfluencerImpactChart";
-import { Link } from "react-router-dom";
 import { influencerApi } from "../../api/influencerApi"; // <-- import your API
 
 export default function InfluencerDashboard() {
@@ -274,59 +271,56 @@ export default function InfluencerDashboard() {
             />
           </Paper>
 
-          {/* <Paper elevation={1} sx={{ p: 2 }}>
-            <InfluencerImpactChart />
-          </Paper> */}
         </Grid>
 
         {/* RIGHT COLUMN */}
         <Grid item xs={12} md={4}>
-          {/* Quick Actions */}
-          {/* <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: "12px" }}>
+          <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: "12px" }}>
             <Typography
               variant="subtitle1"
               fontWeight="bold"
               mb={2}
-              sx={{ fontFamily: "poppins", fontSize: "16px" }}
+              sx={{ fontFamily: "Poppins" }}
             >
-              Quick Actions
+              Your Profile
             </Typography>
+            <Box display="flex" alignItems="center" mb={2}>
+              <Avatar
+                src="/profile.jpg"
+                alt="Profile"
+                sx={{ width: 56, height: 56, mr: 2 }}
+              />
+              <Box>
+                <Typography
+                  variant="body1"
+                  fontWeight="bold"
+                  sx={{ fontFamily: "Poppins" }}
+                >
+                  Hamza
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  sx={{ fontFamily: "Poppins" }}
+                >
+                  Influencer
+                </Typography>
+              </Box>
+            </Box>
             <Button
-              fullWidth
               variant="outlined"
-              endIcon={<VisibilityIcon />}
+              fullWidth
               sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                mb: 1,
-                backgroundColor: "#F2F2F2",
-                border: "none",
-                color: "#2A2A2A",
-                fontFamily: "poppins",
-                fontSize: "12px",
+                textTransform: "none",
+                borderRadius: "8px",
+                borderColor: "#E0E0E0",
+                color: "#000",
+                fontFamily: "Poppins",
               }}
             >
-              View all payment history
+              Edit Profile
             </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              endIcon={<DescriptionIcon />}
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                mb: 1,
-                backgroundColor: "#F2F2F2",
-                border: "none",
-                color: "#2A2A2A",
-                fontFamily: "poppins",
-                fontSize: "12px",
-              }}
-            >
-              Download statement
-            </Button>
-          </Paper> */}
-
+          </Paper>
           <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: "12px" }}>
             <Typography
               variant="subtitle1"
@@ -381,56 +375,7 @@ export default function InfluencerDashboard() {
             ))}
           </Paper>
 
-          {/* Recent Notifications */}
-          {/* <Paper elevation={1} sx={{ pb: 2, borderRadius: "12px" }}>
-            <Typography
-              p={2}
-              variant="subtitle1"
-              fontWeight="500"
-              sx={{ fontFamily: "poppins", fontSize: "16px" }}
-            >
-              Recent Notifications
-            </Typography>
-            {notifications.map((note, idx) => (
-              <Box key={idx} mb={1}>
-                <Box px={2} display="flex" flexDirection="column">
-                  <Typography
-                    variant="body2"
-                    fontWeight="400"
-                    sx={{ fontFamily: "poppins", fontSize: "14px" }}
-                  >
-                    {note.title}
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ fontFamily: "poppins", fontSize: "8px" }}
-                  >
-                    {note.launchtime}
-                  </Typography>
-                </Box>
 
-                {idx < notifications.length && (
-                  <Divider
-                    sx={{
-                      my: 1,
-                      borderBottomWidth: 2,
-                      width: "100%",
-                    }}
-                  />
-                )}
-              </Box>
-            ))}
-            <Typography variant="body2" fontWeight="bold" px={2} py={1}>
-              <Link
-                href=""
-                underline="none"
-                sx={{ color: "black", fontFamily: "poppins", fontSize: "12px" }}
-              >
-                View All Notifications
-              </Link>
-            </Typography>
-          </Paper> */}
         </Grid>
       </Grid>
     </Box>

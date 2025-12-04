@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
             const storedUserData = localStorage.getItem('userProfile');
             // const firstLaunche = localStorage.getItem('firstLaunch');
 
-            console.log('pokemon',{ storedAccessToken, storedRefreshToken, storedUserData });
+            // console.log('pokemon',{ storedAccessToken, storedRefreshToken, storedUserData });
             
             if (storedAccessToken && storedRefreshToken ) {
                 setAuthData({
@@ -110,7 +110,7 @@ export const AuthProvider = ({ children }) => {
     const handleLogin = async (credentials) => {
         try {
             const response = await login(credentials);
-            console.log('respone',response.data);
+            // console.log('respone',response.data);
             const user = response.data.user;
             const role = response.data.user.role;
             const setup = response.data.requires_setup;
@@ -127,7 +127,7 @@ export const AuthProvider = ({ children }) => {
 
             }));
 
-            console.log('response',response)
+            // console.log('response',response)
 
             setAuthData({
                 userId: user._id,
@@ -149,7 +149,7 @@ export const AuthProvider = ({ children }) => {
     const handleGoogleLogin = async (credentials) => {
         try {
             const response = await googleAuth(credentials);
-            console.log('respone',response.data.user);
+            // console.log('respone',response.data.user);
             const user = response.data.user;
             const role = response.data.user.role;
             const setup = response.data.requires_setup;
@@ -166,7 +166,7 @@ export const AuthProvider = ({ children }) => {
 
             }));
 
-            console.log('response',response)
+            // console.log('response',response)
 
             setAuthData({
                 userId: user._id,

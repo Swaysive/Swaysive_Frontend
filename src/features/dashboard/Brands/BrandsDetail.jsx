@@ -183,7 +183,7 @@ const BrandsDetail = () => {
             rowsPerPage={pageSize}
             totalCount={totalCount}
             onPageChange={setPage}
-            onRowClick={(row) => console.log("Clicked row:", row)}
+            // onRowClick={(row) => console.log("Clicked row:", row)}
           />
 
           {/* Footer Controls */}

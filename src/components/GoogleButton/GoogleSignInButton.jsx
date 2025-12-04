@@ -12,7 +12,7 @@ const CustomGoogleSignInButton = () => {
   }, []);
 
   const handleCallbackResponse = (response) => {
-    console.log("Encoded JWT ID token: " + response.credential);
+    // console.log("Encoded JWT ID token: " + response.credential);
   };
 
   return (
