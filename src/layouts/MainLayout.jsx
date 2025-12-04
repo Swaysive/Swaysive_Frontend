@@ -164,13 +164,13 @@ export default function NavbarWithSidebar({ children }) {
             <IconButton onClick={handleMenuOpen} className="ms-2">
               <Avatar src="/profile.jpg" alt="Profile" />
             </IconButton>
-            <Menu
+            {/* <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
               onClose={handleMenuClose}
             >
               <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            </Menu>
+            </Menu> */}
           </Box>
         </Toolbar>
       </AppBar>
