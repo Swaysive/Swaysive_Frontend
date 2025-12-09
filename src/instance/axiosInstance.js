@@ -19,7 +19,7 @@ const processQueue = (error, token = null) => {
 };
 
 // Use .env for base URL or hard-code it
-const API_BASE_URL = 'https://dev-api.swaysive.io';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const createApiInstance = (prefix = '') => {
   const instance = axios.create({
