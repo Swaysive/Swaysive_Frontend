@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Typography,
@@ -13,124 +13,96 @@ import { BsCircleFill } from "react-icons/bs";
 import ProfilePic from "../../assets/icons/messageprofilepic.svg";
 import ProfilePic2 from "../../assets/icons/carolinaprofilepic.svg";
 import ChatScreen from "../Messages/ChatScreen";
+import { fetchConversations } from "../../api/conversationsApi";
+import { useSocketEvent } from "../../context/SocketContext";
 
 function MessagesSidebar() {
-  const users = [
-    {
-      id: 1,
-      name: "John Doe",
-      slogan: "Always ready to chat!",
-      img: ProfilePic,
-      isActive: true,
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      slogan: "Busy at work!",
-      img: ProfilePic,
-      isActive: false,
-    },
-    {
-      id: 3,
-      name: "Alex Carter",
-      slogan: "Available now!",
-      img: ProfilePic,
-      isActive: true,
-    },
-    {
-      id: 4,
-      name: "Carolina",
-      slogan: "I have an idea",
-      img: ProfilePic2,
-      isActive: false,
-    },
-    {
-      id: 5,
-      name: "Michael",
-      slogan: "Let's connect soon!",
-      img: ProfilePic,
-      isActive: true,
-    },
-    {
-      id: 6,
-      name: "Michael",
-      slogan: "Let's connect soon!",
-      img: ProfilePic,
-      isActive: true,
-    },
-    {
-      id: 7,
-      name: "Michael",
-      slogan: "Let's connect soon!",
-      img: ProfilePic,
-      isActive: true,
-    },
-    {
-      id: 8,
-      name: "Michael",
-      slogan: "Let's connect soon!",
-      img: ProfilePic,
-      isActive: true,
-    },
-    {
-      id: 9,
-      name: "Michael",
-      slogan: "Let's connect soon!",
-      img: ProfilePic,
-      isActive: true,
-    },
-    {
-      id: 10,
-      name: "Michael",
-      slogan: "Let's connect soon!",
-      img: ProfilePic,
-      isActive: true,
-    },
-    {
-      id: 11,
-      name: "Michael",
-      slogan: "Let's connect soon!",
-      img: ProfilePic,
-      isActive: true,
-    },
-  ];
-  const messages = [
-    {
-      id: 1,
-      text: "Hi Phillip Dias this is a longer test message",
-      time: "5:45 PM",
-      isSender: true,
-      isActive: false,
-      img: ProfilePic,
-    },
-    {
-      id: 2,
-      text: "I have an idea so let me share it with you.",
-      time: "5:46 PM",
-      isSender: false,
-      isActive: true,
-      img: ProfilePic,
-    },
-    {
-      id: 3,
-      text: "Sounds great, let’s discuss further!",
-      time: "5:47 PM",
-      isSender: true,
-      isActive: true,
-      img: ProfilePic,
-    },
-    {
-      id: 4,
-      text: "Yeah sure Let's do a meeting then!",
-      time: "5:47 PM",
-      isSender: false,
-      isActive: true,
-      img: ProfilePic,
-    },
-  ];
+  const [conversations, setConversations] = useState([]);
+  const [selectedConversation, setSelectedConversation] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  const [visibleCount, setVisibleCount] = useState(10);
-  const visibleUsers = users.slice(0, visibleCount);
+  // Fetch conversations on mount
+  useEffect(() => {
+    const loadConversations = async () => {
+      try {
+        const data = await fetchConversations();
+        setConversations(data.conversations || []);
+        // Auto-select first conversation if available
+        if (data.conversations && data.conversations.length > 0) {
+          setSelectedConversation(data.conversations[0]);
+        }
+      } catch (error) {
+        console.error("Failed to load conversations:", error);
+        // Use empty array if API fails
+        setConversations([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadConversations();
+  }, []);
+
+  // Listen for new messages to update conversation list
+  const handleNewMessage = useCallback((data) => {
+    setConversations((prev) => {
+      const updatedConversations = prev.map((conv) => {
+        if (conv.id === data.conversationId) {
+          return {
+            ...conv,
+            lastMessage: data.message.text,
+            lastMessageTime: data.message.createdAt,
+            unreadCount: selectedConversation?.id === conv.id ? 0 : (conv.unreadCount || 0) + 1,
+          };
+        }
+        return conv;
+      });
+      
+      // Sort by most recent message
+      return updatedConversations.sort((a, b) => 
+        new Date(b.lastMessageTime) - new Date(a.lastMessageTime)
+      );
+    });
+  }, [selectedConversation]);
+
+  useSocketEvent("message:receive", handleNewMessage);
+
+  // Listen for user status updates
+  const handleUserStatus = useCallback((data) => {
+    setConversations((prev) =>
+      prev.map((conv) =>
+        conv.otherUser?.id === data.userId
+          ? { ...conv, otherUser: { ...conv.otherUser, isActive: data.status === "online" } }
+          : conv
+      )
+    );
+  }, []);
+
+  useSocketEvent("user:status", handleUserStatus);
+
+  const handleConversationClick = (conversation) => {
+    setSelectedConversation(conversation);
+    // Mark as read
+    setConversations((prev) =>
+      prev.map((conv) =>
+        conv.id === conversation.id ? { ...conv, unreadCount: 0 } : conv
+      )
+    );
+  };
+
+  const filteredConversations = conversations.filter((conv) => {
+    const userName = conv.otherUser?.name || "";
+    return userName.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
+  // Get the selected user for ChatScreen
+  const selectedUser = selectedConversation?.otherUser
+    ? {
+        ...selectedConversation.otherUser,
+        img: selectedConversation.otherUser.profilePic || ProfilePic,
+      }
+    : null;
 
   return (
     <Box sx={{ marginTop: "50px", marginBottom: "50px" }}>
@@ -168,6 +140,8 @@ function MessagesSidebar() {
               size="small"
               placeholder="Search chats..."
               variant="outlined"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -204,68 +178,116 @@ function MessagesSidebar() {
               },
             }}
           >
-            {users.map(({ id, name, slogan, img, isActive }) => (
-              <Box
-                key={id}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 3,
-                  p: 1,
-                  px: 3,
-                  "&:hover": {
-                    backgroundColor: "#76767626",
-                    cursor: "pointer",
-                  },
-                }}
-              >
-                {/* Profile Picture with Active Dot */}
-                <Box sx={{ position: "relative", display: "inline-block" }}>
-                  <Box
-                    component="img"
-                    src={img}
-                    alt={name}
-                    sx={{
-                      width: 50,
-                      height: 50,
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                    }}
-                  />
-                  <BsCircleFill
-                    style={{
-                      position: "absolute",
-                      bottom: 2,
-                      right: 2,
-                      color: isActive ? "#4CAF50" : "#565656",
-                      fontSize: "14px",
-                      border: "2px solid white",
-                      borderRadius: "50%",
-                    }}
-                  />
-                </Box>
-                <Box>
-                  <Typography
-                    sx={{
-                      fontFamily: "Poppins",
-                      fontSize: "16px",
-                      fontWeight: "600",
-                    }}
-                  >
-                    {name}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "Poppins",
-                      fontSize: "13px",
-                      color: "text.secondary",
-                    }}
-                  >
-                    {slogan}
-                  </Typography>
-                </Box>
+            {loading ? (
+              <Box sx={{ p: 2, textAlign: "center" }}>
+                <Typography sx={{ fontFamily: "Poppins", color: "#707070" }}>
+                  Loading conversations...
+                </Typography>
               </Box>
-            ))}
+            ) : filteredConversations.length === 0 ? (
+              <Box sx={{ p: 2, textAlign: "center" }}>
+                <Typography sx={{ fontFamily: "Poppins", color: "#707070" }}>
+                  {searchQuery ? "No conversations found" : "No conversations yet"}
+                </Typography>
+              </Box>
+            ) : (
+              filteredConversations.map((conversation) => {
+                const { id, otherUser, lastMessage, unreadCount } = conversation;
+                const name = otherUser?.name || "Unknown User";
+                const slogan = lastMessage || "No messages yet";
+                const img = otherUser?.profilePic || ProfilePic;
+                const isActive = otherUser?.isActive || false;
+                const isSelected = selectedConversation?.id === id;
+
+                return (
+                  <Box
+                    key={id}
+                    onClick={() => handleConversationClick(conversation)}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 3,
+                      p: 1,
+                      px: 3,
+                      backgroundColor: isSelected ? "#8EC6EB20" : "transparent",
+                      "&:hover": {
+                        backgroundColor: "#76767626",
+                        cursor: "pointer",
+                      },
+                    }}
+                  >
+                    {/* Profile Picture with Active Dot */}
+                    <Box sx={{ position: "relative", display: "inline-block" }}>
+                      <Box
+                        component="img"
+                        src={img}
+                        alt={name}
+                        sx={{
+                          width: 50,
+                          height: 50,
+                          borderRadius: "50%",
+                          objectFit: "cover",
+                        }}
+                      />
+                      <BsCircleFill
+                        style={{
+                          position: "absolute",
+                          bottom: 2,
+                          right: 2,
+                          color: isActive ? "#4CAF50" : "#565656",
+                          fontSize: "14px",
+                          border: "2px solid white",
+                          borderRadius: "50%",
+                        }}
+                      />
+                    </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography
+                          sx={{
+                            fontFamily: "Poppins",
+                            fontSize: "16px",
+                            fontWeight: "600",
+                          }}
+                        >
+                          {name}
+                        </Typography>
+                        {unreadCount > 0 && (
+                          <Box
+                            sx={{
+                              backgroundColor: "#4CAF50",
+                              color: "white",
+                              borderRadius: "50%",
+                              width: 20,
+                              height: 20,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: "10px",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {unreadCount}
+                          </Box>
+                        )}
+                      </Box>
+                      <Typography
+                        sx={{
+                          fontFamily: "Poppins",
+                          fontSize: "13px",
+                          color: "text.secondary",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {slogan}
+                      </Typography>
+                    </Box>
+                  </Box>
+                );
+              })
+            )}
           </Box>
         </Box>
 
@@ -278,7 +300,7 @@ function MessagesSidebar() {
             p: 2,
           }}
         >
-          <ChatScreen messages={messages} user={users[0]} />
+          <ChatScreen conversation={selectedConversation} user={selectedUser} />
         </Box>
       </Box>
     </Box>

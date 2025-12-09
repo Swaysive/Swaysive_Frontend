@@ -30,7 +30,7 @@ import MyProductsPage from "../features/dashboard/Influencers/MyProducts";
 import Messages from "../features/dashboard/Messages/Messages";
 
 const AppRoutes = () => {
-  const { authData, onboard } = useAuth();
+  const { authData, onboard, step } = useAuth();
   const role = authData?.user?.role; // 👈 extract role safely
 
   return (
@@ -38,8 +38,10 @@ const AppRoutes = () => {
       <Routes>
         {authData ? (
           <>
-            {/* ✅ Apply onboard check only for sellers */}
-            {role === "seller" && !onboard ? (
+            {/* ✅ Step-based routing for sellers */}
+            {role === "seller" && step === 0 ? (
+              <Route path="/*" element={<OnboardRoutes />} />
+            ) : role === "seller" && step === 1 ? (
               <Route path="/*" element={<SubscriptionPLans />} />
             ) : (
               <Route element={<LayoutRoute />}>

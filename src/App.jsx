@@ -6,6 +6,7 @@ import theme from './styles/theme';
 import AppRoutes from './routes/AppRoutes';
 
 import { AuthProvider } from './context/Auth';
+import { SocketProvider } from './context/SocketContext';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -14,11 +15,13 @@ function App() {
 
   return (
     <AuthProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <AppRoutes />
-        <ToastContainer/>
-      </ThemeProvider>
+      <SocketProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <AppRoutes />
+          <ToastContainer/>
+        </ThemeProvider>
+      </SocketProvider>
     </AuthProvider>
   );
 }
