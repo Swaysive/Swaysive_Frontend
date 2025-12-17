@@ -28,7 +28,7 @@ export const createApiInstance = (prefix = '') => {
       'Content-Type': 'application/json',
     },
     validateStatus: function (status) {
-      return status >= 200 && status < 400; // Accept 2xx and 3xx as valid responses
+      return status >= 200 && status < 400; 
     },
   });
 
