@@ -45,7 +45,7 @@ const BrandTable = () => {
     const fetchBrands = async () => {
       setLoading(true);
       try {
-        const response = await catalogApi.getBrands({ page: 1, limit: 1 });
+        const response = await catalogApi.getBrands({ page: 1, limit: 10 });
         if (response.data.status === "success") {
           setBrands(response.data.data.items);
           setTotalRecords(response.data.data.pagination.totalRecords);

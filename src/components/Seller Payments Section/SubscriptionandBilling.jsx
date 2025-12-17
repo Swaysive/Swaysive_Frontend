@@ -18,6 +18,8 @@ import CreditCard from "../../assets/icons/atmcardsvg.svg";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
+import { billingApi } from "../../api/billingApi";
+import AddPaymentMethodModal from "./AddPaymentMethodModal";
 
 const SubscriptionandBilling = () => {
   const [loading, setLoading] = useState(true);
@@ -25,11 +27,24 @@ const SubscriptionandBilling = () => {
   const [subscription, setSubscription] = useState(null);
   const [billingMethods, setBillingMethods] = useState([]);
   const [billingLoading, setBillingLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState(null);
+
+  const handleOpenModal = (type) => {
+    setModalType(type);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setModalType(null);
+  };
+
   const navigate = useNavigate();
 
   const fetchCurrentPlan = async () => {
     try {
-      const response = await usersApi.getCurrentPlan();
+      const response = await billingApi.getCurrentPlan();
       if (response.data.status === "success") {
         setPlan(response.data.data.plan);
         setSubscription(response.data.data.subscription);
@@ -43,7 +58,7 @@ const SubscriptionandBilling = () => {
 
   const fetchBillingMethods = async () => {
     try {
-      const response = await usersApi.getBillingMethods();
+      const response = await billingApi.getBillingMethods();
       if (response.data.status === "success") {
         setBillingMethods(response.data.data);
       }
@@ -62,6 +77,19 @@ const SubscriptionandBilling = () => {
 
   const handleUpgrade = async () => {
     navigate("/pricing", { state: { currentPlanId: plan.id } });
+  };
+
+  const handleMakeDefault = async (stripeId) => {
+    try {
+      const response = await billingApi.updateBillingMethods(stripeId);
+      if (response.data.status === "success") {
+        toast.success("Payment method updated successfully");
+        fetchBillingMethods();
+      }
+    } catch (error) {
+      console.error("Error updating payment method:", error);
+      toast.error("Failed to update payment method");
+    }
   };
 
   const getCardBrandImage = (brand) => {
@@ -353,7 +381,9 @@ const SubscriptionandBilling = () => {
                           gap: 1,
                         }}
                       >
-                        {method.brand.charAt(0).toUpperCase() + method.brand.slice(1)} •••• {method.last_4}
+                        {method.brand.charAt(0).toUpperCase() +
+                          method.brand.slice(1)}{" "}
+                        •••• {method.last_4}
                         <Typography
                           sx={{
                             fontFamily: "Poppins",
@@ -380,32 +410,21 @@ const SubscriptionandBilling = () => {
                     </Box>
                   </Box>
                   <Box display={"flex"} gap={2}>
-                    <Button
-                      startIcon={<FiEdit />}
-                      variant="outlined"
-                      color="dark"
-                      sx={{
-                        border: "1px solid #DFE2E7",
-                        fontFamily: "Poppins",
-                        textTransform: "none",
-                        borderRadius: "6px",
-                      }}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      startIcon={<RiDeleteBinLine />}
-                      variant="outlined"
-                      sx={{
-                        border: "1px solid #D83A52",
-                        fontFamily: "Poppins",
-                        textTransform: "none",
-                        borderRadius: "6px",
-                        color: "#D83A52",
-                      }}
-                    >
-                      Remove
-                    </Button>
+                    {!method.is_default && (
+                      <Button
+                        variant="outlined"
+                        color="dark"
+                        onClick={() => handleMakeDefault(method.stripe_id)}
+                        sx={{
+                          border: "1px solid #DFE2E7",
+                          fontFamily: "Poppins",
+                          textTransform: "none",
+                          borderRadius: "6px",
+                        }}
+                      >
+                        Make default
+                      </Button>
+                    )}
                   </Box>
                 </Box>
               ))
@@ -414,6 +433,7 @@ const SubscriptionandBilling = () => {
         <Button
           variant="outlined"
           color="dark"
+          onClick={() => handleOpenModal("payment")}
           sx={{
             border: "1px solid #DFE2E7",
             fontFamily: "Poppins",
@@ -502,7 +522,9 @@ const SubscriptionandBilling = () => {
                             gap: 1,
                           }}
                         >
-                          {method.brand.charAt(0).toUpperCase() + method.brand.slice(1)} •••• {method.last_4}
+                          {method.brand.charAt(0).toUpperCase() +
+                            method.brand.slice(1)}{" "}
+                          •••• {method.last_4}
                           <Typography
                             sx={{
                               fontFamily: "Poppins",
@@ -571,9 +593,10 @@ const SubscriptionandBilling = () => {
                 alignItems={"center"}
                 sx={{
                   width: "70%",
-                  height: "64px",
+                  height: "auto",
                   backgroundColor: "#F6F7F9",
                   borderRadius: "6px",
+                  p: 2,
                 }}
               >
                 <Typography
@@ -586,9 +609,12 @@ const SubscriptionandBilling = () => {
                   }}
                 >
                   This card will be charged automatically at the end of each
-                  month for platform fees (1.5% per unit sold) and influencer{" "}
+                  month for platform fees (1.5% per unit sold) and influencer
+                  commisions you owe.
                   <br />
-                  commissions you owe.
+                  <br />
+                  <strong>Auto Payouts:</strong> Influencer payouts will be
+                  transferred biweekly from the day campaign is started.
                 </Typography>
               </Box>
             </Box>
@@ -596,6 +622,7 @@ const SubscriptionandBilling = () => {
           <Button
             variant="outlined"
             color="dark"
+            onClick={() => handleOpenModal("payout")}
             sx={{
               border: "1px solid #DFE2E7",
               fontFamily: "Poppins",
@@ -607,6 +634,15 @@ const SubscriptionandBilling = () => {
           </Button>
         </Box>
       </Box>
+      <AddPaymentMethodModal
+        open={modalOpen}
+        onClose={handleCloseModal}
+        onSuccess={() => {
+          fetchBillingMethods();
+          toast.success("Payment method added successfully");
+        }}
+        type={modalType}
+      />
     </Box>
   );
 };

@@ -111,7 +111,7 @@ const ProductTable = ({rows,columns}) => {
       </TableContainer>
 
       {/* Footer pagination */}
-      <Box
+      {/* <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
@@ -130,7 +130,7 @@ const ProductTable = ({rows,columns}) => {
           </Select>
           <Pagination count={99} variant="outlined" shape="rounded" />
         </Box>
-      </Box>
+      </Box> */}
     </Paper>
   );
 };

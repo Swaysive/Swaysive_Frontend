@@ -26,47 +26,41 @@ apiClient.interceptors.request.use(async (config) => {
   return config;
 });
 
-const apiInstance = createApiInstance("catalog");
+const apiInstance = createApiInstance("campaigns");
 
-export const catalogApi = {
+export const campaignApi = {
   /**
    * Setup a new gym profile
    * @param {Object} data - Gym setup data
    * @returns {Promise}
    */
 
-  getProducts: async ({ page, limit }) => {
-    return apiInstance.get("/products", {
-      params: { page, limit },
-    });
+  createCouponsCode: async ({ data }) => {
+    return apiInstance.post(`/coupons`, data);
   },
 
-  getProductDetail: async (productId) => {
-    return apiInstance.get(`/products/${productId}`);
-  },
-
-  getVariants: async (productId) => {
-    return apiInstance.get(`/products/${productId}/`);
-  },
-
-  getBrands: async ({ page, limit }) => {
-    return apiInstance.get("/brands", {
-      params: { page, limit },
-    });
-  },
-
-  getBrandDetail: async ({ brandId, page, limit }) => {
-    return apiInstance.get(`/brands/${brandId}`, {
-      params: { page, limit },
-    });
+  assignInfluencerToProduct: async ({ productId, influencerId }) => {
+    return apiInstance.post(`/assign`, { productId, influencerId });
   },
 
   productAnalytics: async (productId) => {
-    return apiInstance.get(`/products/${productId}/analytics`);
+    return apiInstance.get(`/analytics?productId=${productId}`);
   },
 
-  productCodes: async (productId) => {
-    return apiInstance.get(`/products/${productId}/codes`);
+    downloadCoupon: async (couponId) => {
+    return apiInstance.get(`/coupons/${couponId}/download`);
   },
 
+  generateAffiliateLink: async ({
+    productId,
+    influencerId,
+    commissionRate,
+    variantIds,
+  }) => {
+    return apiInstance.post(`/generate-affiliate-links`, {
+      commissionRate,
+      productId,
+      influencerId,
+    });
+  },
 };

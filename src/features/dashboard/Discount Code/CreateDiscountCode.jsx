@@ -20,6 +20,7 @@ import { useParams, useLocation } from "react-router-dom"; // If you get product
 import { toast } from "react-toastify";
 import { HiBadgeCheck } from "react-icons/hi";
 import { TextField, InputAdornment } from "@mui/material";
+import { campaignApi } from "../../../api/campainApis";
 
 export default function CreateDiscountCode() {
   // Get productId from URL or props
@@ -47,6 +48,7 @@ export default function CreateDiscountCode() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [discountCode, setDiscountCode] = useState("");
+  const [discountId, setDiscountId] = useState("");
   const [continuous, setContinuous] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -70,11 +72,13 @@ export default function CreateDiscountCode() {
         const variantsRes = await catalogApi.getVariants(productApiId);
         if (
           variantsRes.data.status === "success" &&
-          variantsRes.data.data.result
+          variantsRes.data.data.length > 0 &&
+          variantsRes.data.data[0].variants?.items
         ) {
-          setVariants(variantsRes.data.data.result);
+          setVariants(variantsRes.data.data[0].variants.items);
         }
       } catch (error) {
+        console.error("Error fetching variants:", error);
         toast.error("Failed to fetch product details or variants");
       } finally {
         setLoading(false);
@@ -115,6 +119,7 @@ export default function CreateDiscountCode() {
   // Handle submit
   const handleSubmit = async () => {
     const payload = {
+      productId: productApiId,
       discountType,
       discountValue: Number(discountValue),
       budgetCap: Number(budgetCap),
@@ -128,12 +133,12 @@ export default function CreateDiscountCode() {
     };
 
     try {
-      const res = await catalogApi.createCouponsCode({
+      const res = await campaignApi.createCouponsCode({
         data: payload,
-        productId: productApiId,
       });
       if (res.data.status === "success") {
         setDiscountCode(res.data.data.code);
+        setDiscountId(res.data.data.id);
         setSuccessModalOpen(true);
       }
       // await catalogApi.createCouponsCode({
@@ -427,7 +432,7 @@ export default function CreateDiscountCode() {
                         className="badge bg-dark border me-2 d-inline-flex align-items-center"
                         style={{ fontSize: 14, padding: "6px 10px" }}
                       >
-                        {v.variant_sku}
+                        {v.sku}
                         <CloseIcon
                           fontSize="small"
                           style={{ marginLeft: 6, cursor: "pointer" }}
@@ -481,18 +486,16 @@ export default function CreateDiscountCode() {
                             "aria-labelledby": `variant-${variant.id}`,
                           }}
                           disabled={isDisabled}
-                        /> 
+                        />
                         <Avatar
                           src={variant.images?.[1] || ""}
-                          alt={variant.variant_title}
+                          alt={variant.title}
                           sx={{ width: 32, height: 32, mr: 2 }}
                         />
                         <div>
-                          <div style={{ fontWeight: 500 }}>
-                            {variant.variant_title}
-                          </div>
+                          <div style={{ fontWeight: 500 }}>{variant.title}</div>
                           <div style={{ fontSize: 13, color: "#888" }}>
-                            {variant.variant_sku}
+                            {variant.sku}
                           </div>
                           {isDisabled && (
                             <div style={{ fontSize: 12, color: "#d9534f" }}>
@@ -673,9 +676,8 @@ export default function CreateDiscountCode() {
 
           <div className="card p-4">
             <div className="row">
-               <h5 className="font-poppins fw-semibold">Discount Overview</h5>
+              <h5 className="font-poppins fw-semibold">Discount Overview</h5>
               <div className="col-md-6">
-               
                 <p>
                   <strong>Product Name</strong>
                   <br />
@@ -797,6 +799,41 @@ export default function CreateDiscountCode() {
               <h5 className="text-dark mt-2">
                 Estimated activation: within 6 hours
               </h5>
+              <button
+                className="btn btn-dark mt-3 px-4"
+                onClick={async () => {
+                  try {
+                    const response = await campaignApi.downloadCoupon(
+                      discountId
+                    );
+
+                    // Create blob from response data
+                    const blob = new Blob([response.data], {
+                      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    });
+                    const url = window.URL.createObjectURL(blob);
+
+                    // Create temporary link and trigger download
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.setAttribute(
+                      "download",
+                      `coupon_${discountCode}.xlsx`
+                    ); // or .csv depending on API
+                    document.body.appendChild(link);
+                    link.click();
+
+                    // Cleanup
+                    link.parentNode.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+                  } catch (e) {
+                    console.error("Download error:", e);
+                    toast.error("Failed to download coupon");
+                  }
+                }}
+              >
+                Download Coupon
+              </button>
             </div>
           </div>
         </div>
