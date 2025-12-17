@@ -18,9 +18,9 @@ export const usersApi = {
     return apiInstance.get("/onboard/status");
   },
 
-  getCurrentPlan: async () => {
-    return apiInstance.get("/subscription/current");
-  },
+  // getCurrentPlan: async () => {
+  //   return apiInstance.get("/billing/subscription/current");
+  // },
 
   sendInvitations: async (data) => {
     return apiInstance.post("/invitation/send", data);
@@ -30,17 +30,13 @@ export const usersApi = {
     return apiInstance.post("/invitation/accept", data);
   },
 
-  subscriptionChange: async (payload) => {
-    return apiInstance.post("/subscription/change", payload);
-  },
-
   viewInvitations: async () => {
     return apiInstance.get("/invitation/view");
   },
 
-  getBillingMethods: async () => {
-    return apiInstance.get("/billing-methods");
-  },
+  // getBillingMethods: async () => {
+  //   return apiInstance.get("/billing/methods");
+  // },
 
   getUsers: async ({ type }) => {
     return apiInstance.get(`/`, {

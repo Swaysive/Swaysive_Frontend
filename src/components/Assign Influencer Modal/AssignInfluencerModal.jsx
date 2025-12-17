@@ -22,6 +22,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle"
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { toast } from 'react-toastify';
+import { campaignApi } from '../../api/campainApis';
 
 const randomAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png"
 
@@ -53,7 +54,7 @@ const AssignInfluencerModal = ({
   const handleAssign = async () => {
     if (!selectedInfluencerId) return;
     try {
-      await catalogApi.assignInfluencerToProduct({
+      await campaignApi.assignInfluencerToProduct({
         productId,
         influencerId: selectedInfluencerId,
       });
@@ -77,7 +78,7 @@ const AssignInfluencerModal = ({
   // Generate affiliate link (update to handle multiple links)
   const handleGenerate = async () => {
     try {
-      const response = await catalogApi.generateAffiliateLink({
+      const response = await campaignApi.generateAffiliateLink({
         // productId,
         influencerId: selectedInfluencerId,
         commissionRate: Number(total),

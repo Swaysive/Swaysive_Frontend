@@ -15,26 +15,55 @@ import ProfilePic2 from "../../assets/icons/carolinaprofilepic.svg";
 import ChatScreen from "../Messages/ChatScreen";
 import { fetchConversations } from "../../api/conversationsApi";
 import { useSocketEvent } from "../../context/SocketContext";
+import { useAuth } from "../../context/Auth";
 
 function MessagesSidebar() {
   const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
+  const { authData } = useAuth();
+  const currentUserId = authData?.user?.id;
+
+  // Helper function to get the other participant in a conversation
+  const getOtherUser = (participants) => {
+    if (!participants || participants.length === 0) return null;
+    // Find the participant that is NOT the current user
+    const otherUser = participants.find(p => p._id !== currentUserId) || participants[0];
+    return {
+      _id: otherUser._id,
+      id: otherUser._id,
+      name: `${otherUser.name?.first || ''} ${otherUser.name?.last || ''}`.trim() || 'Unknown User',
+      email: otherUser.email,
+      avatar: otherUser.avatar,
+      role: otherUser.role,
+      isActive: otherUser.isOnline || false,
+    };
+  };
 
   // Fetch conversations on mount
   useEffect(() => {
     const loadConversations = async () => {
       try {
-        const data = await fetchConversations();
-        setConversations(data.conversations || []);
-        // Auto-select first conversation if available
-        if (data.conversations && data.conversations.length > 0) {
-          setSelectedConversation(data.conversations[0]);
-        }
+        const response = await fetchConversations();
+        // API returns { status, message, data: [...] }
+        const conversationsData = response.data || response.conversations || [];
+        
+        // Transform conversations to include otherUser
+        const transformedConversations = conversationsData.map(conv => ({
+          ...conv,
+          id: conv._id,
+          otherUser: getOtherUser(conv.participants),
+          lastMessage: conv.last_message?.text || conv.last_message || null,
+          lastMessageTime: conv.last_message_at || conv.updated_at,
+          unreadCount: conv.unread_count || 0,
+        }));
+        
+        setConversations(transformedConversations);
+        
+        // Don't auto-select - let user click to open conversation
       } catch (error) {
         console.error("Failed to load conversations:", error);
-        // Use empty array if API fails
         setConversations([]);
       } finally {
         setLoading(false);
@@ -42,18 +71,21 @@ function MessagesSidebar() {
     };
 
     loadConversations();
-  }, []);
+  }, [currentUserId]);
 
-  // Listen for new messages to update conversation list
+  // Listen for new messages to update conversation list (message:new event)
   const handleNewMessage = useCallback((data) => {
     setConversations((prev) => {
+      const conversationId = data.conversationId || data.conversation || data.conversation_id;
       const updatedConversations = prev.map((conv) => {
-        if (conv.id === data.conversationId) {
+        if (conv._id === conversationId || conv.id === conversationId) {
           return {
             ...conv,
-            lastMessage: data.message.text,
-            lastMessageTime: data.message.createdAt,
-            unreadCount: selectedConversation?.id === conv.id ? 0 : (conv.unreadCount || 0) + 1,
+            lastMessage: data.text || data.content || data.message?.text,
+            lastMessageTime: data.createdAt || data.created_at || new Date().toISOString(),
+            unreadCount: (selectedConversation?._id === conv._id || selectedConversation?.id === conv.id) 
+              ? 0 
+              : (conv.unreadCount || 0) + 1,
           };
         }
         return conv;
@@ -61,32 +93,61 @@ function MessagesSidebar() {
       
       // Sort by most recent message
       return updatedConversations.sort((a, b) => 
-        new Date(b.lastMessageTime) - new Date(a.lastMessageTime)
+        new Date(b.lastMessageTime || b.updated_at) - new Date(a.lastMessageTime || a.updated_at)
       );
     });
   }, [selectedConversation]);
 
-  useSocketEvent("message:receive", handleNewMessage);
+  useSocketEvent("message:new", handleNewMessage);
 
-  // Listen for user status updates
-  const handleUserStatus = useCallback((data) => {
+  // Also listen for message:sent to update conversation list
+  useSocketEvent("message:sent", handleNewMessage);
+
+  // Listen for conversation updates
+  const handleConversationUpdated = useCallback((data) => {
     setConversations((prev) =>
       prev.map((conv) =>
-        conv.otherUser?.id === data.userId
-          ? { ...conv, otherUser: { ...conv.otherUser, isActive: data.status === "online" } }
+        conv.id === data.id || conv._id === data._id
+          ? { ...conv, ...data }
           : conv
       )
     );
   }, []);
 
-  useSocketEvent("user:status", handleUserStatus);
+  useSocketEvent("conversation:updated", handleConversationUpdated);
+
+  // Listen for user online status
+  const handleUserOnline = useCallback((data) => {
+    setConversations((prev) =>
+      prev.map((conv) =>
+        conv.otherUser?.id === data.userId || conv.otherUser?._id === data.userId
+          ? { ...conv, otherUser: { ...conv.otherUser, isActive: true, isOnline: true } }
+          : conv
+      )
+    );
+  }, []);
+
+  useSocketEvent("user:online", handleUserOnline);
+
+  // Listen for user offline status
+  const handleUserOffline = useCallback((data) => {
+    setConversations((prev) =>
+      prev.map((conv) =>
+        conv.otherUser?.id === data.userId || conv.otherUser?._id === data.userId
+          ? { ...conv, otherUser: { ...conv.otherUser, isActive: false, isOnline: false } }
+          : conv
+      )
+    );
+  }, []);
+
+  useSocketEvent("user:offline", handleUserOffline);
 
   const handleConversationClick = (conversation) => {
     setSelectedConversation(conversation);
     // Mark as read
     setConversations((prev) =>
       prev.map((conv) =>
-        conv.id === conversation.id ? { ...conv, unreadCount: 0 } : conv
+        conv._id === conversation._id ? { ...conv, unreadCount: 0 } : conv
       )
     );
   };
@@ -192,16 +253,16 @@ function MessagesSidebar() {
               </Box>
             ) : (
               filteredConversations.map((conversation) => {
-                const { id, otherUser, lastMessage, unreadCount } = conversation;
+                const { _id, otherUser, lastMessage, unreadCount } = conversation;
                 const name = otherUser?.name || "Unknown User";
                 const slogan = lastMessage || "No messages yet";
-                const img = otherUser?.profilePic || ProfilePic;
+                const img = otherUser?.avatar || ProfilePic;
                 const isActive = otherUser?.isActive || false;
-                const isSelected = selectedConversation?.id === id;
+                const isSelected = selectedConversation?._id === _id;
 
                 return (
                   <Box
-                    key={id}
+                    key={_id}
                     onClick={() => handleConversationClick(conversation)}
                     sx={{
                       display: "flex",

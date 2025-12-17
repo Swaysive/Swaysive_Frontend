@@ -32,45 +32,35 @@ const BrandsDetail = () => {
   const [productsLoading, setProductsLoading] = useState(true);
   const loading = brandLoading || productsLoading;
 
-  // Fetch brand detail
+  // Fetch brand detail and products
   useEffect(() => {
-    const fetchBrand = async () => {
+    const fetchBrandAndProducts = async () => {
+      setBrandLoading(true);
       try {
-        const res = await catalogApi.getBrandDetail(brandId);
-        if (res.data.status === "success") {
-          setBrand(res.data.data);
-        }
-      } catch (e) {
-        setBrand(null);
-      } finally {
-        setBrandLoading(false);
-      }
-    };
-    fetchBrand();
-  }, [brandId]);
-
-  // Fetch brand products
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await catalogApi.getBrandProducts({
+        const res = await catalogApi.getBrandDetail({
+          brandId,
           page,
           limit: pageSize,
-          brandId,
         });
         if (res.data.status === "success") {
-          setProducts(res.data.data.items);
+          setBrand(res.data.data.brand);
+          setProducts(res.data.data.products.items || []);
           setTotalCount(
-            res.data.data.pagination.total || res.data.data.result.length
+            res.data.data.products.pagination?.total ||
+              res.data.data.products.items?.length ||
+              0
           );
         }
       } catch (e) {
+        console.error("Error fetching brand details:", e);
+        setBrand(null);
         setProducts([]);
       } finally {
+        setBrandLoading(false);
         setProductsLoading(false);
       }
     };
-    fetchProducts();
+    fetchBrandAndProducts();
   }, [brandId, page, pageSize]);
 
   // Filter products by search
