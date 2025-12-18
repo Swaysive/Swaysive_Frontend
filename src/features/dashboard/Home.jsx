@@ -1,5 +1,5 @@
 import React from "react";
-import CampaignImpactChart from "../../components/Charts/CampaignImpactChart";
+// import CampaignImpactChart from "../../components/Charts/CampaignImpactChart";
 import PartnershipOverview from "../../components/Charts/PartnershipOverview";
 import DashboardHeader from "../../components/Headers/DashboardHeader";
 import NextSteps from "../../components/Next Steps/NextSteps";
@@ -74,9 +74,9 @@ function Home() {
         <div className="col-md-7 col-lg-7">
           <NextSteps />
         </div>
-        <div className="col-12 mt-4">
+        {/* <div className="col-12 mt-4">
           <CampaignImpactChart />
-        </div>
+        </div> */}
       </div>
 
       {/* </MainLayout> */}
