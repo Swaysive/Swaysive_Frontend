@@ -161,7 +161,7 @@ const InfluencerTable = () => {
             <TableHead style={{ backgroundColor: "#f8f9fa" }}>
               <TableRow>
                 <TableCell><strong>Influencers</strong></TableCell>
-                <TableCell><strong>Brands</strong></TableCell>
+                {/* <TableCell><strong>Brands</strong></TableCell> */}
                 <TableCell><strong>Status</strong></TableCell>
               </TableRow>
             </TableHead>
@@ -189,11 +189,11 @@ const InfluencerTable = () => {
                       </Box>
                     </Box>
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     {inf.brands.map((brand, idx) => (
                       <React.Fragment key={idx}>{getBrandChip(brand)}</React.Fragment>
                     ))}
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>
                     <Chip
                       label={inf.status}

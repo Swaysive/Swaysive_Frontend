@@ -630,7 +630,7 @@ function ChatScreen({ conversation, user }) {
         }}
       >
         <Box>
-          <BsEmojiSmile size={20} />
+          {/* <BsEmojiSmile size={20} /> */}
         </Box>
         <TextField
           fullWidth
