@@ -124,7 +124,7 @@ const InfluencerTable = () => {
       <div className="col-12 mb-4">
         <DashboardHeader
           headerText="All Influencers"
-          bodyText="Review and update your creator-facing brand details and logo for each brand"
+          bodyText="Here are the list of all the influencers you have invited and are actively running products campaigns."
         />
       </div>
       <Box p={2} component={Paper} sx={{ borderRadius: 2 }}>

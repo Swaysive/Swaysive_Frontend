@@ -76,7 +76,7 @@ const BrandTable = () => {
       <div className="col-12 mb-4">
         <DashboardHeader
           headerText="Your Brands"
-          bodyText="Review and update your creator-facing brand details and logo for each brand"
+          bodyText="Here you will see all the different brands on your store being listed,"
         />
       </div>
       <Paper sx={{ borderRadius: "12px", p: 2, mt: 6 }}>

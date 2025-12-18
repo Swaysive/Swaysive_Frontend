@@ -15,7 +15,7 @@ function Home() {
         <div className="col-12">
           <DashboardHeader
             headerText="Dashboard"
-            bodyText="Welcome to swaysive! This is your homepage – check here to see new notifications and review a snapshot of your performance."
+            bodyText="Welcome to Swaysive! This dashboard is your overview of the active brands, campaigns, and influencers."
           />
         </div>
         <div className="row p-4 align-items-stretch stat-row">
@@ -61,7 +61,7 @@ function Home() {
           </div> */}
           <div className="col-md-3 col-lg-3">
             <StatCard
-              label="Response Time"
+              label="Total Revenue"
               count={0}
               change={0}
               isPositive={true}

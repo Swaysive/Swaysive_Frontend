@@ -93,7 +93,7 @@ const ProductTable = () => {
       <div className="col-12 mb-4">
         <DashboardHeader
           headerText="Your Products"
-          bodyText="Review and update your creator-facing brand details and logo for each brand"
+          bodyText="Here you will see your store products, you can click on any product to see its details and further create discount code, assign it to influencers."
         />
       </div>
       <Box p={2} component={Paper} sx={{ borderRadius: 2 }}>

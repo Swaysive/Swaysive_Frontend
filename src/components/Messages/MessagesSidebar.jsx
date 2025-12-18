@@ -193,7 +193,7 @@ function MessagesSidebar() {
     <Box sx={{ marginTop: "50px", marginBottom: "50px" }}>
       <DashboardHeader
         headerText="Messages"
-        bodyText="Conversations tied to campaigns will appear here for easy tracking."
+        bodyText="Communicate with your influencers and share affiliate link to them here."
       />
 
       <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
