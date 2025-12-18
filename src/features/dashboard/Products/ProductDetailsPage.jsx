@@ -40,6 +40,8 @@ import { usersApi } from "../../../api/usersApi";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { campaignApi } from "../../../api/campainApis";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import { toast } from "react-toastify";
 
 const randomAvatars = [
   "https://randomuser.me/api/portraits/men/1.jpg",
@@ -240,6 +242,15 @@ const ProductDetailsPage = () => {
         productAsin: product?.asin,
       },
     });
+  };
+
+  const handleCopyLink = (link) => {
+    if (link) {
+      navigator.clipboard.writeText(link);
+      toast.success("Link copied to clipboard!");
+    } else {
+      toast.error("No link available to copy.");
+    }
   };
 
   // Paginated variants
@@ -479,7 +490,8 @@ const ProductDetailsPage = () => {
                   <TableCell>Price</TableCell>
                   <TableCell>Campaign Status</TableCell>
                   <TableCell>Applied Codes</TableCell>
-                  {/* <TableCell>Actions</TableCell> */}
+                  <TableCell>Influencer Name</TableCell>
+                  <TableCell>Action</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -510,12 +522,20 @@ const ProductDetailsPage = () => {
                       {/* Placeholder, replace with real data if available */}
                       {variant.couponCode ? variant.couponCode : "N/A"}
                     </TableCell>
-                    {/* <TableCell>
-                      
-                      <Button size="small" variant="outlined">
-                        Apply Code
-                      </Button>
-                    </TableCell> */}
+                    <TableCell>{variant.influencer?.name || "N/A"}</TableCell>
+                    <TableCell>
+                      <Tooltip title="Copy Link">
+                        <IconButton
+                          size="small"
+                          onClick={() =>
+                            handleCopyLink(variant.influencer?.link)
+                          }
+                          disabled={!variant.influencer?.link}
+                        >
+                          <ContentCopyIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

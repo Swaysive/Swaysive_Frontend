@@ -498,7 +498,7 @@ const SubscriptionandBilling = () => {
               </Box>
             ) : (
               billingMethods
-                .filter((method) => method.type === "platform_fee")
+                .filter((method) => method.type === "payout")
                 .map((method, index) => (
                   <Box
                     key={method.stripe_id}

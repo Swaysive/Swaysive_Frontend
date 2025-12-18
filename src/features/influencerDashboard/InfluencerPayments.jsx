@@ -113,7 +113,7 @@ function InfluencerPayments() {
           fontWeight={700}
           sx={{ fontFamily: "Poppins", fontSize: "28px" }}
         >
-          My Payments – Helimix
+          My Payments 
         </Typography>
         <Typography
           variant="body2"
@@ -121,7 +121,7 @@ function InfluencerPayments() {
           mb={3}
           sx={{ fontFamily: "Poppins", fontSize: "14px" }}
         >
-          Manage your payout methods and view your earnings from Helimix.
+          {/* Manage your payout methods and view your earnings from Helimix. */}
         </Typography>
 
         {/* Buttons */}

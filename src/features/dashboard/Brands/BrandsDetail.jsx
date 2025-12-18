@@ -114,10 +114,10 @@ const BrandsDetail = () => {
                 <Typography fontWeight={600}>Name</Typography>
                 <Typography>{brand?.name || "-"}</Typography>
               </Box>
-              <Box display="flex" justifyContent="space-between" mb={1}>
+              {/* <Box display="flex" justifyContent="space-between" mb={1}>
                 <Typography fontWeight={600}>Campaign</Typography>
                 <Typography>45</Typography>
-              </Box>
+              </Box> */}
               <Box display="flex" justifyContent="space-between">
                 <Typography fontWeight={600}>Products</Typography>
                 <Typography>{brand?.product_count ?? "-"}</Typography>
@@ -149,7 +149,7 @@ const BrandsDetail = () => {
               }}
               sx={{ width: 300 }}
             />
-            <Box>
+            {/* <Box>
               <Button
                 variant="outlined"
                 sx={{ mr: 1, color: "#000", borderColor: "#000" }}
@@ -162,7 +162,7 @@ const BrandsDetail = () => {
               >
                 Export
               </Button>
-            </Box>
+            </Box> */}
           </Box>
 
           {/* Table */}

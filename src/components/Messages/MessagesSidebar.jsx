@@ -29,11 +29,14 @@ function MessagesSidebar() {
   const getOtherUser = (participants) => {
     if (!participants || participants.length === 0) return null;
     // Find the participant that is NOT the current user
-    const otherUser = participants.find(p => p._id !== currentUserId) || participants[0];
+    const otherUser =
+      participants.find((p) => p._id !== currentUserId) || participants[0];
     return {
       _id: otherUser._id,
       id: otherUser._id,
-      name: `${otherUser.name?.first || ''} ${otherUser.name?.last || ''}`.trim() || 'Unknown User',
+      name:
+        `${otherUser.name?.first || ""} ${otherUser.name?.last || ""}`.trim() ||
+        "Unknown User",
       email: otherUser.email,
       avatar: otherUser.avatar,
       role: otherUser.role,
@@ -48,9 +51,9 @@ function MessagesSidebar() {
         const response = await fetchConversations();
         // API returns { status, message, data: [...] }
         const conversationsData = response.data || response.conversations || [];
-        
+
         // Transform conversations to include otherUser
-        const transformedConversations = conversationsData.map(conv => ({
+        const transformedConversations = conversationsData.map((conv) => ({
           ...conv,
           id: conv._id,
           otherUser: getOtherUser(conv.participants),
@@ -58,9 +61,9 @@ function MessagesSidebar() {
           lastMessageTime: conv.last_message_at || conv.updated_at,
           unreadCount: conv.unread_count || 0,
         }));
-        
+
         setConversations(transformedConversations);
-        
+
         // Don't auto-select - let user click to open conversation
       } catch (error) {
         console.error("Failed to load conversations:", error);
@@ -74,29 +77,38 @@ function MessagesSidebar() {
   }, [currentUserId]);
 
   // Listen for new messages to update conversation list (message:new event)
-  const handleNewMessage = useCallback((data) => {
-    setConversations((prev) => {
-      const conversationId = data.conversationId || data.conversation || data.conversation_id;
-      const updatedConversations = prev.map((conv) => {
-        if (conv._id === conversationId || conv.id === conversationId) {
-          return {
-            ...conv,
-            lastMessage: data.text || data.content || data.message?.text,
-            lastMessageTime: data.createdAt || data.created_at || new Date().toISOString(),
-            unreadCount: (selectedConversation?._id === conv._id || selectedConversation?.id === conv.id) 
-              ? 0 
-              : (conv.unreadCount || 0) + 1,
-          };
-        }
-        return conv;
+  const handleNewMessage = useCallback(
+    (data) => {
+      setConversations((prev) => {
+        const conversationId =
+          data.conversationId || data.conversation || data.conversation_id;
+        const updatedConversations = prev.map((conv) => {
+          if (conv._id === conversationId || conv.id === conversationId) {
+            return {
+              ...conv,
+              lastMessage: data.text || data.content || data.message?.text,
+              lastMessageTime:
+                data.createdAt || data.created_at || new Date().toISOString(),
+              unreadCount:
+                selectedConversation?._id === conv._id ||
+                selectedConversation?.id === conv.id
+                  ? 0
+                  : (conv.unreadCount || 0) + 1,
+            };
+          }
+          return conv;
+        });
+
+        // Sort by most recent message
+        return updatedConversations.sort(
+          (a, b) =>
+            new Date(b.lastMessageTime || b.updated_at) -
+            new Date(a.lastMessageTime || a.updated_at)
+        );
       });
-      
-      // Sort by most recent message
-      return updatedConversations.sort((a, b) => 
-        new Date(b.lastMessageTime || b.updated_at) - new Date(a.lastMessageTime || a.updated_at)
-      );
-    });
-  }, [selectedConversation]);
+    },
+    [selectedConversation]
+  );
 
   useSocketEvent("message:new", handleNewMessage);
 
@@ -120,8 +132,12 @@ function MessagesSidebar() {
   const handleUserOnline = useCallback((data) => {
     setConversations((prev) =>
       prev.map((conv) =>
-        conv.otherUser?.id === data.userId || conv.otherUser?._id === data.userId
-          ? { ...conv, otherUser: { ...conv.otherUser, isActive: true, isOnline: true } }
+        conv.otherUser?.id === data.userId ||
+        conv.otherUser?._id === data.userId
+          ? {
+              ...conv,
+              otherUser: { ...conv.otherUser, isActive: true, isOnline: true },
+            }
           : conv
       )
     );
@@ -133,8 +149,16 @@ function MessagesSidebar() {
   const handleUserOffline = useCallback((data) => {
     setConversations((prev) =>
       prev.map((conv) =>
-        conv.otherUser?.id === data.userId || conv.otherUser?._id === data.userId
-          ? { ...conv, otherUser: { ...conv.otherUser, isActive: false, isOnline: false } }
+        conv.otherUser?.id === data.userId ||
+        conv.otherUser?._id === data.userId
+          ? {
+              ...conv,
+              otherUser: {
+                ...conv.otherUser,
+                isActive: false,
+                isOnline: false,
+              },
+            }
           : conv
       )
     );
@@ -248,12 +272,15 @@ function MessagesSidebar() {
             ) : filteredConversations.length === 0 ? (
               <Box sx={{ p: 2, textAlign: "center" }}>
                 <Typography sx={{ fontFamily: "Poppins", color: "#707070" }}>
-                  {searchQuery ? "No conversations found" : "No conversations yet"}
+                  {searchQuery
+                    ? "No conversations found"
+                    : "No conversations yet"}
                 </Typography>
               </Box>
             ) : (
               filteredConversations.map((conversation) => {
-                const { _id, otherUser, lastMessage, unreadCount } = conversation;
+                const { _id, otherUser, lastMessage, unreadCount } =
+                  conversation;
                 const name = otherUser?.name || "Unknown User";
                 const slogan = lastMessage || "No messages yet";
                 const img = otherUser?.avatar || ProfilePic;
@@ -303,7 +330,13 @@ function MessagesSidebar() {
                       />
                     </Box>
                     <Box sx={{ flex: 1 }}>
-                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
                         <Typography
                           sx={{
                             fontFamily: "Poppins",

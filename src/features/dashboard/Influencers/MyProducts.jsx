@@ -14,6 +14,7 @@ import ReusableTable from "../../../components/ReusableTable/ReusableTable";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { influencerApi } from "../../../api/influencerApi"; // <-- import your API
+import { usersApi } from "../../../api/usersApi";
 
 const MyProductsPage = () => {
   const [page, setPage] = useState(1);
@@ -27,7 +28,7 @@ const MyProductsPage = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const response = await influencerApi.getProducts();
+        const response = await usersApi.getProducts();
         if (response.data.status === "success") {
           setProducts(response.data.data);
         }
@@ -211,11 +212,11 @@ const MyProductsPage = () => {
         }}
       >
         <Typography variant="h5" fontWeight={600}>
-          My Products – Helimix
+          My Products
         </Typography>
-        <Typography variant="body2" color="text.secondary" mb={3}>
+        {/* <Typography variant="body2" color="text.secondary" mb={3}>
           Campaigns assigned by Helimix
-        </Typography>
+        </Typography> */}
       </Box>
 
       {/* Search & Filters */}

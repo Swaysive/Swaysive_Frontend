@@ -1,6 +1,7 @@
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = 'https://dev-socket.swaysive.io';
+
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 
 let socket = null;
 
