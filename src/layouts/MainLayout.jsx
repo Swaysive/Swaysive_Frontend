@@ -161,14 +161,14 @@ export default function NavbarWithSidebar({ children }) {
           </Box>
 
           <Box className="d-flex align-items-center">
-            <Tooltip title="Notifications">
+            {/* <Tooltip title="Notifications">
               <IconButton color="default">
                 <Notifications />
               </IconButton>
             </Tooltip>
             <IconButton onClick={handleMenuOpen} className="ms-2">
               <Avatar src="/profile.jpg" alt="Profile" />
-            </IconButton>
+            </IconButton> */}
             {/* <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
