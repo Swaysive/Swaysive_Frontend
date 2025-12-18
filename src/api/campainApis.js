@@ -47,8 +47,8 @@ export const campaignApi = {
     return apiInstance.get(`/analytics?productId=${productId}`);
   },
 
-    downloadCoupon: async (couponId) => {
-    return apiInstance.get(`/coupons/${couponId}/download`);
+    downloadCoupon: async (discountCode) => {
+    return apiInstance.get(`/coupons/${discountCode}/download`);
   },
 
   generateAffiliateLink: async ({

@@ -804,7 +804,7 @@ export default function CreateDiscountCode() {
                 onClick={async () => {
                   try {
                     const response = await campaignApi.downloadCoupon(
-                      discountId
+                      discountCode
                     );
 
                     // Create blob from response data
