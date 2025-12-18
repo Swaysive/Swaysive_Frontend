@@ -4,35 +4,26 @@ import { Tabs, Tab, Typography, Box } from "@mui/material";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { PersonOutline } from "@mui/icons-material";
 
-const chartDataSets = {
-  creators: {
-    active: 0,
-    inactive: 0,
-    count: 0,
-    label: "Active Creators",
-    description: "you have 0 / 0 products active and 0 / 0 brands active",
-  },
-  //   products: {
-  //     active: 80,
-  //     inactive: 20,
-  //     count: 25,
-  //     label: "Active Products",
-  //     description: "you have 25 / 26 products active and 1 / 2 brands active"
-  //   },
-  //   brands: {
-  //     active: 50,
-  //     inactive: 50,
-  //     count: 1,
-  //     label: "Active Brands",
-  //     description: "you have 25 / 26 products active and 1 / 2 brands active"
-  //   }
-};
-
 const COLORS = ["#28a745", "#dc3545"]; // green, red
 
-export default function PartnershipOverview() {
-  const [tab, setTab] = useState("creators");
-  const currentData = chartDataSets[tab];
+export default function PartnershipOverview({ data }) {
+  const creatorStats = data?.totalCreators || {
+    active: 0,
+    inactive: 0,
+    total: 0,
+  };
+
+  // Calculate percentages for the pie chart
+  const total = creatorStats.total || 1; // Avoid division by zero
+  const activePercentage = Math.round((creatorStats.active / total) * 100);
+  const inactivePercentage = 100 - activePercentage;
+
+  const currentData = {
+    count: creatorStats.total,
+    active: activePercentage,
+    inactive: inactivePercentage,
+    label: "Active Creators",
+  };
 
   const pieData = [
     { name: "Active", value: currentData.active },
@@ -110,27 +101,6 @@ export default function PartnershipOverview() {
           <small>Inactive ({currentData.inactive}%)</small>
         </Box>
       </Box>
-
-      {/* <Typography
-        className="mt-3"
-        variant="body2"
-        sx={{ fontFamily: "Poppins", fontSize: "13px", fontWeight: "medium" }}
-      >
-        {currentData.description}
-      </Typography> */}
-
-      {/* <Tabs
-        value={tab}
-        onChange={(e, val) => setTab(val)}
-        indicatorColor="primary"
-        textColor="primary"
-        centered
-        className="mt-3"
-      >
-        <Tab label="Creators" value="creators" />
-        <Tab label="Products" value="products" />
-        <Tab label="Brands" value="brands" />
-      </Tabs> */}
     </div>
   );
 }

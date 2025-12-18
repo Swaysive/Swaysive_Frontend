@@ -3,9 +3,22 @@ import "./NextSteps.css";
 import { Card, CardContent, Typography, Button } from "@mui/material";
 import ExternalIcon from "../../assets/icons/external-links-icons.svg"; // Import local icon
 
-const tasks = [];
+const NextSteps = ({ events = [] }) => {
+  const tasks = events.map((event) => {
+    let message = "";
+    let action = "View";
+    let link = "#";
 
-const NextSteps = () => {
+    if (event.type === "campaign_assigned") {
+      message = `Campaign assigned to ${event.influencer.name.first} ${event.influencer.name.last} for ${event.product.title}`;
+    } else if (event.type === "invitation") {
+      message = `Invitation ${event.action} by ${event.email}`;
+    } else {
+      message = `${event.type} ${event.action}`;
+    }
+
+    return { message, action, link };
+  });
   return (
     <Card className="next-steps-card shadow-sm rounded-4">
       <CardContent>

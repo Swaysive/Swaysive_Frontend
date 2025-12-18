@@ -8,20 +8,26 @@ import {
   Avatar,
   Stack,
   Divider,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 
 import ReusableTable from "../../components/ReusableTable/ReusableTable";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import { influencerApi } from "../../api/influencerApi"; // <-- import your API
 import { usersApi } from "../../api/usersApi";
+import { campaignApi as dashboardApi } from "../../api/dashboardApi";
 
 export default function InfluencerDashboard() {
-  // Dummy Data
+  const [dashboardStats, setDashboardStats] = useState({
+    totalCommission: 0,
+    unitsSold: 0,
+    activeCampaigns: 0,
+  });
+
   const stats = [
-    { title: "Total Commission", value: "$0" },
-    { title: "Units Sold", value: "0" },
-    { title: "Active Campaigns", value: "0" },
+    { title: "Total Commission", value: `$${dashboardStats.totalCommission}` },
+    { title: "Units Sold", value: dashboardStats.unitsSold },
+    { title: "Active Campaigns", value: dashboardStats.activeCampaigns },
   ];
 
   const [page, setPage] = useState(1);
@@ -29,21 +35,29 @@ export default function InfluencerDashboard() {
   const [assignedProducts, setAssignedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch assigned products from API
+  // Fetch assigned products and dashboard stats from API
   useEffect(() => {
-    const fetchAssignedProducts = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const response = await usersApi.getProducts();
-        if (response.data.status === "success") {
-          setAssignedProducts(response.data.data);
+        const [productsRes, dashboardRes] = await Promise.all([
+          usersApi.getProducts(),
+          dashboardApi.getDashboardData(),
+        ]);
+
+        if (productsRes.data.status === "success") {
+          setAssignedProducts(productsRes.data.data);
+        }
+
+        if (dashboardRes.data.status === "success") {
+          setDashboardStats(dashboardRes.data.data);
         }
       } catch (error) {
-        // Optionally handle error
+        console.error("Error fetching dashboard data:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchAssignedProducts();
+    fetchDashboardData();
   }, []);
 
   const columns = [
@@ -196,17 +210,17 @@ export default function InfluencerDashboard() {
     },
   ];
   if (loading) {
-      return (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          minHeight="60vh"
-        >
-          <CircularProgress />
-        </Box>
-      );
-    }
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="60vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
   return (
     <Box p={3} bgcolor="#f9f9f9" minHeight="100vh">
       <Grid container spacing={2}>
@@ -271,7 +285,6 @@ export default function InfluencerDashboard() {
               loading={loading}
             />
           </Paper>
-
         </Grid>
 
         {/* RIGHT COLUMN */}
@@ -373,8 +386,6 @@ export default function InfluencerDashboard() {
               </Grid>
             ))}
           </Paper>
-
-
         </Grid>
       </Grid>
     </Box>
