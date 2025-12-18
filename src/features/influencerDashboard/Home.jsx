@@ -14,13 +14,14 @@ import {
 import ReusableTable from "../../components/ReusableTable/ReusableTable";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import { influencerApi } from "../../api/influencerApi"; // <-- import your API
+import { usersApi } from "../../api/usersApi";
 
 export default function InfluencerDashboard() {
   // Dummy Data
   const stats = [
-    { title: "Total Commission", value: "$1,280.5" },
-    { title: "Units Sold", value: "192" },
-    { title: "Active Campaigns", value: "5" },
+    { title: "Total Commission", value: "$0" },
+    { title: "Units Sold", value: "0" },
+    { title: "Active Campaigns", value: "0" },
   ];
 
   const [page, setPage] = useState(1);
@@ -32,7 +33,7 @@ export default function InfluencerDashboard() {
   useEffect(() => {
     const fetchAssignedProducts = async () => {
       try {
-        const response = await influencerApi.getProducts();
+        const response = await usersApi.getProducts();
         if (response.data.status === "success") {
           setAssignedProducts(response.data.data);
         }
@@ -158,10 +159,10 @@ export default function InfluencerDashboard() {
   );
 
   const payoutData = {
-    nextPayout: "$320",
+    nextPayout: "$0",
     schedule: "Weekly",
-    lastPayment: "$285.20 on June 2025",
-    method: "Bank Transfer (****1234)",
+    lastPayment: "$0",
+    method: "-",
   };
 
   const notifications = [
@@ -275,7 +276,7 @@ export default function InfluencerDashboard() {
 
         {/* RIGHT COLUMN */}
         <Grid item xs={12} md={4}>
-          <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: "12px" }}>
+          {/* <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: "12px" }}>
             <Typography
               variant="subtitle1"
               fontWeight="bold"
@@ -320,7 +321,7 @@ export default function InfluencerDashboard() {
             >
               Edit Profile
             </Button>
-          </Paper>
+          </Paper> */}
           <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: "12px" }}>
             <Typography
               variant="subtitle1"
@@ -349,7 +350,6 @@ export default function InfluencerDashboard() {
                   alignItems: "center",
                 }}
               >
-                {/* 70% Column - Label */}
                 <Grid item xs={6}>
                   <Typography
                     variant="body2"
@@ -359,7 +359,6 @@ export default function InfluencerDashboard() {
                   </Typography>
                 </Grid>
 
-                {/* 30% Column - Value */}
                 <Grid item xs={6}>
                   <Typography
                     variant="body2"

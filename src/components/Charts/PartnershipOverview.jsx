@@ -111,13 +111,13 @@ export default function PartnershipOverview() {
         </Box>
       </Box>
 
-      <Typography
+      {/* <Typography
         className="mt-3"
         variant="body2"
         sx={{ fontFamily: "Poppins", fontSize: "13px", fontWeight: "medium" }}
       >
         {currentData.description}
-      </Typography>
+      </Typography> */}
 
       {/* <Tabs
         value={tab}

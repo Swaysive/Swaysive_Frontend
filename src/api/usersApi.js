@@ -34,6 +34,10 @@ export const usersApi = {
     return apiInstance.get("/invitation/view");
   },
 
+  getProducts: async () => {
+    return apiInstance.get('/influencer/products');
+  },
+
   // getBillingMethods: async () => {
   //   return apiInstance.get("/billing/methods");
   // },

@@ -57,7 +57,7 @@ export const campaignApi = {
     commissionRate,
     variantIds,
   }) => {
-    return apiInstance.post(`/generate-affiliate-links`, {
+    return apiInstance.post(`/generate-affiliate-link`, {
       commissionRate,
       productId,
       influencerId,

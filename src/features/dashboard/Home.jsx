@@ -19,7 +19,7 @@ function Home() {
           />
         </div>
         <div className="row p-4 align-items-stretch stat-row">
-          <div className="col-md-2 col-lg-2">
+          <div className="col-md-3 col-lg-3">
             <StatCard
               label="Active Brands"
               count={0}
@@ -27,15 +27,15 @@ function Home() {
               isPositive={true}
             />
           </div>
-          <div className="col-md-2 col-lg-2">
+          {/* <div className="col-md-2 col-lg-2">
             <StatCard
               label="Products Live"
               count={0}
               change={0}
               isPositive={true}
             />
-          </div>
-          <div className="col-md-2 col-lg-2">
+          </div> */}
+          <div className="col-md-3 col-lg-3">
             <StatCard
               label="Live Campaign"
               count={0}
@@ -43,7 +43,7 @@ function Home() {
               isPositive={true}
             />
           </div>
-          <div className="col-md-2 col-lg-2">
+          <div className="col-md-3 col-lg-3">
             <StatCard
               label="Conversions"
               count={0}
@@ -51,15 +51,15 @@ function Home() {
               isPositive={true}
             />
           </div>
-          <div className="col-md-2 col-lg-2">
+          {/* <div className="col-md-2 col-lg-2">
             <StatCard
               label="Review Queue"
               count={0}
               change={0}
               isPositive={true}
             />
-          </div>
-          <div className="col-md-2 col-lg-2">
+          </div> */}
+          <div className="col-md-3 col-lg-3">
             <StatCard
               label="Response Time"
               count={0}

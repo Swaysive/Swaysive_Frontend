@@ -111,7 +111,7 @@ export default function NavbarWithSidebar({ children }) {
       icon: <TbMessage2 size={25} />,
       path: "/influencer-home/messages",
     },
-    { text: "Payments", icon: <Payments />, path: "/influencer-home/payments" },
+    // { text: "Payments", icon: <Payments />, path: "/influencer-home/payments" },
     {
       text: "Settings",
       icon: <IoSettingsOutline size={25} />,

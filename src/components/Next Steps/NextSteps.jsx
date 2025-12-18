@@ -64,7 +64,7 @@ const NextSteps = () => {
           ))
         )}
 
-        <div className="text-center mt-3">
+        {/* <div className="text-center mt-3">
           <Button
             href="#"
             variant="text"
@@ -78,7 +78,7 @@ const NextSteps = () => {
               className="ms-2 icon-img"
             />
           </Button>
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   );

@@ -32,7 +32,7 @@ const ProductTable = ({rows,columns}) => {
           <TableHead>
             <TableRow>
               <TableCell padding="checkbox">
-                <Checkbox />
+                {/* <Checkbox /> */}
               </TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Products</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Brand</TableCell>
@@ -45,7 +45,7 @@ const ProductTable = ({rows,columns}) => {
             {rows.map((row) => (
               <TableRow key={row.id} hover>
                 <TableCell padding="checkbox">
-                  <Checkbox />
+                  {/* <Checkbox /> */}
                 </TableCell>
 
                 {/* Product column */}
