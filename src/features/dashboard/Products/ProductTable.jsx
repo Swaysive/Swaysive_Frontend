@@ -19,7 +19,7 @@ import {
   Select,
   MenuItem,
   InputAdornment,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DashboardHeader from "../../../components/Headers/DashboardHeader";
@@ -31,39 +31,38 @@ import { useNavigate } from "react-router-dom";
 const ProductTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [products, setProducts] = useState([]);
-  const [pageSize, setPageSize] = useState(5);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await catalogApi.getProducts({ page: 1, limit: 20 });
-        const fetchedProducts = response.data.data.items;
+        setLoading(true);
+        const response = await catalogApi.getProducts({
+          page: currentPage,
+          limit: pageSize,
+        });
+        // The API returns { data: { items: [...], pagination: { total: ... } } }
+        // Based on user snippet: response.data.data.items and response.data.data.pagination.total
+        const fetchedProducts = response.data?.data?.items || [];
+        const total = response.data?.data?.pagination?.total || 0;
 
-        const isActive = localStorage.getItem("active") === "true";
-        // console.log("Active status from localStorage:", isActive);
-
-        const updatedProducts = fetchedProducts.map((product, index) => ({
-          ...product,
-          status: isActive && index === 0 ? "Active" : "Inactive",
-        }));
-
-        // console.log("Products fetched successfully:", updatedProducts);
-        setProducts(updatedProducts);
+        setProducts(fetchedProducts);
+        setTotalProducts(total);
       } catch (error) {
         console.error("Error fetching products:", error);
-      }
-      finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchProducts();
-  }, []);
+  }, [currentPage, pageSize]);
 
-  const startIndex = (currentPage - 1) * pageSize;
-  const displayedProducts = products.slice(startIndex, startIndex + pageSize);
+  // Server-side pagination means 'products' already contains only the current page's items
+  const displayedProducts = products;
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
@@ -78,17 +77,17 @@ const ProductTable = () => {
     navigate(`/products/details/${product.id}`);
   };
   if (loading) {
-      return (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          minHeight="60vh"
-        >
-          <CircularProgress />
-        </Box>
-      );
-    }
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="60vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
   return (
     <div className="row" style={{ marginTop: "50px" }}>
       <div className="col-12 mb-4">
@@ -126,7 +125,6 @@ const ProductTable = () => {
             >
               Actions
             </Button> */}
-
           </Box>
         </Box>
 
@@ -146,7 +144,7 @@ const ProductTable = () => {
             </TableHead>
             <TableBody>
               {displayedProducts.map((item) => (
-                <TableRow key={item.ASIN} hover>
+                <TableRow key={item.id} hover>
                   {/* <TableCell padding="checkbox">
                     <Checkbox />
                   </TableCell> */}
@@ -159,11 +157,7 @@ const ProductTable = () => {
                       style={{ cursor: "pointer" }}
                     >
                       <Avatar
-                        src={
-                          item.images && item.images.length > 0
-                            ? item.images[1]
-                            : ""
-                        }
+                        src={item.main_image || ""}
                         variant="rounded"
                         sx={{ width: 48, height: 48 }}
                       />
@@ -184,8 +178,9 @@ const ProductTable = () => {
                   </TableCell>
                   <TableCell>{item.brand?.name || "N/A"}</TableCell>
                   <TableCell>
-                    {/* If you have influencer data, show it here. Otherwise, use a placeholder */}
-                    N/A
+                    {item.influencerName?.first && item.influencerName?.last
+                      ? `${item.influencerName.first} ${item.influencerName.last}`
+                      : "N/A"}
                   </TableCell>
                   <TableCell>
                     <Chip
@@ -226,7 +221,7 @@ const ProductTable = () => {
           mt={3}
         >
           <Pagination
-            count={Math.ceil(products.length / pageSize)}
+            count={Math.ceil(totalProducts / pageSize)}
             page={currentPage}
             onChange={handlePageChange}
             shape="rounded"
@@ -242,7 +237,7 @@ const ProductTable = () => {
           />
           <Box display="flex" alignItems="center" gap={1}>
             <Typography variant="body2">
-              Showing {displayedProducts.length} of {products.length} entries
+              Showing {products.length} of {totalProducts} entries
             </Typography>
             <Select
               size="small"

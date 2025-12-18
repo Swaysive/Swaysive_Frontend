@@ -1,6 +1,7 @@
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = 'https://dev-api.swaysive.io';
+
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 
 let socket = null;
 
@@ -17,7 +18,7 @@ export const initializeSocket = () => {
     },
     autoConnect: false,
     reconnection: true,
-    reconnectionAttempts: 5,
+    reconnectionAttempts: 5, 
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
     timeout: 20000,

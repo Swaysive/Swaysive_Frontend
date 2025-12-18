@@ -106,7 +106,12 @@ export default function NavbarWithSidebar({ children }) {
       icon: <RiShoppingBag3Line size={25} />,
       path: "/influencer-home/products",
     },
-    { text: "Payments", icon: <Payments />, path: "/influencer-home/payments" },
+    {
+      text: "Messages",
+      icon: <TbMessage2 size={25} />,
+      path: "/influencer-home/messages",
+    },
+    // { text: "Payments", icon: <Payments />, path: "/influencer-home/payments" },
     {
       text: "Settings",
       icon: <IoSettingsOutline size={25} />,

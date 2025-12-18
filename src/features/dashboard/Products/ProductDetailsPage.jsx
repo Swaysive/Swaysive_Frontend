@@ -39,6 +39,9 @@ import { catalogApi } from "../../../api/catalogApi";
 import { usersApi } from "../../../api/usersApi";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import { campaignApi } from "../../../api/campainApis";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import { toast } from "react-toastify";
 
 const randomAvatars = [
   "https://randomuser.me/api/portraits/men/1.jpg",
@@ -83,18 +86,30 @@ const ProductDetailsPage = () => {
     const fetchProductDetail = async () => {
       try {
         const response = await catalogApi.getProductDetail(id);
-        if (response.data.status === "success") {
-          setProduct(response.data.data);
-          setVariants(response.data.data.variants || []);
-          // Get influencer from overview
-          setInfluencer(response.data.data.overview?.influencer);
-          // Set active status based on overview or first variant
-          if (response.data.data.overview?.status === "active") {
+        if (
+          response.data.status === "success" &&
+          response.data.data.length > 0
+        ) {
+          const data = response.data.data[0];
+          setProduct(data.product);
+          setVariants(data.variants.items || []);
+
+          // Helper to get influencer info if available (check variants or general product)
+          const foundInfluencer = data.variants.items.find(
+            (v) => v.influencer
+          )?.influencer;
+          setInfluencer(foundInfluencer || null);
+
+          // Set active status based on product status
+          if (data.product.status === "active") {
             setActive("Active");
+          } else {
+            setActive("Inactive");
           }
         }
       } catch (error) {
         // Handle error (toast, etc.)
+        console.error("Error fetching product details:", error);
       } finally {
         setProductDetailLoading(false);
       }
@@ -111,7 +126,7 @@ const ProductDetailsPage = () => {
           const infs = res.data.data.map((inf, idx) => ({
             ...inf,
             firstName: inf.first, // Map to firstName for consistency
-            lastName: inf.last,   // Map to lastName for consistency
+            lastName: inf.last, // Map to lastName for consistency
             name: `${inf.first} ${inf.last}`,
             image: randomAvatars[idx % randomAvatars.length],
           }));
@@ -157,7 +172,7 @@ const ProductDetailsPage = () => {
       }
       setAnalyticsLoading(true);
       try {
-        const res = await catalogApi.productAnalytics(product.id);
+        const res = await campaignApi.productAnalytics(product.id);
         if (res.data.status === "success") {
           setAnalytics(res.data.data);
         }
@@ -221,12 +236,21 @@ const ProductDetailsPage = () => {
     navigate("/create-discount-code", {
       state: {
         productApiId: product.id,
-        productId: product.overview.id,
+        productId: product.id, // Using same ID as we don't have separate overview ID
         productTitle: product?.title,
-        productPrice: product?.overview.price,
-        productAsin: product?.overview.variant_sku,
+        productPrice: variants.length > 0 ? variants[0].price : 0,
+        productAsin: product?.asin,
       },
     });
+  };
+
+  const handleCopyLink = (link) => {
+    if (link) {
+      navigator.clipboard.writeText(link);
+      toast.success("Link copied to clipboard!");
+    } else {
+      toast.error("No link available to copy.");
+    }
   };
 
   // Paginated variants
@@ -300,7 +324,11 @@ const ProductDetailsPage = () => {
                   Amazon Detail Page
                 </a>
                 <img
-                  src={product?.images[1] || "https://via.placeholder.com/100"}
+                  src={
+                    product?.main_image ||
+                    (variants.length > 0 && variants[0].main_image) ||
+                    "https://via.placeholder.com/100"
+                  }
                   alt="Product"
                   className="img-thumbnail"
                   width="100"
@@ -334,11 +362,11 @@ const ProductDetailsPage = () => {
                   <Grid item xs={6}>
                     <div className="mb-2" style={{ color: "#667085" }}>
                       <strong className="text-dark">ASIN:</strong>{" "}
-                      {product?.overview?.variant_sku}
+                      {product?.asin}
                     </div>
                     <div className="mb-2" style={{ color: "#667085" }}>
                       <strong className="text-dark">Price:</strong> $
-                      {product?.overview?.price}
+                      {variants.length > 0 ? variants[0].price : "N/A"}
                     </div>
 
                     <div className="d-flex align-items-center mb-2 ">
@@ -367,11 +395,13 @@ const ProductDetailsPage = () => {
                     </div>
                     <div className="mb-2" style={{ color: "#667085" }}>
                       <strong className="text-dark">Category:</strong>
-                      {product?.overview?.best_sellers_rank?.[0]?.category}
+                      {variants.length > 0 && variants[0].category
+                        ? variants[0].category
+                        : "N/A"}
                     </div>
                     <div className="mb-2" style={{ color: "#667085" }}>
                       <strong className="text-dark">Best Seller Rank: </strong>
-                      {product?.overview?.best_sellers_rank?.[0]?.rank}
+                      N/A
                       {/* {product?.overview?.best_seller_rank?.[0]?.rank} */}
                     </div>
                     <div>
@@ -460,7 +490,8 @@ const ProductDetailsPage = () => {
                   <TableCell>Price</TableCell>
                   <TableCell>Campaign Status</TableCell>
                   <TableCell>Applied Codes</TableCell>
-                  {/* <TableCell>Actions</TableCell> */}
+                  <TableCell>Influencer Name</TableCell>
+                  <TableCell>Action</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -476,12 +507,7 @@ const ProductDetailsPage = () => {
                         <span>{variant.sku}</span>
                       </Box>
                     </TableCell>
-                    <TableCell>
-                      {/* {Object.entries(variant.attributes || {})
-                        .map(([key, value]) => `${key}: ${value}`)
-                        .join(", ")} */}
-                      {variant.attributes.color}
-                    </TableCell>
+                    <TableCell>{variant.color || "N/A"}</TableCell>
                     <TableCell>${variant.price}</TableCell>
                     <TableCell>
                       {/* Placeholder, replace with real data if available */}
@@ -494,14 +520,22 @@ const ProductDetailsPage = () => {
                     </TableCell>
                     <TableCell>
                       {/* Placeholder, replace with real data if available */}
-                      {variant.discountCode ? variant.discountCode : "N/A"}
+                      {variant.couponCode ? variant.couponCode : "N/A"}
                     </TableCell>
-                    {/* <TableCell>
-                      
-                      <Button size="small" variant="outlined">
-                        Apply Code
-                      </Button>
-                    </TableCell> */}
+                    <TableCell>{variant.influencer?.name || "N/A"}</TableCell>
+                    <TableCell>
+                      <Tooltip title="Copy Link">
+                        <IconButton
+                          size="small"
+                          onClick={() =>
+                            handleCopyLink(variant.influencer?.link)
+                          }
+                          disabled={!variant.influencer?.link}
+                        >
+                          <ContentCopyIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

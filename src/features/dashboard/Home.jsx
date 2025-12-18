@@ -12,60 +12,59 @@ function Home() {
     <>
       {/* <MainLayout> */}
       <div className="row" style={{ marginTop: "50px" }}>
-        
         <div className="col-12">
-        <DashboardHeader
-        headerText="Dashboard"
-        bodyText="Welcome to swaysive! This is your homepage – check here to see new notifications and review a snapshot of your performance."
-      />
+          <DashboardHeader
+            headerText="Dashboard"
+            bodyText="Welcome to swaysive! This is your homepage – check here to see new notifications and review a snapshot of your performance."
+          />
         </div>
         <div className="row p-4 align-items-stretch stat-row">
-          <div className="col-md-2 col-lg-2">
+          <div className="col-md-3 col-lg-3">
             <StatCard
               label="Active Brands"
-              count={30}
-              change={2}
+              count={0}
+              change={0}
               isPositive={true}
             />
           </div>
-          <div className="col-md-2 col-lg-2">
+          {/* <div className="col-md-2 col-lg-2">
             <StatCard
               label="Products Live"
-              count={26}
-              change={3}
+              count={0}
+              change={0}
               isPositive={true}
             />
-          </div>
-          <div className="col-md-2 col-lg-2">
+          </div> */}
+          <div className="col-md-3 col-lg-3">
             <StatCard
               label="Live Campaign"
-              count={12}
-              change={3}
+              count={0}
+              change={0}
               isPositive={true}
             />
           </div>
-          <div className="col-md-2 col-lg-2">
+          <div className="col-md-3 col-lg-3">
             <StatCard
               label="Conversions"
-              count={212}
-              change={18}
+              count={0}
+              change={0}
               isPositive={true}
             />
           </div>
-          <div className="col-md-2 col-lg-2">
+          {/* <div className="col-md-2 col-lg-2">
             <StatCard
               label="Review Queue"
-              count={4}
-              change={2}
-              isPositive={false}
+              count={0}
+              change={0}
+              isPositive={true}
             />
-          </div>
-          <div className="col-md-2 col-lg-2">
+          </div> */}
+          <div className="col-md-3 col-lg-3">
             <StatCard
               label="Response Time"
-              count={3.2}
-              change={0.5}
-              isPositive={false}
+              count={0}
+              change={0}
+              isPositive={true}
             />
           </div>
         </div>

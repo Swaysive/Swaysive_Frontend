@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { useNavigate, useLocation } from "react-router-dom";
 import BubbleLeft from "../../assets/images/bubbles-left1.png";
 import BubbleRight from "../../assets/images/bubbles-right.png";
+import { billingApi } from "../../api/billingApi";
 
 export default function Pricing() {
   const [plans, setPlans] = useState([]);
@@ -42,7 +43,7 @@ export default function Pricing() {
       const payload = {
         planId: plan.id,
       };
-      const response = await usersApi.subscriptionChange(payload);
+      const response = await billingApi.subscriptionChange(payload);
       
       // Handle both success status and redirect responses
       // if (response.data.status === "success" && response.data.data?.sessionUrl) {

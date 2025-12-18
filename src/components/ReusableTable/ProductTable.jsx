@@ -32,7 +32,7 @@ const ProductTable = ({rows,columns}) => {
           <TableHead>
             <TableRow>
               <TableCell padding="checkbox">
-                <Checkbox />
+                {/* <Checkbox /> */}
               </TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Products</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Brand</TableCell>
@@ -45,7 +45,7 @@ const ProductTable = ({rows,columns}) => {
             {rows.map((row) => (
               <TableRow key={row.id} hover>
                 <TableCell padding="checkbox">
-                  <Checkbox />
+                  {/* <Checkbox /> */}
                 </TableCell>
 
                 {/* Product column */}
@@ -111,7 +111,7 @@ const ProductTable = ({rows,columns}) => {
       </TableContainer>
 
       {/* Footer pagination */}
-      <Box
+      {/* <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
@@ -130,7 +130,7 @@ const ProductTable = ({rows,columns}) => {
           </Select>
           <Pagination count={99} variant="outlined" shape="rounded" />
         </Box>
-      </Box>
+      </Box> */}
     </Paper>
   );
 };

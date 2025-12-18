@@ -118,6 +118,10 @@ const AppRoutes = () => {
                       path="/influencer-home/settings"
                       element={<InfluencerSettings />}
                     />
+                    <Route
+                      path="/influencer-home/messages"
+                      element={<Messages />}
+                    />
                   </>
                 )}
               </Route>
