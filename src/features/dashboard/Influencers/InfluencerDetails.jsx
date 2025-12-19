@@ -20,8 +20,10 @@ import {
   MenuItem,
   InputAdornment,
   CircularProgress,
+  Tooltip,
+  Snackbar,
 } from "@mui/material";
-import { Facebook, Instagram, Search } from "@mui/icons-material";
+import { Facebook, Instagram, Search, ContentCopy } from "@mui/icons-material";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
@@ -39,6 +41,7 @@ const InfluencerDetails = () => {
   const [data, setData] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   useEffect(() => {
     const fetchInfluencerProducts = async () => {
@@ -50,10 +53,13 @@ const InfluencerDetails = () => {
             id: item.product.id,
             title: item.product.title,
             brand: item.product.brand?.name || "Generic",
-            commission: "0%", // Not available in the response snippet
-            status: item.product.status === "active" ? "Active" : "Inactive",
+            commission: item.overview.influencer?.affiliateCommission
+              ? `${item.overview.influencer.affiliateCommission}%`
+              : "0%",
+            status:
+              item.overview.campaignStatus === "active" ? "Active" : "Inactive",
             unitsSold: 0, // Not available in the response snippet
-            url: "-", // Not available in the response snippet
+            url: item.overview.influencer?.affiliateLink || "-",
           }));
           setData(mappedData);
         }
@@ -217,9 +223,7 @@ const InfluencerDetails = () => {
             <TableBody>
               {paginatedData.map((row, idx) => (
                 <TableRow key={idx}>
-                  <TableCell padding="checkbox">
-                    {/* <Checkbox /> */}
-                  </TableCell>
+                  <TableCell padding="checkbox">{/* <Checkbox /> */}</TableCell>
                   <TableCell>
                     <Typography
                       variant="body2"
@@ -263,14 +267,33 @@ const InfluencerDetails = () => {
                   <TableCell>{row.unitsSold}</TableCell>
                   <TableCell>
                     {row.url !== "-" ? (
-                      <a
-                        href={`https://${row.url}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ wordBreak: "break-all" }}
-                      >
-                        {row.url}
-                      </a>
+                      <Box display="flex" alignItems="center">
+                        <Tooltip title="Copy URL">
+                          <IconButton
+                            size="small"
+                            onClick={() => {
+                              navigator.clipboard.writeText(row.url);
+                              setSnackbarOpen(true);
+                            }}
+                            sx={{ color: "#757575" }}
+                          >
+                            <ContentCopy fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        {/* <Typography
+                          variant="caption"
+                          sx={{
+                            ml: 1,
+                            color: "#757575",
+                            maxWidth: "150px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {row.url}
+                        </Typography> */}
+                      </Box>
                     ) : (
                       "-"
                     )}
@@ -322,7 +345,17 @@ const InfluencerDetails = () => {
         </Box>
       </div>
 
-      <GenerateUrlModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <GenerateUrlModal
+        open={modalOpen}
+        handleClose={() => setModalOpen(false)}
+      />
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={2000}
+        onClose={() => setSnackbarOpen(false)}
+        message="URL copied to clipboard"
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      />
     </div>
   );
 };

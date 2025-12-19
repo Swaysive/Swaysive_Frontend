@@ -160,7 +160,7 @@ const BrandTable = () => {
                     />
                   </TableCell>
                   <TableCell>{brand.product_count ?? 0}</TableCell>
-                  <TableCell>{brand.campaigns ?? 0}</TableCell>
+                  <TableCell>{brand.campaign_count ?? 0}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

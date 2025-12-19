@@ -73,13 +73,24 @@ const BrandsDetail = () => {
   // Map API products to table rows
   const rows = filteredProducts.map((p) => ({
     id: p._id,
-    image: p.images?.[1] || "",
+    image: p.main_image || p.images?.[1] || "",
     name: p.title,
     code: p.asin,
     material: p.material || "",
     tags: [],
-    brand: brand?.name || "",
-    influencer: "-", // You can fill this if you have influencer info
+    brand: p.brand?.name || brand?.name || "",
+    influencer: (
+      <Box>
+        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+          {p.influencerName?.first && p.influencerName?.last
+            ? `${p.influencerName.first} ${p.influencerName.last}`
+            : "-"}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {p.brand?.name || brand?.name || ""}
+        </Typography>
+      </Box>
+    ),
     status: p.status === "active" ? "Active" : "Inactive",
   }));
   if (loading) {
