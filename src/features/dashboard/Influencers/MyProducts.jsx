@@ -15,6 +15,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { influencerApi } from "../../../api/influencerApi"; // <-- import your API
 import { usersApi } from "../../../api/usersApi";
+import DashboardHeader from "../../../components/Headers/DashboardHeader";
 
 const MyProductsPage = () => {
   const [page, setPage] = useState(1);
@@ -204,7 +205,12 @@ const MyProductsPage = () => {
   return (
     <Box p={3}>
       <ToastContainer />
-      <Box
+       <DashboardHeader
+          headerText="My Products"
+          // bodyText="Review and update your creator-facing brand details and logo for each brand"
+          showBackButton={true}
+        />
+      {/* <Box
         sx={{
           background: "linear-gradient(180deg, #FCFCFC 0%, #F0F7FF 100%)",
           p: 3,
@@ -214,10 +220,8 @@ const MyProductsPage = () => {
         <Typography variant="h5" fontWeight={600}>
           My Products
         </Typography>
-        {/* <Typography variant="body2" color="text.secondary" mb={3}>
-          Campaigns assigned by Helimix
-        </Typography> */}
-      </Box>
+      
+      </Box> */}
 
       {/* Search & Filters */}
       <Box display="flex" flexWrap="wrap" gap={2} alignItems="center" m={2}>
