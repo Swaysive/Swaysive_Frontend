@@ -24,13 +24,16 @@ import {
 import { Facebook, Instagram, Search } from "@mui/icons-material";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { usersApi } from "../../../api/usersApi";
 import DashboardHeader from "../../../components/Headers/DashboardHeader";
-import "./InfluencerDetails.css"; // custom styles
-import EditIcon from "../../../assets/icons/edit-icon.svg";
-import { catalogApi } from "../../../api/catalogApi";
 import GenerateUrlModal from "../../../components/GenerateUrl Modal/GenerateUrlModal";
 
 const InfluencerDetails = () => {
+  const { id } = useParams();
+  const location = useLocation();
+  const influencerName = location.state?.influencerName || "Influencer Details";
+
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [data, setData] = useState([]);
@@ -38,31 +41,31 @@ const InfluencerDetails = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchInfluencerProducts = async () => {
       try {
-        const response = await catalogApi.getProducts();
-        // console.log("Products fetched successfully:", response.data.products);
-
-        const isActive = localStorage.getItem("active") === "true";
-
-        const firstThree = response.data.products
-          .slice(0, 3)
-          .map((product, index) => ({
-            ...product,
-            status: isActive && index === 0 ? "Active" : "Inactive",
+        const response = await usersApi.getInfluencerDetails(id);
+        if (response.data.status === "success") {
+          // Map the new structure: response.data.data -> [{ product, overview, variants }]
+          const mappedData = response.data.data.map((item) => ({
+            id: item.product.id,
+            title: item.product.title,
+            brand: item.product.brand?.name || "Generic",
+            commission: "0%", // Not available in the response snippet
+            status: item.product.status === "active" ? "Active" : "Inactive",
+            unitsSold: 0, // Not available in the response snippet
+            url: "-", // Not available in the response snippet
           }));
-
-        setData(firstThree);
+          setData(mappedData);
+        }
       } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-      finally{
-        setLoading(false)
+        console.error("Error fetching influencer products:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchProducts();
-  }, []);
+    fetchInfluencerProducts();
+  }, [id]);
 
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
@@ -86,29 +89,30 @@ const InfluencerDetails = () => {
     setCurrentPage(1);
   };
   if (loading) {
-      return (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          minHeight="60vh"
-        >
-          <CircularProgress />
-        </Box>
-      );
-    }
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="60vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
   return (
     <div className="py-4" style={{ overflowX: "hidden" }}>
       <div className="col-12 mb-4">
         <DashboardHeader
-          headerText="Your Products"
-          bodyText="Review and update your creator-facing brand details and logo for each brand"
+          headerText={`Influencer: ${influencerName}`}
+          // bodyText={`Review and update creator-facing details for ${influencerName}`}
+          showBackButton={true}
         />
       </div>
 
       <div className="influencer-container">
         {/* Influencer Header */}
-        <div
+        {/* <div
           className="p-3 mb-4 bg-dark text-white rounded row"
           style={{ maxWidth: "350px" }}
         >
@@ -137,7 +141,7 @@ const InfluencerDetails = () => {
           >
             Make Payment
           </Button>
-        </div>
+        </div> */}
 
         {/* Table Controls */}
         <Box
@@ -161,7 +165,7 @@ const InfluencerDetails = () => {
             }}
             sx={{ width: { xs: "100%", sm: 250 } }}
           />
-          <Box display="flex" gap={1} flexWrap="wrap">
+          {/* <Box display="flex" gap={1} flexWrap="wrap">
             <Button
               variant="outlined"
               sx={{ color: "#000", borderColor: "#000" }}
@@ -178,7 +182,7 @@ const InfluencerDetails = () => {
             >
               Generate URL
             </Button>
-          </Box>
+          </Box> */}
         </Box>
 
         {/* Product Table */}
@@ -187,7 +191,7 @@ const InfluencerDetails = () => {
             <TableHead>
               <TableRow>
                 <TableCell padding="checkbox" sx={{ width: 50 }}>
-                  <Checkbox />
+                  {/* <Checkbox /> */}
                 </TableCell>
                 <TableCell sx={{ width: "45%" }}>
                   <b>Product Name</b>
@@ -214,7 +218,7 @@ const InfluencerDetails = () => {
               {paginatedData.map((row, idx) => (
                 <TableRow key={idx}>
                   <TableCell padding="checkbox">
-                    <Checkbox />
+                    {/* <Checkbox /> */}
                   </TableCell>
                   <TableCell>
                     <Typography
@@ -229,8 +233,8 @@ const InfluencerDetails = () => {
                       {row.title}
                     </Typography>
                   </TableCell>
-                  <TableCell>Helimix</TableCell>
-                  <TableCell>3%</TableCell>
+                  <TableCell>{row.brand}</TableCell>
+                  <TableCell>{row.commission}</TableCell>
                   <TableCell>
                     <Chip
                       label={row.status}
@@ -256,16 +260,20 @@ const InfluencerDetails = () => {
                       }}
                     />
                   </TableCell>
-                  <TableCell>{row.purchases_past_month}</TableCell>
+                  <TableCell>{row.unitsSold}</TableCell>
                   <TableCell>
-                    <a
-                      href={`https://${row.url}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ wordBreak: "break-all" }}
-                    >
-                      {row.url}
-                    </a>
+                    {row.url !== "-" ? (
+                      <a
+                        href={`https://${row.url}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ wordBreak: "break-all" }}
+                      >
+                        {row.url}
+                      </a>
+                    ) : (
+                      "-"
+                    )}
                   </TableCell>
                 </TableRow>
               ))}

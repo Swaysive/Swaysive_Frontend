@@ -26,6 +26,10 @@ export const usersApi = {
     return apiInstance.post("/invitation/send", data);
   },
 
+  getInfluencerDetails: async (id) => {
+    return apiInstance.get(`/influencers/${id}`);
+  },
+
   acceptInvitation: async (data) => {
     return apiInstance.post("/invitation/accept", data);
   },

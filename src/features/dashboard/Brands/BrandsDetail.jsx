@@ -99,12 +99,13 @@ const BrandsDetail = () => {
       <div className="col-12 mb-4">
         <DashboardHeader
           headerText="Your Brands"
-          bodyText="Review and update your creator-facing brand details and logo for each brand"
+          // bodyText="Review and update your creator-facing brand details and logo for each brand"
+          showBackButton={true}
         />
       </div>
       <Box sx={{ p: 3 }}>
         {/* Brand Overview */}
-        <Grid container spacing={2} alignItems="stretch">
+        <Grid container spacing={2} alignItems="stretch" sx={{ width: "50%" }}>
           <Grid item xs={12}>
             <Paper sx={{ p: 2, borderRadius: "12px", height: "100%" }}>
               <Typography variant="h6" color="black" mb={2}>

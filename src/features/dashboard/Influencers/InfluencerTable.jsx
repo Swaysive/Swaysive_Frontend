@@ -1,7 +1,25 @@
 import React, { useState, useEffect } from "react";
 import {
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Chip, Avatar,
-  TextField, InputAdornment, Box, Typography, Select, MenuItem, IconButton, Dialog, DialogContent, CircularProgress
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Chip,
+  Avatar,
+  TextField,
+  InputAdornment,
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  IconButton,
+  Dialog,
+  DialogContent,
+  CircularProgress,
 } from "@mui/material";
 import { Search, FilterList } from "@mui/icons-material";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
@@ -10,8 +28,8 @@ import DashboardHeader from "../../../components/Headers/DashboardHeader";
 // import FacebookIcon from "../../../assets/icons/facebook-icon.svg";
 // import InstagramIcon from "../../../assets/icons/instagram-icon.svg";
 import "./InfluencerTable.css";
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CloseIcon from '@mui/icons-material/Close';
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from "react-router-dom";
 import { usersApi } from "../../../api/usersApi";
 import { toast } from "react-toastify";
@@ -23,7 +41,7 @@ import { toast } from "react-toastify";
 //   "https://cdn-icons-png.flaticon.com/512/149/149071.png",
 //   "https://cdn-icons-png.flaticon.com/512/149/149071.png"
 // ];
-const randomAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+const randomAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
 const getBrandChip = (brand) => (
   <Chip label={brand} color="primary" size="small" className="me-1 mb-1" />
@@ -54,15 +72,14 @@ const InfluencerTable = () => {
             brands: ["Helimix"], // Placeholder, update if you have real data
             status: user.status === "active" ? "Active" : "Pending",
             socials: { fb: "1.5M", ig: "1.5M" }, // Placeholder
-            email: user.email
+            email: user.email,
           }));
           setInfluencers(mapped);
         }
       } catch (error) {
         toast.error("Failed to fetch influencers.");
-      }
-      finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     };
     fetchInfluencers();
@@ -98,27 +115,30 @@ const InfluencerTable = () => {
       handleInviteModalClose();
       setSuccessModalOpen(true);
     } catch (error) {
-      const errorMessage = error.response?.data?.message || "An unexpected error occurred.";
+      const errorMessage =
+        error.response?.data?.message || "An unexpected error occurred.";
       toast.error(errorMessage);
       handleInviteModalClose();
     }
   };
 
-  const handleInfluencerClick = (id) => {
-    navigate(`/seller-home/influencers/details/${id}`);
+  const handleInfluencerClick = (influencer) => {
+    navigate(`/seller-home/influencers/details/${influencer.id}`, {
+      state: { influencerName: influencer.name },
+    });
   };
   if (loading) {
-      return (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          minHeight="60vh"
-        >
-          <CircularProgress />
-        </Box>
-      );
-    }
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="60vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
   return (
     <div className="row" style={{ marginTop: "50px" }}>
       <div className="col-12 mb-4">
@@ -129,7 +149,12 @@ const InfluencerTable = () => {
       </div>
       <Box p={2} component={Paper} sx={{ borderRadius: 2 }}>
         {/* Top Controls */}
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={3}
+        >
           <TextField
             placeholder="Search..."
             variant="outlined"
@@ -144,7 +169,6 @@ const InfluencerTable = () => {
             sx={{ width: 300 }}
           />
           <Box>
-
             <Button
               variant="contained"
               sx={{ backgroundColor: "#000" }}
@@ -160,17 +184,26 @@ const InfluencerTable = () => {
           <Table>
             <TableHead style={{ backgroundColor: "#f8f9fa" }}>
               <TableRow>
-                <TableCell><strong>Influencers</strong></TableCell>
+                <TableCell>
+                  <strong>Influencers</strong>
+                </TableCell>
                 {/* <TableCell><strong>Brands</strong></TableCell> */}
-                <TableCell><strong>Status</strong></TableCell>
+                <TableCell>
+                  <strong>Status</strong>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {paginatedData.map((inf, index) => (
                 <TableRow key={inf.id || index}>
                   <TableCell>
-                    <Box display="flex" alignItems="center" gap={2} onClick={() => handleInfluencerClick(inf.id)}
-                      style={{ cursor: "pointer" }}>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      gap={2}
+                      onClick={() => handleInfluencerClick(inf)}
+                      style={{ cursor: "pointer" }}
+                    >
                       <Avatar src={inf.avatar} alt={inf.name} />
                       <Box>
                         <Typography variant="body2" fontWeight={600}>
@@ -226,13 +259,24 @@ const InfluencerTable = () => {
         </TableContainer>
 
         {/* Footer Controls */}
-        <Box display="flex" justifyContent="space-between" alignItems="center" mt={3}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mt={3}
+        >
           <Box display="flex" alignItems="center" gap={1}>
-            <IconButton onClick={handlePreviousPage} disabled={currentPage === 1}>
+            <IconButton
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+            >
               <KeyboardArrowLeft />
             </IconButton>
             <Typography variant="body2">{currentPage}</Typography>
-            <IconButton onClick={handleNextPage} disabled={currentPage === totalPages}>
+            <IconButton
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
               <KeyboardArrowRight />
             </IconButton>
           </Box>
@@ -293,7 +337,8 @@ const InfluencerTable = () => {
           <CheckCircleIcon style={{ fontSize: 50, color: "green" }} />
           <h5 className="fw-bold mt-3 mb-3">Invitation Sent!</h5>
           <p className="text-muted mb-0">
-            We have sent an invitation to “{email}” <br />to join Swaysive.
+            We have sent an invitation to “{email}” <br />
+            to join Swaysive.
           </p>
         </DialogContent>
       </Dialog>

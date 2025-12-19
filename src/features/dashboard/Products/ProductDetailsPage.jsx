@@ -291,7 +291,8 @@ const ProductDetailsPage = () => {
         <div className="col-12 mb-4">
           <DashboardHeader
             headerText="Your Products"
-            bodyText="Review and update your creator-facing brand details and logo for each brand"
+            // bodyText="Review and update your creator-facing brand details and logo for each brand."
+            showBackButton={true}
           />
         </div>
 
@@ -491,7 +492,7 @@ const ProductDetailsPage = () => {
                   <TableCell>Campaign Status</TableCell>
                   <TableCell>Applied Codes</TableCell>
                   <TableCell>Influencer Name</TableCell>
-                  <TableCell>Action</TableCell>
+                  <TableCell>Url</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -513,7 +514,7 @@ const ProductDetailsPage = () => {
                       {/* Placeholder, replace with real data if available */}
                       <Chip
                         label={
-                          variant.status === "active" ? "Active" : "Inactive"
+                          variant.campaignStatus === "active" ? "Active" : "Inactive"
                         }
                         size="small"
                       />

@@ -115,7 +115,7 @@ const BrandTable = () => {
             <TableHead>
               <TableRow>
                 <TableCell padding="checkbox">
-                  <Checkbox />
+                  {/* <Checkbox /> */}
                 </TableCell>
                 <TableCell sx={{ fontWeight: "bold" }}>Brand</TableCell>
                 <TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
@@ -127,7 +127,7 @@ const BrandTable = () => {
               {brands.map((brand) => (
                 <TableRow key={brand._id} hover>
                   <TableCell padding="checkbox">
-                    <Checkbox />
+                    {/* <Checkbox /> */}
                   </TableCell>
                   <TableCell
                     onClick={() => navigate(`/brands/details/${brand.id}`)}

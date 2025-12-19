@@ -1,23 +1,51 @@
-import React from 'react';
-import './DashboardHeader.css';
-import { Box, Typography } from '@mui/material';
+import React from "react";
+import "./DashboardHeader.css";
+import { Box, Typography, IconButton } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
 
 // Import assets locally
-import OverlaySquare from '../../assets/images/overlay-square.svg';
-import DotLight from '../../assets/images/dot-light.svg';
+import OverlaySquare from "../../assets/images/overlay-square.svg";
+import DotLight from "../../assets/images/dot-light.svg";
 
-const DashboardHeader = ({ headerText, bodyText }) => {
+const DashboardHeader = ({ headerText, bodyText, showBackButton = false }) => {
+  const navigate = useNavigate();
+
   const backgroundAssets = [
-    { url: OverlaySquare, className: 'asset-0' },
-    { url: DotLight, className: 'asset-1' },
+    { url: OverlaySquare, className: "asset-0" },
+    { url: DotLight, className: "asset-1" },
   ];
 
   return (
     <Box className="dashboard-header container-fluid p-4 rounded-4 position-relative text-white">
       {/* Text Content */}
       <div className="z-1 position-relative text-width">
-        <Typography variant="h5"  sx={{ fontFamily: "Poppins", fontSize: "28px", fontWeight:"700" }}>{headerText}</Typography>
-        <Typography variant="body1" className="mt-2" sx={{ fontFamily: "Poppins", fontSize: "14px", fontWeight:"500" }}>
+        <Box display="flex" alignItems="center" gap={1}>
+          {showBackButton && (
+            <IconButton
+              onClick={() => navigate(-1)}
+              sx={{
+                color: "white",
+                p: 0,
+                mr: 1,
+                "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+              }}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+          )}
+          <Typography
+            variant="h5"
+            sx={{ fontFamily: "Poppins", fontSize: "28px", fontWeight: "700" }}
+          >
+            {headerText}
+          </Typography>
+        </Box>
+        <Typography
+          variant="body1"
+          className="mt-2"
+          sx={{ fontFamily: "Poppins", fontSize: "14px", fontWeight: "500" }}
+        >
           {bodyText}
         </Typography>
       </div>
