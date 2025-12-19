@@ -15,6 +15,7 @@ import { IoMdSend } from "react-icons/io";
 import { IoAdd } from "react-icons/io5";
 import React, { useState, useEffect, useCallback } from "react";
 import { useSocket, useSocketEvent } from "../../context/SocketContext";
+const ProfilePic = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 import { useAuth } from "../../context/Auth";
 import { fetchMessages } from "../../api/conversationsApi";
 import { v4 as uuidv4 } from "uuid";
@@ -369,7 +370,10 @@ function ChatScreen({ conversation, user }) {
           <Box sx={{ position: "relative", display: "inline-block" }}>
             <Box
               component="img"
-              src={user?.img}
+              src={
+                user?.img ||
+                "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+              }
               alt="Profile"
               sx={{
                 width: 45,
@@ -545,8 +549,11 @@ function ChatScreen({ conversation, user }) {
                   <Box sx={{ position: "relative", display: "inline-block" }}>
                     <Box
                       component="img"
-                      // src={img || "https://via.placeholder.com/40"}
-                      // alt="Profilee"
+                      src={
+                        img ||
+                        "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                      }
+                      alt="Profile"
                       sx={{
                         width: 25,
                         height: 25,
@@ -629,9 +636,7 @@ function ChatScreen({ conversation, user }) {
           p: 1,
         }}
       >
-        <Box>
-          {/* <BsEmojiSmile size={20} /> */}
-        </Box>
+        <Box>{/* <BsEmojiSmile size={20} /> */}</Box>
         <TextField
           fullWidth
           size="small"

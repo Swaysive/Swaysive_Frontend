@@ -10,8 +10,7 @@ import {
 import DashboardHeader from "../Headers/DashboardHeader";
 import { IoSearch } from "react-icons/io5";
 import { BsCircleFill } from "react-icons/bs";
-import ProfilePic from "../../assets/icons/messageprofilepic.svg";
-import ProfilePic2 from "../../assets/icons/carolinaprofilepic.svg";
+const ProfilePic = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 import ChatScreen from "../Messages/ChatScreen";
 import { fetchConversations } from "../../api/conversationsApi";
 import { useSocketEvent } from "../../context/SocketContext";
