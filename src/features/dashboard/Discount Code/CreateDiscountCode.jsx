@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import "./CreateDiscountCode.css";
-import { useParams, useLocation } from "react-router-dom"; // If you get productId from URL
+import { useParams, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { HiBadgeCheck } from "react-icons/hi";
 import { TextField, InputAdornment } from "@mui/material";
@@ -75,7 +75,12 @@ export default function CreateDiscountCode() {
           variantsRes.data.data.length > 0 &&
           variantsRes.data.data[0].variants?.items
         ) {
-          setVariants(variantsRes.data.data[0].variants.items);
+          setVariants(
+            variantsRes.data.data[0].variants.items.map((item) => ({
+              ...item,
+              hasDiscount: !!item.couponCode,
+            }))
+          );
         }
       } catch (error) {
         console.error("Error fetching variants:", error);
@@ -826,6 +831,12 @@ export default function CreateDiscountCode() {
                     // Cleanup
                     link.parentNode.removeChild(link);
                     window.URL.revokeObjectURL(url);
+
+                    // Open Amazon Seller Central in new tab
+                    window.open(
+                      "https://sellercentral.amazon.com/coupons/bulk-upload",
+                      "_blank"
+                    );
                   } catch (e) {
                     console.error("Download error:", e);
                     toast.error("Failed to download coupon");
